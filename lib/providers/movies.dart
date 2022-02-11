@@ -16,13 +16,13 @@ class Movies with ChangeNotifier {
   }
 
   //метод для поиска фильмов
-  Future<void> searchMovie(String name) async {
+  Future<void> searchMovie({required String name, required int page}) async {
     _items = [];
     final url = Uri.parse(
-        'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=1&include_adult=false');
+        'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=$page&include_adult=false');
     final response = await http.get(url);
     print(json.decode(response.body));
-    List<Movie> listMovie = [];
+
     if (response.statusCode == 200) {
       try {
         //получаем результаты поиска и проходимся по списку, создавая фильмы
@@ -30,12 +30,13 @@ class Movies with ChangeNotifier {
 
         for (int i = 0; i < movieSearch.results.length; i++) {
           final movieItem = movieSearch.results[i];
-          listMovie.add(
+          _items.add(
             Movie(
               id: movieItem.id,
+              // imageUrl: movieItem.posterPath,
               imageUrl: movieItem.posterPath == null
-                  ? 'assets/image/noImageFound.png'
-                  : "https://image.tmdb.org/t/p/w185${movieItem.posterPath}",
+                  ? "assets/image/noImageFound.png"
+                  : "${movieItem.posterPath}",
               title: movieItem.title,
               originalTitle: movieItem.originalTitle,
               overview: movieItem.overview,
@@ -48,7 +49,6 @@ class Movies with ChangeNotifier {
         print('найдена ошибка $error');
       }
     }
-    _items = listMovie;
     notifyListeners();
   }
 }

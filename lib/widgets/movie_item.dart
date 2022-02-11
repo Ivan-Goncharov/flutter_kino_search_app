@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../providers/movie.dart';
+import '../screens/detailed_info.dart';
 
 //виджет для вывода карточки с одним фильмом в поиске фильмов
 class MovieItem extends StatelessWidget {
@@ -21,15 +22,28 @@ class MovieItem extends StatelessWidget {
           height: 100,
           child: FittedBox(
             fit: BoxFit.contain,
-            child: movie.imageUrl == null
+            //выводим постер на экран
+            //если ссылка на изображение не рабочая, выводим дефолтное
+            child: movie.imageUrl!.contains('noImageFound')
                 ? Image.asset('${movie.imageUrl}')
-                : Image.network('${movie.imageUrl}'),
+                : Image.network(
+                    'https://image.tmdb.org/t/p/w185${movie.imageUrl}'),
           ),
         ),
         title: Text(
           '${movie.title}',
         ),
-        subtitle: Text('${movie.originalTitle}, ${movie.date}'),
+        subtitle:
+            Text('${movie.originalTitle}, ${movie.date!.substring(0, 4)}'),
+
+        //по нажатию переходим на экран с подробным описанием фильма
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            DetailedInfo.routName,
+            arguments: movie,
+          );
+        },
       ),
     );
   }

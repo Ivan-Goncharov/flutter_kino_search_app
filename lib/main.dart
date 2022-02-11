@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/movies.dart';
 import 'screens/bottom_page.dart';
+import './screens/detailed_info.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,9 +24,9 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData.dark(),
         home: const BottomPage(),
-        // routes: {
-        //   MovieScreen.routName: (context) => MovieScreen(),
-        // },
+        routes: {
+          DetailedInfo.routName: (context) => const DetailedInfo(),
+        },
       ),
     );
   }
