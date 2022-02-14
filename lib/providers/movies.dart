@@ -16,7 +16,7 @@ class Movies with ChangeNotifier {
   }
 
   //метод для поиска фильмов
-  Future<void> searchMovie({required String name, required int page}) async {
+  Future searchMovie({required String name, required int page}) async {
     _items = [];
     final url = Uri.parse(
         'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=$page&include_adult=false');
@@ -44,6 +44,7 @@ class Movies with ChangeNotifier {
             ),
           );
         }
+        return _items;
       } //если результатов нет, то выкидываем ошибку
       catch (error) {
         print('найдена ошибка $error');
