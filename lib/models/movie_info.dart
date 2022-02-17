@@ -1,4 +1,5 @@
 // Класс для обработки запроса о конкретном фильме
+import 'package:intl/intl.dart';
 
 class MovieInfo {
   bool? adult;
@@ -119,6 +120,23 @@ class MovieInfo {
         "vote_average": voteAverage,
         "vote_count": voteCount,
       };
+
+  //метод для конвертации даты в String
+  String getDate() {
+    return DateFormat('yyyy-MM-dd').format(releaseDate).substring(0, 4);
+  }
+
+  String getGenres() {
+    String genre = '';
+    for (int i = 0; i < genres.length; i++) {
+      if (i < 3) {
+        genre += '${genres[i].name}, ';
+      } else {
+        break;
+      }
+    }
+    return genre;
+  }
 }
 
 class Genre {

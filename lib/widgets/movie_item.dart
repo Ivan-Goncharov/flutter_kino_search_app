@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/providers/movies.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
 import '../screens/detailed_info.dart';
@@ -33,15 +35,14 @@ class MovieItem extends StatelessWidget {
         title: Text(
           '${movie.title}',
         ),
-        subtitle:
-            Text('${movie.originalTitle}, ${movie.date!.substring(0, 4)}'),
+        subtitle: Text('${movie.originalTitle}, ${movie.date}'),
 
         //по нажатию переходим на экран с подробным описанием фильма
         onTap: () {
           Navigator.pushNamed(
             context,
             DetailedInfo.routName,
-            arguments: movie,
+            arguments: movie.id,
           );
         },
       ),

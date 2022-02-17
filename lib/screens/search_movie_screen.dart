@@ -40,7 +40,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      print('конец списка');
       setState(() {
         _isLoading = true;
         page += 1;
@@ -56,7 +55,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
       //вызываем метод поиска с текстом от пользователя
       await _movieProvider.searchMovie(
           name: _myTextController.text, page: page);
-      print(page);
     } catch (er) {
       print('Найдена ошибка $er');
     } finally {
@@ -68,13 +66,19 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   // метод вызывается при изменении текста в поле ввода
   //меняем страницу поиска на 1, чтобы обнулить результат предыдщего поиска
   Future<void> _inputTextChange() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       page = 1;
       //вызываем метод поиска с текстом от пользователя
-      await _movieProvider.searchMovie(
-          name: _myTextController.text, page: page);
-
-      print(page);
+      await _movieProvider
+          .searchMovie(name: _myTextController.text, page: page)
+          .then((_) => {
+                setState(() {
+                  _isLoading = false;
+                }),
+              });
     } catch (er) {
       print('Найдена ошибка $er');
     } finally {
@@ -111,48 +115,49 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: _isLoading
-            ? Center(
-                child: Column(
-                  children: const [
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text('Ищем фильмы'),
-                  ],
+        child: Column(
+          children: [
+            //поле для ввода названия фильма
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
                 ),
-              )
-            : Column(
-                children: [
-                  //поле для ввода названия фильма
-                  TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      hintText: 'Введите название фильма',
-                    ),
-                    controller: _myTextController,
-                  ),
-
-                  //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
-                  movie.isEmpty && _myTextController.text.isNotEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text('Ничего не найдено'),
-                        )
-                      : Expanded(
-                          child: ListView.builder(
-                            itemCount: movie.length,
-                            itemBuilder: (context, index) {
-                              return MovieItem(movie: movie[index]);
-                            },
-                            controller: _scrollController,
-                          ),
-                        ),
-                ],
+                hintText: 'Введите название фильма',
               ),
+              controller: _myTextController,
+            ),
+            // в зависимости от значения загрузки: выводим виджеты
+            _isLoading && _myTextController.text.isNotEmpty
+                ? Center(
+                    child: Column(
+                      children: const [
+                        CircularProgressIndicator(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text('Ищем фильмы'),
+                      ],
+                    ),
+                  )
+                :
+                //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
+                movie.isEmpty && _myTextController.text.isNotEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text('Ничего не найдено'),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                          itemCount: movie.length,
+                          itemBuilder: (context, index) {
+                            return MovieItem(movie: movie[index]);
+                          },
+                          controller: _scrollController,
+                        ),
+                      ),
+          ],
+        ),
       ),
     );
   }

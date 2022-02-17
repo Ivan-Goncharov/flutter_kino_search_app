@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_my_kino_app/models/movie_info.dart';
 import 'package:http/http.dart' as http;
 
 import 'movie.dart';
@@ -15,13 +16,14 @@ class Movies with ChangeNotifier {
     return [..._items];
   }
 
+  late MovieInfo movieItem;
+
   //метод для поиска фильмов
   Future searchMovie({required String name, required int page}) async {
     _items = [];
     final url = Uri.parse(
         'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=$page&include_adult=false');
     final response = await http.get(url);
-    print(json.decode(response.body));
 
     if (response.statusCode == 200) {
       try {
@@ -30,6 +32,7 @@ class Movies with ChangeNotifier {
 
         for (int i = 0; i < movieSearch.results.length; i++) {
           final movieItem = movieSearch.results[i];
+
           _items.add(
             Movie(
               id: movieItem.id,
@@ -40,16 +43,24 @@ class Movies with ChangeNotifier {
               title: movieItem.title,
               originalTitle: movieItem.originalTitle,
               overview: movieItem.overview,
-              date: movieItem.releaseDate,
+              date: movieItem.releaseDate!.substring(0, 4),
             ),
           );
         }
         return _items;
       } //если результатов нет, то выкидываем ошибку
       catch (error) {
-        print('найдена ошибка $error');
+        print('$error');
       }
     }
     notifyListeners();
+  }
+
+  //метод для получения дополнительной информации о фильме
+  Future detailedMovie(int movieId) async {
+    final url = Uri.parse(
+        'https://api.themoviedb.org/3/movie/${movieId}?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
+    final response = await http.get(url);
+    movieItem = MovieInfo.fromJson(json.decode(response.body));
   }
 }
