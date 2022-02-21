@@ -17,7 +17,7 @@ class MovieItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
         leading: SizedBox(
           width: 60,
@@ -39,6 +39,7 @@ class MovieItem extends StatelessWidget {
 
         //по нажатию переходим на экран с подробным описанием фильма
         onTap: () {
+          Provider.of<Movies>(context, listen: false).addMovieHistory(movie);
           Navigator.pushNamed(
             context,
             DetailedInfo.routName,

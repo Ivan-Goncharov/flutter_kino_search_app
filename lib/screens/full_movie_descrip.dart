@@ -98,6 +98,7 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                   ),
                   Row(
                     children: [
+                      // возрастной рейтинг RASR, если отсуствует, то пустой текст
                       _movie.ageLimitRu.isNotEmpty
                           ? Padding(
                               padding: const EdgeInsets.only(right: 8.0),
@@ -111,6 +112,7 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                               ),
                             )
                           : const Text(''),
+                      //возрастной рейтинг US
                       _movie.ageLimitUS.isNotEmpty
                           ? Image(
                               width: 80,

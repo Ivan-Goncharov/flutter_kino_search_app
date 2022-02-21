@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/screens/error_message.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movies.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
           DetailedInfo.routName: (context) => const DetailedInfo(),
           FullMovieDesciption.routNamed: (context) =>
               const FullMovieDesciption(),
+          ErrorMessage.routNamed: (context) => const ErrorMessage(),
         },
       ),
     );

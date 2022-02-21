@@ -121,11 +121,6 @@ class MovieInfo {
         "vote_count": voteCount,
       };
 
-  // //метод для конвертации даты в String
-  // String getDate() {
-  //   return DateFormat('yyyy-MM-dd').format(releaseDate).substring(0, 4);
-  // }
-
   String getGenres() {
     String genre = '';
     for (int i = 0; i < genres.length; i++) {

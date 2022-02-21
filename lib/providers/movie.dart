@@ -13,6 +13,7 @@ class Movie with ChangeNotifier {
   String? originalTitle;
   String? overview;
   String? date;
+  int? voteCount;
 
   //данные переменные будут заполняться по мере выолнения запросов API
   String genres = '';
@@ -22,6 +23,7 @@ class Movie with ChangeNotifier {
   String imdbVotes = '';
   String ageLimitRu = '';
   String ageLimitUS = '';
+  String keyVideo = '';
 
   Movie({
     required this.id,
@@ -30,6 +32,7 @@ class Movie with ChangeNotifier {
     required this.originalTitle,
     required this.overview,
     required this.date,
+    required this.voteCount,
   });
 
   //загружаем детальные данные о фильме с помощью его ID
@@ -37,6 +40,7 @@ class Movie with ChangeNotifier {
     final url = Uri.parse(
         'https://api.themoviedb.org/3/movie/$id?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
     try {
+      // print(id);
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final _movie = MovieInfo.fromJson(json.decode(response.body));
@@ -87,6 +91,52 @@ class Movie with ChangeNotifier {
           ageLimitUS = movieCertif[i]['release_dates'][0]['certification'];
         }
       }
+    }
+  }
+
+  //метод для запроса видео трейлеров фильма
+  void getTrailer() {
+    trailerCountry('ru', '$title').then(
+      (valueRu) {
+        if (valueRu.isEmpty) {
+          trailerCountry('us', '$originalTitle').then(
+            (valueUS) {
+              keyVideo = valueUS;
+            },
+          );
+        } else {
+          keyVideo = valueRu;
+        }
+      },
+    );
+  }
+
+  Future<String> trailerCountry(String codCounty, String movieTitle) async {
+    var url = Uri.parse(
+        'https://api.themoviedb.org/3/movie/$id/videos?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=$codCounty');
+    final response = await http.get(url);
+    var videoKey = '';
+    if (response.statusCode == 200) {
+      final movieTrailer =
+          json.decode(response.body)['results'] as List<dynamic>;
+      print(movieTrailer);
+      if (movieTrailer.isNotEmpty) {
+        for (int i = 0; i < movieTrailer.length; i++) {
+          final video = movieTrailer[i];
+          String videoName = video['name'] as String;
+          String type = video['type'] as String;
+          movieTitle = movieTitle.toLowerCase();
+          videoName = videoName.toLowerCase();
+
+          if (videoName.contains(movieTitle) && type == 'Trailer') {
+            videoKey = video['key'];
+            break;
+          }
+        }
+      }
+      return videoKey;
+    } else {
+      return videoKey;
     }
   }
 }

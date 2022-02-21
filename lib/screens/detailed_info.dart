@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
+import 'package:flutter_my_kino_app/screens/error_message.dart';
+import 'package:flutter_my_kino_app/widgets/videoPlayer.dart';
 
 import '../widgets/ratings.dart';
 import './full_movie_descrip.dart';
@@ -54,10 +56,15 @@ class _DetailedInfoState extends State<DetailedInfo> {
     setState(() {
       _isLoading = true;
     });
-    _movie = ModalRoute.of(context)!.settings.arguments as Movie;
-    _movie.detailedMovie().then((_) {
-      _movie.getRating();
-    });
+    try {
+      _movie = ModalRoute.of(context)!.settings.arguments as Movie;
+      _movie.detailedMovie().then((_) {
+        _movie.getRating();
+        _movie.getTrailer();
+      });
+    } catch (error) {
+      Navigator.pushNamed(context, ErrorMessage.routNamed);
+    }
     setState(() {
       _isLoading = false;
     });
@@ -231,6 +238,8 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                   ),
                                 ),
 
+                                //кнопка перехода
+                                //на экран с полным описанием фильма
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pushNamed(
@@ -253,7 +262,14 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                   padding: const EdgeInsets.all(8.0),
                                   child:
                                       Ratings(_movie.imdbRat, _movie.imdbVotes),
-                                )
+                                ),
+
+                                Container(
+                                  width: double.infinity,
+                                  height: _myHeight * 0.2,
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: VideoPlayer(_movie.keyVideo),
+                                ),
                               ],
                             ),
                           ),

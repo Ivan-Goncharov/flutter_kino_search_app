@@ -4,6 +4,8 @@ import 'package:flutter_my_kino_app/providers/movies.dart';
 import 'package:flutter_my_kino_app/widgets/movie_item.dart';
 import 'package:provider/provider.dart';
 
+import 'error_message.dart';
+
 class SearchMovieScreen extends StatefulWidget {
   const SearchMovieScreen({Key? key}) : super(key: key);
 
@@ -24,6 +26,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   //страница поиска фильмов по умолчанию
   var page = 1;
   var _isLoading = false;
+  var _isConnectError = false;
 
   //инициализируем контроллеры с функцией
   @override
@@ -56,7 +59,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
       await _movieProvider.searchMovie(
           name: _myTextController.text, page: page);
     } catch (er) {
-      print('Найдена ошибка $er');
+      print('$er');
     } finally {
       changeText();
       _scrollController.jumpTo(_scrollController.position.minScrollExtent);
@@ -66,23 +69,31 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   // метод вызывается при изменении текста в поле ввода
   //меняем страницу поиска на 1, чтобы обнулить результат предыдщего поиска
   Future<void> _inputTextChange() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      page = 1;
-      //вызываем метод поиска с текстом от пользователя
-      await _movieProvider
-          .searchMovie(name: _myTextController.text, page: page)
-          .then((_) => {
-                setState(() {
-                  _isLoading = false;
-                }),
-              });
-    } catch (er) {
-      print('Найдена ошибка $er');
-    } finally {
-      changeText();
+    if (_myTextController.text.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+        _isConnectError = false;
+      });
+      try {
+        page = 1;
+        //вызываем метод поиска с текстом от пользователя
+        await _movieProvider
+            .searchMovie(name: _myTextController.text, page: page)
+            .then((_) => {
+                  setState(() {
+                    _isLoading = false;
+                  }),
+                });
+        changeText();
+      } catch (er) {
+        setState(() {
+          _isConnectError = true;
+        });
+      }
+    } else {
+      setState(() {
+        movie = _movieProvider.historySearch;
+      });
     }
   }
 
@@ -90,6 +101,9 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   void changeText() {
     setState(() {
       movie = _movieProvider.items;
+      movie.sort(
+        (a, b) => b.voteCount!.compareTo(a.voteCount as int),
+      );
     });
   }
 
@@ -118,44 +132,67 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
         child: Column(
           children: [
             //поле для ввода названия фильма
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  hintText: 'Введите название фильма',
                 ),
-                hintText: 'Введите название фильма',
+                controller: _myTextController,
               ),
-              controller: _myTextController,
             ),
-            // в зависимости от значения загрузки: выводим виджеты
-            _isLoading && _myTextController.text.isNotEmpty
-                ? Center(
+            _isConnectError
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 20,
+                    ),
                     child: Column(
-                      children: const [
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text('Ищем фильмы'),
+                      children: [
+                        Text('У нас что-то сломалось'),
                       ],
                     ),
                   )
                 :
-                //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
-                movie.isEmpty && _myTextController.text.isNotEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: Text('Ничего не найдено'),
-                      )
-                    : Expanded(
-                        child: ListView.builder(
-                          itemCount: movie.length,
-                          itemBuilder: (context, index) {
-                            return MovieItem(movie: movie[index]);
-                          },
-                          controller: _scrollController,
+                // в зависимости от значения загрузки: выводим виджеты
+                _isLoading && _myTextController.text.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(40),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            CircularProgressIndicator(),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Идет поиск фильмов'),
+                          ],
                         ),
-                      ),
+                      )
+                    :
+                    //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
+                    movie.isEmpty && _myTextController.text.isNotEmpty
+                        ? const Center(
+                            // padding: EdgeInsets.only(top: 10),
+                            heightFactor: 8,
+                            child: Text(
+                              'Ничего не нашлось',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: movie.length,
+                              itemBuilder: (context, index) {
+                                return MovieItem(movie: movie[index]);
+                              },
+                              controller: _scrollController,
+                            ),
+                          ),
           ],
         ),
       ),
