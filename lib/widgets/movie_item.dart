@@ -42,7 +42,7 @@ class MovieItem extends StatelessWidget {
           Navigator.pushNamed(
             context,
             DetailedInfo.routName,
-            arguments: movie.id,
+            arguments: movie,
           );
         },
       ),

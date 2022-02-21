@@ -121,21 +121,25 @@ class MovieInfo {
         "vote_count": voteCount,
       };
 
-  //метод для конвертации даты в String
-  String getDate() {
-    return DateFormat('yyyy-MM-dd').format(releaseDate).substring(0, 4);
-  }
+  // //метод для конвертации даты в String
+  // String getDate() {
+  //   return DateFormat('yyyy-MM-dd').format(releaseDate).substring(0, 4);
+  // }
 
   String getGenres() {
     String genre = '';
     for (int i = 0; i < genres.length; i++) {
       if (i < 3) {
-        genre += '${genres[i].name}, ';
+        genre += ', ${genres[i].name}';
       } else {
         break;
       }
     }
     return genre;
+  }
+
+  String getDuration() {
+    return '${runtime ~/ 60}ч. ${runtime % 60}мин.';
   }
 }
 

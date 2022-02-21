@@ -16,8 +16,6 @@ class Movies with ChangeNotifier {
     return [..._items];
   }
 
-  late MovieInfo movieItem;
-
   //метод для поиска фильмов
   Future searchMovie({required String name, required int page}) async {
     _items = [];
@@ -32,7 +30,6 @@ class Movies with ChangeNotifier {
 
         for (int i = 0; i < movieSearch.results.length; i++) {
           final movieItem = movieSearch.results[i];
-
           _items.add(
             Movie(
               id: movieItem.id,
@@ -54,13 +51,5 @@ class Movies with ChangeNotifier {
       }
     }
     notifyListeners();
-  }
-
-  //метод для получения дополнительной информации о фильме
-  Future detailedMovie(int movieId) async {
-    final url = Uri.parse(
-        'https://api.themoviedb.org/3/movie/${movieId}?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
-    final response = await http.get(url);
-    movieItem = MovieInfo.fromJson(json.decode(response.body));
   }
 }

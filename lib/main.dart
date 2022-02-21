@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/movies.dart';
 import 'screens/bottom_page.dart';
 import './screens/detailed_info.dart';
+import './screens/full_movie_descrip.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
         home: const BottomPage(),
         routes: {
           DetailedInfo.routName: (context) => const DetailedInfo(),
+          FullMovieDesciption.routNamed: (context) =>
+              const FullMovieDesciption(),
         },
       ),
     );

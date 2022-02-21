@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/providers/movies.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_my_kino_app/providers/movie.dart';
 
-import '../models/movie_info.dart';
+import '../widgets/ratings.dart';
+import './full_movie_descrip.dart';
 
 //класс с подробным описанием фильма
 class DetailedInfo extends StatefulWidget {
@@ -28,9 +26,8 @@ class _DetailedInfoState extends State<DetailedInfo> {
   //контроллер для отслеживания положения прокручеваемой части
   late DraggableScrollableController _scrollController;
   //принимаем через аргументы навигации фильм
-  late final int _movieId;
   var _isLoading = false;
-  late MovieInfo _movie;
+  late final Movie _movie;
 
   @override
   void initState() {
@@ -40,19 +37,6 @@ class _DetailedInfoState extends State<DetailedInfo> {
     super.initState();
   }
 
-  Future _detailedMovie(int movieId) async {
-    setState(() {
-      _isLoading = true;
-    });
-    final url = Uri.parse(
-        'https://api.themoviedb.org/3/movie/$movieId?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
-    final response = await http.get(url).then((_) {});
-    setState(() {
-      _isLoading = false;
-    });
-    _movie = MovieInfo.fromJson(json.decode(response.body));
-  }
-
   //получаем размеры экрана и задаем начальные размеры для постера фильма
   @override
   void didChangeDependencies() {
@@ -60,25 +44,30 @@ class _DetailedInfoState extends State<DetailedInfo> {
     _myWidth = MediaQuery.of(context).size.width;
     _imageHeight = _myHeight * 0.5;
     _imageWidth = _myWidth * 0.75;
-    _movieId = ModalRoute.of(context)!.settings.arguments as int;
-    // _inizialisingMovie(_movieId, context);
+    _iniz(context);
     super.didChangeDependencies();
   }
 
-  // // получаем более пордробное описание фильма
-  // Future<void> _inizialisingMovie(int id, BuildContext context) async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   await Provider.of<Movies>(context, listen: false).detailedMovie(id).then(
-  //     (_) {
-  //       _movie = Provider.of<Movies>(context, listen: false).movieItem;
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
-  //     },
-  //   );
-  // }
+  // метод для запуска запросов
+  // после завершения запроса о деталях фильма, делаем запрос о рейтинге фильма
+  _iniz(BuildContext context) {
+    setState(() {
+      _isLoading = true;
+    });
+    _movie = ModalRoute.of(context)!.settings.arguments as Movie;
+    _movie.detailedMovie().then((_) {
+      _movie.getRating();
+    });
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   ///слушатель для контроллера
   ///чем больше пространства занимает ScrollSheet, тем меньше изображение
@@ -118,20 +107,12 @@ class _DetailedInfoState extends State<DetailedInfo> {
     });
   }
 
-  // //метод для конвертации даты в String
-  // String getDate(DateTime date) {
-  //   return DateFormat('yyyy-MM-dd').format(date).substring(0, 4);
-  // }
-
   @override
   Widget build(BuildContext context) {
-    _detailedMovie(_movieId);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isLoading ? '...' : '${_movie.title}'),
+        title: Text('${_movie.title}'),
       ),
-      // используем стэк, для того, чтобы фоном было размытый постер
-      // а на переднем плане постер без размытия
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -153,7 +134,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/original${_movie.posterPath}'),
+                                  'https://image.tmdb.org/t/p/original${_movie.imageUrl}'),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -170,7 +151,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
                           width: _imageWidth,
                           height: _imageHeight,
                           child: Image.network(
-                              'https://image.tmdb.org/t/p/original${_movie.posterPath}'),
+                              'https://image.tmdb.org/t/p/original${_movie.imageUrl}'),
                         ),
                       ),
                     ],
@@ -213,20 +194,66 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ),
-                                // информация о жанре, производителе,  годе и
+                                // информация о жанрах и годе производства
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
                                   child: Text(
-                                    // ignore: unnecessary_string_interpolations
-                                    _movie.getDate() +
-                                        ', ' +
-                                        _movie.getGenres(),
+                                    '${_movie.date}' + _movie.genres,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w400,
                                         color: Colors.white38),
                                   ),
                                 ),
+                                // длительность фильма
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    _movie.duration,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white38),
+                                  ),
+                                ),
+                                //описание фильма
+                                Container(
+                                  width: double.infinity,
+                                  height: _myHeight * 0.15,
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    '${_movie.overview}',
+                                    textAlign: TextAlign.start,
+                                    overflow: TextOverflow.fade,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.4),
+                                  ),
+                                ),
+
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      FullMovieDesciption.routNamed,
+                                      arguments: _movie,
+                                    );
+                                  },
+                                  child: Row(
+                                    children: const [
+                                      Text('Полное описание'),
+                                      Icon(Icons.arrow_right),
+                                    ],
+                                  ),
+                                ),
+
+                                //рейтинг фильма и количество оценок
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(8.0),
+                                  child:
+                                      Ratings(_movie.imdbRat, _movie.imdbVotes),
+                                )
                               ],
                             ),
                           ),
