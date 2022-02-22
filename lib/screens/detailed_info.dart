@@ -63,7 +63,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
         _movie.getTrailer();
       });
     } catch (error) {
-      Navigator.pushNamed(context, ErrorMessage.routNamed);
+      print(error);
     }
     setState(() {
       _isLoading = false;
@@ -264,12 +264,12 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                       Ratings(_movie.imdbRat, _movie.imdbVotes),
                                 ),
 
-                                Container(
-                                  width: double.infinity,
-                                  height: _myHeight * 0.2,
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: VideoPlayer(_movie.keyVideo),
-                                ),
+                                // // Container(
+                                // //   width: double.infinity,
+                                // //   height: _myHeight * 0.2,
+                                // //   padding: const EdgeInsets.all(8.0),
+                                // //   child: VideoPlayer(_movie.keyVideo),
+                                // ),
                               ],
                             ),
                           ),
