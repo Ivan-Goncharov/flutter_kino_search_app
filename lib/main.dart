@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/screens/all_search_results.dart';
-import 'package:flutter_my_kino_app/screens/error_message.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movies.dart';
 import 'screens/bottom_page.dart';
 import './screens/detailed_info.dart';
 import './screens/full_movie_descrip.dart';
+import 'widgets/videoPlayer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           DetailedInfo.routName: (context) => const DetailedInfo(),
           FullMovieDesciption.routNamed: (context) =>
               const FullMovieDesciption(),
-          ErrorMessage.routNamed: (context) => const ErrorMessage(),
+          VideoPlayerScreen.routNamed: (context) => const VideoPlayerScreen(),
           AllSearchResult.routNamed: (context) => const AllSearchResult(),
         },
       ),

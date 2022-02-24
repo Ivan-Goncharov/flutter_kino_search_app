@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -41,12 +42,12 @@ class Movies with ChangeNotifier {
     var page = 0;
     while (isNotEmptySearch) {
       page += 1;
-      final response = await http.get(
-        Uri.parse(
-            'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=$page&include_adult=false'),
-      );
-      if (response.statusCode == 200) {
-        try {
+      try {
+        final response = await http.get(
+          Uri.parse(
+              'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=$page&include_adult=false'),
+        );
+        if (response.statusCode == 200) {
           //получаем результаты поиска и проходимся по списку, создавая фильмы
           final movieSearch = SearchMovie.fromJson(json.decode(response.body));
           if (movieSearch.results.isNotEmpty) {
@@ -70,11 +71,14 @@ class Movies with ChangeNotifier {
           } else {
             isNotEmptySearch = false;
           }
-        } catch (error) {
-          print('Произошла ошибка при поиске фильмов: $error');
+        } else {
+          print(response.statusCode);
         }
-      } else {
-        print(response.statusCode);
+      } on SocketException catch (er) {
+        print('Произошла ошибка при поиске фильмов: $er');
+        rethrow;
+      } catch (er) {
+        print('Произошла ошибка при поиске фильмов: $er');
       }
     }
   }

@@ -20,18 +20,18 @@ class MovieItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
         leading: SizedBox(
-          width: 60,
-          height: 100,
-          child: FittedBox(
-            fit: BoxFit.contain,
-            //выводим постер на экран
-            //если ссылка на изображение не рабочая, выводим дефолтное
-            child: movie.imageUrl!.contains('noImageFound')
-                ? Image.asset('${movie.imageUrl}')
-                : Image.network(
-                    'https://image.tmdb.org/t/p/w185${movie.imageUrl}'),
-          ),
-        ),
+            width: 60,
+            height: 100,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              //выводим постер на экран
+              //если ссылка на изображение не рабочая, выводим дефолтное
+              child: movie.imageUrl!.contains('noImageFound')
+                  ? Image.asset('${movie.imageUrl}')
+                  : Image.network(
+                      'https://image.tmdb.org/t/p/w185${movie.imageUrl}'),
+            )),
+
         title: Text(
           '${movie.title}',
         ),

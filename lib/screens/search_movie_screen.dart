@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_my_kino_app/providers/movies.dart';
 import 'package:flutter_my_kino_app/screens/all_search_results.dart';
+import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
 import 'package:flutter_my_kino_app/widgets/movie_item.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +38,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   }
 
   // метод вызывается при изменении текста в поле ввода
-  Future<void> _inputTextChange() async {
+  _inputTextChange() async {
     //производим поиск, если поле ввода не пустое
     // и не совпадает с вводом, которое было до этого
     //это обход, т.к. при  скрытии клавиатуры TextField (при скроллинге)
@@ -80,6 +81,34 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
       setState(() {
         movie = _movieProvider.historySearch;
       });
+    }
+  }
+
+  //метод для повторной попытки поиска,
+  //если произошла ошибка и пользователь захотел попробовать обновить результаты
+  _errorUpdateScreen() async {
+    if (_myTextController.text.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+        _isConnectError = false;
+      });
+      try {
+        page = 1;
+        //вызываем метод поиска с текстом от пользователя
+        await _movieProvider
+            .searchMovie(name: _myTextController.text, page: page)
+            .then((_) => {
+                  setState(() {
+                    _isLoading = false;
+                  }),
+                });
+        changeText();
+      } catch (er) {
+        //вызываем экран с ошибкой
+        setState(() {
+          _isConnectError = true;
+        });
+      }
     }
   }
 
@@ -163,47 +192,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
             // если будет ошибка, то показываем виджет с описанием
             // и кнопкой для обновления
             _isConnectError
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 40,
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'У нас что-то сломалось',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Му уже решаем проблему. Возможно, проблемы с интернет соединением. Попробуйте еще раз обновить',
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 15),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: SizedBox(
-                            height: size.height * 0.05,
-                            width: size.width * 0.6,
-                            child: TextButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        const Color.fromRGBO(20, 20, 20, 1)),
-                              ),
-                              onPressed: () {
-                                _inputTextChange();
-                              },
-                              child: const Text('Обновить'),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                ? ErrorMessageWidget(handler: _errorUpdateScreen, size: size)
                 :
                 // в зависимости от значения загрузки: выводим виджеты
                 _isLoading && _myTextController.text.isNotEmpty
@@ -216,7 +205,13 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('Идет поиск фильмов'),
+                            Text(
+                              'Идет поиск фильмов',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                       )
@@ -248,7 +243,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
 
                                 return MovieItem(movie: movie[index]);
                               },
-                              controller: _scrollController,
                             ),
                           ),
           ],
