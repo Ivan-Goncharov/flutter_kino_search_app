@@ -6,7 +6,7 @@ import '../providers/movies.dart';
 import 'screens/bottom_page.dart';
 import './screens/detailed_info.dart';
 import './screens/full_movie_descrip.dart';
-import 'widgets/videoPlayer.dart';
+import 'widgets/detailed_widget/videoPlayer.dart';
 
 void main() {
   runApp(const MyApp());

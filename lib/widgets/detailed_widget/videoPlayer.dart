@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../providers/movie.dart';
+import '../../providers/movie.dart';
 
+// Видео плеер, который использует пакет youtube_player_flutter
 class VideoPlayerScreen extends StatefulWidget {
   static const routNamed = './videoPlayer';
   const VideoPlayerScreen({Key? key}) : super(key: key);
@@ -13,26 +13,29 @@ class VideoPlayerScreen extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<VideoPlayerScreen> {
+  // получаем наш фильм через аргументы навигации
   late Movie _movie;
+  // контроллер для получения видео с платформы Youtube
   late YoutubePlayerController _controller;
 
   @override
   void didChangeDependencies() {
+    //инициализруем данные о фильме
     _movie = ModalRoute.of(context)!.settings.arguments as Movie;
-    if (_movie.keyVideo.isNotEmpty) {
-      _controller = _controller = YoutubePlayerController(
-        initialVideoId: _movie.keyVideo,
-        flags: const YoutubePlayerFlags(
-          mute: false,
-          autoPlay: true,
-          disableDragSeek: false,
-          loop: false,
-          isLive: false,
-          forceHD: false,
-          enableCaption: true,
-        ),
-      );
-    }
+    // создаем контроллер, передаем ключ от видео трейлера
+    _controller = _controller = YoutubePlayerController(
+      initialVideoId: _movie.keyVideo,
+      flags: const YoutubePlayerFlags(
+        mute: false,
+        autoPlay: true,
+        disableDragSeek: false,
+        loop: false,
+        isLive: false,
+        forceHD: false,
+        enableCaption: true,
+      ),
+    );
+
     super.didChangeDependencies();
   }
 
@@ -50,6 +53,7 @@ class _VideoPlayerState extends State<VideoPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // используем Builder, чтобы поддерживать полноэкранный просмотр
     return YoutubePlayerBuilder(
       player: YoutubePlayer(
         controller: _controller,
@@ -74,7 +78,7 @@ class _VideoPlayerState extends State<VideoPlayerScreen> {
         appBar: AppBar(
           title: Text(
             '${_movie.title}: Трейлер',
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ),
         body: Center(

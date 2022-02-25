@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/credits_info.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/movie_info.dart';
@@ -26,6 +27,7 @@ class Movie with ChangeNotifier {
   String ageLimitRu = '';
   String ageLimitUS = '';
   String keyVideo = '';
+  CreditsMovieInfo? creditsInfo;
 
   Movie({
     required this.id,
@@ -42,7 +44,7 @@ class Movie with ChangeNotifier {
     final url = Uri.parse(
         'https://api.themoviedb.org/3/movie/$id?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
 
-    // print(id);
+    print(id);
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -154,7 +156,6 @@ class Movie with ChangeNotifier {
       if (response.statusCode == 200) {
         final movieTrailer =
             json.decode(response.body)['results'] as List<dynamic>;
-        print(movieTrailer);
         if (movieTrailer.isNotEmpty) {
           for (int i = 0; i < movieTrailer.length; i++) {
             final video = movieTrailer[i];
@@ -185,5 +186,26 @@ class Movie with ChangeNotifier {
         print("Unhandled exception: ${e.toString()}");
     }
     return '';
+  }
+
+  Future<void> getMovieCredits() async {
+    final url = Uri.parse(
+        'https://api.themoviedb.org/3/movie/$id/credits?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        creditsInfo = CreditsMovieInfo.fromJson(json.decode(response.body));
+        print(creditsInfo?.cast[0].name);
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        print("Socket exception: ${e.toString()}");
+        rethrow;
+      } else if (e is TimeoutException) {
+        //treat TimeoutException
+        print("Timeout exception: ${e.toString()}");
+      } else
+        print("Unhandled exception: ${e.toString()}");
+    }
   }
 }
