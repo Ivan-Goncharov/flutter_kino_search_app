@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/credits_info.dart';
+import 'package:flutter_my_kino_app/screens/all_cast_person.dart';
 
-import '../../providers/movie.dart';
-
+//виджет для вывода актеров
 class ActorCast extends StatelessWidget {
+  //принимаем информацию об актерском составе
+  // и высоту
   final CreditsMovieInfo? creditsInfo;
   final double height;
   ActorCast({
@@ -14,6 +16,7 @@ class ActorCast extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // проверяем длину списка актеров
     final actors = creditsInfo?.cast;
     final lenghtActorsList = actors?.length ?? 0;
     return Column(
@@ -31,29 +34,41 @@ class ActorCast extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    '$lenghtActorsList',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              // в заголовке кнопка - переход на расширенный список,
+              // также выводим длину списка - указываем кол-во актеров
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, AllCastPerson.routNamed,
+                      arguments: actors);
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      '$lenghtActorsList',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white54,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios,
                       color: Colors.white54,
                     ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.white54,
-                  ),
-                ],
+                  ],
+                ),
               )
             ],
           ),
         ),
+        //контейнер содержит горизонтальный скроллинг
+        // выводим постер, имя и героя
+        // в списке 10 самых важных ролей,
+        // остальных можно посмотреть в расширенном списке
         Container(
           padding: const EdgeInsets.all(8.0),
           width: double.infinity,
-          height: height * 0.25,
+          height: height * 0.30,
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -70,6 +85,7 @@ class ActorCast extends StatelessWidget {
     );
   }
 
+  // Шаблон для вывода одного актера
   Container actorInfo(Cast actor) {
     return Container(
       // color: Colors.white,
@@ -80,7 +96,7 @@ class ActorCast extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
             child: Image(
-              image: getImage(actor.profilePath),
+              image: actor.getImage(),
               height: 100,
             ),
           ),
@@ -95,18 +111,21 @@ class ActorCast extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+            actor.character ?? '',
+            softWrap: true,
+            style: const TextStyle(
+              color: Colors.white54,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
-      padding: const EdgeInsets.all(5.0),
-      width: 110,
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      width: 120,
     );
-  }
-
-  ImageProvider getImage(String? path) {
-    if (path == null) {
-      return const AssetImage('assets/image/noImageFound.png');
-    } else {
-      return NetworkImage('https://image.tmdb.org/t/p/w185$path');
-    }
   }
 }

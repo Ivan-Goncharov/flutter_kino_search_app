@@ -45,7 +45,6 @@ class _DetailedInfoState extends State<DetailedInfo> {
               },
             );
       }
-
       setState(() {
         _isLoading = false;
       });
@@ -115,7 +114,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
 
                     // расширяющийся список
                     DraggableScrollableSheet(
-                      initialChildSize: 0.35,
+                      initialChildSize: 0.25,
                       maxChildSize: 1,
                       minChildSize: 0.20,
                       builder: (BuildContext context,
@@ -126,16 +125,14 @@ class _DetailedInfoState extends State<DetailedInfo> {
                             borderRadius: BorderRadius.circular(8.0),
                             child: Container(
                               color: Colors.black,
-                              child: ListView(
-                                  controller: scrollController,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: MovieDetailsColumn(
-                                          movie: _movie, myHeight: _myHeight),
-                                    ),
-                                    // ActorCast(height: _myHeight),
-                                  ]),
+                              child: SingleChildScrollView(
+                                controller: scrollController,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: MovieDetailsColumn(
+                                      movie: _movie, myHeight: _myHeight),
+                                ),
+                              ),
                             ),
                           ),
                         );

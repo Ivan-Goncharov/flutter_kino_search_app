@@ -1,10 +1,8 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromJson(jsonString);
-
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
+//Модель для получения Json результата запроса об актерах и съемочной групее фильма
 CreditsMovieInfo welcomeFromJson(String str) =>
     CreditsMovieInfo.fromJson(json.decode(str));
 
@@ -33,6 +31,37 @@ class CreditsMovieInfo {
         "cast": List<dynamic>.from(cast.map((x) => x.toJson())),
         "crew": List<dynamic>.from(crew.map((x) => x.toJson())),
       };
+
+  List<Cast> getCrewList(List<String> jobList) {
+    List<Cast> listCrew = [];
+
+    for (int j = 0; j < jobList.length; j++) {
+      for (int i = 0; i < crew.length; i++) {
+        final crewPers = crew[i];
+        if (jobList[j] == crewPers.job) {
+          listCrew.add(crewPers);
+        }
+      }
+    }
+    return listCrew;
+  }
+
+  void getMapCrew() {
+    Map<String, List<Cast>> mapCrew = {
+      'Режиссер': getCrewList(['Director']),
+      'Продюссер':
+          getCrewList(['Producer', 'Executive Producer', 'Associate Producer']),
+      'Сценарист': getCrewList(['Screenplay', 'Novel']),
+      'Оператор': getCrewList(['Director of Photography']),
+      'Композитор': getCrewList(['Original Music Composer']),
+      'Художник-постановщик': getCrewList(['Production Design']),
+      'Художник-костюмер': getCrewList(['Costume Design']),
+      'Арт-директор': getCrewList(['Art Direction']),
+      'Монтажер': getCrewList(['Editor']),
+    };
+    print(mapCrew.length);
+    print(mapCrew.keys);
+  }
 }
 
 class Cast {
@@ -100,6 +129,16 @@ class Cast {
             department == null ? null : departmentValues.reverse[department],
         "job": job == null ? null : job,
       };
+
+  //получаем постер, проверяем на null, если постер отсутсвует,
+  // то присваиваем пустую фотографию
+  ImageProvider getImage() {
+    if (profilePath == null) {
+      return const AssetImage('assets/image/noImageFound.png');
+    } else {
+      return NetworkImage('https://image.tmdb.org/t/p/w185$profilePath');
+    }
+  }
 }
 
 enum Department {

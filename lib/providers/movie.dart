@@ -188,6 +188,7 @@ class Movie with ChangeNotifier {
     return '';
   }
 
+  // метод для получения данных о съемочной группе и актерах фильма
   Future<void> getMovieCredits() async {
     final url = Uri.parse(
         'https://api.themoviedb.org/3/movie/$id/credits?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
@@ -195,14 +196,13 @@ class Movie with ChangeNotifier {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         creditsInfo = CreditsMovieInfo.fromJson(json.decode(response.body));
-        print(creditsInfo?.cast[0].name);
+        creditsInfo!.getMapCrew();
       }
     } catch (e) {
       if (e is SocketException) {
         print("Socket exception: ${e.toString()}");
         rethrow;
       } else if (e is TimeoutException) {
-        //treat TimeoutException
         print("Timeout exception: ${e.toString()}");
       } else
         print("Unhandled exception: ${e.toString()}");
