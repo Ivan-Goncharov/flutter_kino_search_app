@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/credits_info.dart';
-import 'package:flutter_my_kino_app/screens/all_cast_person.dart';
+
+import '../../screens/all_actor_screen.dart';
+import '../../models/credits_info.dart';
+import '../../screens/detailed_cast_item.dart';
 
 //виджет для вывода актеров
 class ActorCast extends StatelessWidget {
@@ -8,7 +10,7 @@ class ActorCast extends StatelessWidget {
   // и высоту
   final CreditsMovieInfo? creditsInfo;
   final double height;
-  ActorCast({
+  const ActorCast({
     Key? key,
     required this.height,
     required this.creditsInfo,
@@ -34,11 +36,12 @@ class ActorCast extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               // в заголовке кнопка - переход на расширенный список,
               // также выводим длину списка - указываем кол-во актеров
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, AllCastPerson.routNamed,
+                  Navigator.pushNamed(context, AllActorScreen.routNamed,
                       arguments: actors);
                 },
                 child: Row(
@@ -66,7 +69,7 @@ class ActorCast extends StatelessWidget {
         // в списке 10 самых важных ролей,
         // остальных можно посмотреть в расширенном списке
         Container(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(top: 15),
           width: double.infinity,
           height: height * 0.30,
           child: ListView.builder(
@@ -76,7 +79,11 @@ class ActorCast extends StatelessWidget {
             itemBuilder: (context, index) {
               final actor = actors![index];
 
-              return actorInfo(actor);
+              return actorInfo(
+                context: context,
+                actor: actor,
+                heroKey: 'actorHero$index',
+              );
             },
             itemCount: lenghtActorsList > 10 ? 10 : lenghtActorsList,
           ),
@@ -86,43 +93,69 @@ class ActorCast extends StatelessWidget {
   }
 
   // Шаблон для вывода одного актера
-  Container actorInfo(Cast actor) {
+  Container actorInfo(
+      {required BuildContext context,
+      required Cast actor,
+      required String heroKey}) {
     return Container(
-      // color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Image(
-              image: actor.getImage(),
-              height: 100,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: ((context, animation, secondaryAnimation) {
+                return DetailedCastInfo(
+                  heroKey: heroKey,
+                  castItem: actor,
+                );
+              }),
+              transitionDuration: const Duration(milliseconds: 700),
             ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            actor.name,
-            textAlign: TextAlign.center,
-            softWrap: true,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            //постер с закругленными краями
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Hero(
+                tag: heroKey,
+                child: Image(
+                  image: actor.getImage(),
+                  height: 100,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            actor.character ?? '',
-            softWrap: true,
-            style: const TextStyle(
-              color: Colors.white54,
+            const SizedBox(
+              height: 5,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            // имя и фамилия актера
+            Text(
+              actor.name,
+              textAlign: TextAlign.center,
+              softWrap: true,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            // если есть, то имя персонажа
+            Text(
+              actor.character ?? '',
+              softWrap: true,
+              maxLines: 2,
+              overflow: TextOverflow.fade,
+              style: const TextStyle(
+                color: Colors.white54,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       width: 120,

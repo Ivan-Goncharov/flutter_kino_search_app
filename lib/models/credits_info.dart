@@ -18,6 +18,11 @@ class CreditsMovieInfo {
   int id;
   List<Cast> cast;
   List<Cast> crew;
+  //список самых важных работников съемочной группы
+  //для вывода на общем экране фильма
+  List<Cast> customCrewList = [];
+  //карта со списком должностей и людей на должности
+  Map<String, List<Cast>> custumCrewMap = {};
 
   factory CreditsMovieInfo.fromJson(Map<String, dynamic> json) =>
       CreditsMovieInfo(
@@ -32,6 +37,8 @@ class CreditsMovieInfo {
         "crew": List<dynamic>.from(crew.map((x) => x.toJson())),
       };
 
+// метод для фильтрации съемочной группы,
+// в зависимости от их должности
   List<Cast> getCrewList(List<String> jobList) {
     List<Cast> listCrew = [];
 
@@ -40,14 +47,16 @@ class CreditsMovieInfo {
         final crewPers = crew[i];
         if (jobList[j] == crewPers.job) {
           listCrew.add(crewPers);
+          customCrewList.add(crewPers);
         }
       }
     }
     return listCrew;
   }
 
-  void getMapCrew() {
-    Map<String, List<Cast>> mapCrew = {
+//метод для фильтрации списка съемочной группы
+  void createMapCrew() {
+    custumCrewMap = {
       'Режиссер': getCrewList(['Director']),
       'Продюссер':
           getCrewList(['Producer', 'Executive Producer', 'Associate Producer']),
@@ -59,8 +68,6 @@ class CreditsMovieInfo {
       'Арт-директор': getCrewList(['Art Direction']),
       'Монтажер': getCrewList(['Editor']),
     };
-    print(mapCrew.length);
-    print(mapCrew.keys);
   }
 }
 
@@ -136,7 +143,8 @@ class Cast {
     if (profilePath == null) {
       return const AssetImage('assets/image/noImageFound.png');
     } else {
-      return NetworkImage('https://image.tmdb.org/t/p/w185$profilePath');
+      // print('https://image.tmdb.org/t/p/w185$profilePath');
+      return NetworkImage('https://image.tmdb.org/t/p/original$profilePath');
     }
   }
 }

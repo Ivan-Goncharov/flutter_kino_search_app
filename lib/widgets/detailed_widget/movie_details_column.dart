@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/credits_info.dart';
 
 import '../../providers/movie.dart';
 import '../../screens/full_movie_descrip.dart';
 import '../ratings.dart';
 import 'actor_cast.dart';
+import 'crew_cast.dart';
 import 'videoPlayer.dart';
 
 //Виджет для отображения подробной информации о фильме
@@ -102,6 +102,12 @@ class MovieDetailsColumn extends StatelessWidget {
 
         //горизонтальный скроллинг список актеров
         ActorCast(
+          height: _myHeight,
+          creditsInfo: _movie!.creditsInfo,
+        ),
+
+        //горизонтальный скроллинг список съемочной группы
+        CrewCast(
           height: _myHeight,
           creditsInfo: _movie!.creditsInfo,
         ),

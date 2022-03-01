@@ -196,7 +196,7 @@ class Movie with ChangeNotifier {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         creditsInfo = CreditsMovieInfo.fromJson(json.decode(response.body));
-        creditsInfo!.getMapCrew();
+        creditsInfo!.createMapCrew();
       }
     } catch (e) {
       if (e is SocketException) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/screens/all_cast_person.dart';
+import 'package:flutter_my_kino_app/screens/all_actor_screen.dart';
+import 'package:flutter_my_kino_app/screens/all_crew_screen.dart';
 import 'package:flutter_my_kino_app/screens/all_search_results.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
               const FullMovieDesciption(),
           VideoPlayerScreen.routNamed: (context) => const VideoPlayerScreen(),
           AllSearchResult.routNamed: (context) => const AllSearchResult(),
-          AllCastPerson.routNamed: (context) => const AllCastPerson(),
+          AllActorScreen.routNamed: (context) => const AllActorScreen(),
+          AllCrewScreen.routNamed: (context) => const AllCrewScreen(),
         },
       ),
     );
