@@ -75,12 +75,7 @@ class _VideoPlayerState extends State<VideoPlayerScreen> {
         ],
       ),
       builder: (context, player) => Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${_movie.title}: Трейлер',
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
+        backgroundColor: Colors.black,
         body: Center(
           child: player,
         ),

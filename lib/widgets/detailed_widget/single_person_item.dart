@@ -19,7 +19,7 @@ class SinglePersonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // обрабатываем нажатие на карту - 
+        // обрабатываем нажатие на карту -
         // переходом на страницу с описанием работника
         Navigator.push(
           context,
@@ -43,6 +43,7 @@ class SinglePersonItem extends StatelessWidget {
               Row(
                 children: [
                   //Постер с фотографией работника
+                  //оборачиваем в виджет Hero, и присваиваем полученный tag от вызвавшего виджета
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: Hero(
@@ -86,6 +87,8 @@ class SinglePersonItem extends StatelessWidget {
                         height: 20,
                       ),
                       //имя персонажа или должность
+                      //если актер - то выводим имя персонажа,
+                      // если не актер, то должность
                       isActor
                           ? Text(
                               castPers.character ?? '',

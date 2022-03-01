@@ -100,6 +100,8 @@ class ActorCast extends StatelessWidget {
     return Container(
       child: GestureDetector(
         onTap: () {
+          // при нажатии на карту с актером -
+          //открывается детальное описание
           Navigator.push(
             context,
             PageRouteBuilder(

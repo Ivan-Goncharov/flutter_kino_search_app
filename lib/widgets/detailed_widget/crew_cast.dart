@@ -94,6 +94,8 @@ class CrewCast extends StatelessWidget {
       required String heroKey}) {
     return GestureDetector(
       onTap: () {
+        //при нажатии на экран с работником -
+        //плавный переход на экран с детальным описанием
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -119,6 +121,7 @@ class CrewCast extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 //фото с закругленными краями
+                // оборачиваем в Hero  для анимации
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: Hero(

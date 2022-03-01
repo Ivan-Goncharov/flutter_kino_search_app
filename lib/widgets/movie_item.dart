@@ -3,7 +3,7 @@ import 'package:flutter_my_kino_app/providers/movies.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
-import '../screens/detailed_info.dart';
+import '../screens/detailed_movie_info.dart';
 
 //виджет для вывода карточки с одним фильмом в поиске фильмов
 class MovieItem extends StatelessWidget {
@@ -14,23 +14,36 @@ class MovieItem extends StatelessWidget {
     required this.movie,
   }) : super(key: key);
 
+// проверяем на переданное изображение - постер,
+// если ссылка на изображение noImageFound,
+// то возвращаем соотвествующий файл
+  Image getImage(String? imageUrl) {
+    if (imageUrl!.contains('noImageFound')) {
+      return Image.asset(imageUrl);
+    } else {
+      return Image.network('https://image.tmdb.org/t/p/w300$imageUrl');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final heroTag = 'movieItem${movie.id}';
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
         leading: SizedBox(
-            width: 60,
-            height: 100,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              //выводим постер на экран
-              //если ссылка на изображение не рабочая, выводим дефолтное
-              child: movie.imageUrl!.contains('noImageFound')
-                  ? Image.asset('${movie.imageUrl}')
-                  : Image.network(
-                      'https://image.tmdb.org/t/p/w185${movie.imageUrl}'),
-            )),
+          width: 60,
+          height: 100,
+          child: FittedBox(
+            fit: BoxFit.contain,
+            //выводим постер на экран
+
+            child: Hero(
+              child: getImage(movie.imageUrl),
+              tag: heroTag,
+            ),
+          ),
+        ),
 
         title: Text(
           '${movie.title}',
@@ -40,10 +53,23 @@ class MovieItem extends StatelessWidget {
         //по нажатию переходим на экран с подробным описанием фильма
         onTap: () {
           Provider.of<Movies>(context, listen: false).addMovieHistory(movie);
-          Navigator.pushNamed(
+          // Navigator.pushNamed(
+          //   context,
+          //   DetailedInfo.routName,
+          //   arguments: movie,
+          // );
+          Navigator.push(
             context,
-            DetailedInfo.routName,
-            arguments: movie,
+            PageRouteBuilder(
+              pageBuilder: ((context, animation, secondaryAnimation) {
+                return DetailedInfo(
+                    movie: movie,
+                    heroTag: heroTag,
+                    image: getImage(movie.imageUrl));
+              }),
+              transitionDuration: const Duration(milliseconds: 700),
+              reverseTransitionDuration: const Duration(milliseconds: 300),
+            ),
           );
         },
       ),
