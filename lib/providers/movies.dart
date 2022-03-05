@@ -45,6 +45,7 @@ class Movies with ChangeNotifier {
     }
   }
 
+// метод для поиска всех фильмов возможных фильмов по этому слову
   Future searchAllMovie(String name) async {
     _itemsMovies = [];
     var isNotEmptySearch = true;

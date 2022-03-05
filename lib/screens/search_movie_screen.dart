@@ -19,11 +19,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
 
   //провайдер получим позже, когда будет доступен context
   late Movies _movieProvider;
-  //список с фильмами из поиска
-  List<Movie> movies = [];
-
-  List<Movie> tvShows = [];
-
   // контроллер для перемещания по ListView и для отслеживания положения
   late ScrollController _scrollController;
 
@@ -31,8 +26,8 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   var _showCirculTexField = false;
   var _isConnectError = false;
   var text = '';
-  //инициализируем контроллеры с функцией
 
+  //инициализируем контроллеры с функцией
   @override
   void initState() {
     _scrollController = ScrollController();
@@ -42,7 +37,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
 
   // метод вызывается при изменении текста в поле ввода
   _inputTextChange() async {
-    final _isEmpty = movies.isEmpty;
+    final _isEmpty = _movieProvider.itemsMovies.isEmpty;
     //производим поиск, если поле ввода не пустое
     // и не совпадает с вводом, которое было до этого
     //это обход, т.к. при  скрытии клавиатуры TextField (при скроллинге)
@@ -62,11 +57,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
       try {
         //вызываем метод поиска фильмов с текстом от пользователя
         await _movieProvider.searchMovie(name: _myTextController.text);
-        await _movieProvider.searchTVShow(name: _myTextController.text).then(
-          (_) {
-            changeText();
-          },
-        );
+        await _movieProvider.searchTVShow(name: _myTextController.text);
         if (_isEmpty) {
           setState(() {
             _showCirculCenter = false;
@@ -78,24 +69,14 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
         }
       } catch (er) {
         // вызываем экран с ошибкой
+        // прекращаем анимацию загрузки
         setState(() {
           _isConnectError = true;
+          _showCirculTexField = false;
         });
         print('возникла ошибка в search_movie/iniz: $er');
       }
-    }
-
-    // если клаиватура скрыта, то просто выводим предыдущие результаты
-    else if (_myTextController.text.isNotEmpty) {
-      changeText();
-    } else {
-      //если в поле ввода пусто, то выводим на экран последние 10 фильмов,
-      //которые открывал пользователь
-      setState(() {
-        tvShows = [];
-        movies = [];
-      });
-    }
+    } else {}
   }
 
   //метод для повторной попытки поиска,
@@ -111,7 +92,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
         await _movieProvider.searchMovie(name: _myTextController.text);
         await _movieProvider.searchTVShow(name: _myTextController.text).then(
           (_) {
-            changeText();
             setState(() {
               _showCirculCenter = false;
             });
@@ -126,25 +106,10 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
     }
   }
 
-  //метод для изменения списка с информацией о найденных фильмах
-  void changeText() {
-    movies = _movieProvider.itemsMovies;
-    tvShows = _movieProvider.itemsTVshows;
-
-    //сортируем фильмы по популярности
-    movies.sort(
-      (a, b) => b.voteCount!.compareTo(a.voteCount as int),
-    );
-    tvShows.sort(
-      (a, b) => b.voteCount!.compareTo(a.voteCount as int),
-    );
-    // print('длина тв списка ${tvShows.length}');
-  }
-
   //переопределяем метод для вызова провайдера поиска фильмов
   @override
   void didChangeDependencies() {
-    _movieProvider = Provider.of<Movies>(context);
+    _movieProvider = Provider.of<Movies>(context, listen: true);
     super.didChangeDependencies();
   }
 
@@ -247,10 +212,11 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                         : const SizedBox(),
                                     // если поиск не удался: выводим сообщение об ошибке
                                     // иначе выводим скроллинг лист с фильмами
-                                    movies.isEmpty &&
+                                    _movieProvider.itemsMovies.isEmpty &&
                                             _myTextController.text.isNotEmpty
                                         ? createFalseFound()
-                                        : createSearchListView(size, movies),
+                                        : createSearchListView(
+                                            size, _movieProvider.itemsMovies),
 
                                     //выводим сериалы
                                     //заголовок
@@ -260,10 +226,11 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                         : const SizedBox(),
                                     // если поиск не удался: выводим сообщение об ошибке
                                     // иначе выводим скроллинг лист с фильмами
-                                    movies.isEmpty &&
+                                    _movieProvider.itemsTVshows.isEmpty &&
                                             _myTextController.text.isNotEmpty
                                         ? createFalseFound()
-                                        : createSearchListView(size, tvShows),
+                                        : createSearchListView(
+                                            size, _movieProvider.itemsTVshows),
                                   ],
                                 ),
                     ],
