@@ -32,7 +32,7 @@ class ActorCast extends StatelessWidget {
                 'Актеры',
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -48,15 +48,16 @@ class ActorCast extends StatelessWidget {
                   children: [
                     Text(
                       '$lenghtActorsList',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white54,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.white54,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 16,
                     ),
                   ],
                 ),
@@ -69,9 +70,9 @@ class ActorCast extends StatelessWidget {
         // в списке 10 самых важных ролей,
         // остальных можно посмотреть в расширенном списке
         Container(
-          padding: const EdgeInsets.only(top: 15),
+          padding: const EdgeInsets.only(top: 8),
           width: double.infinity,
-          height: height * 0.30,
+          height: height * 0.25,
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -121,7 +122,7 @@ class ActorCast extends StatelessWidget {
           children: [
             //постер с закругленными краями
             ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(8.0),
               child: Hero(
                 tag: heroKey,
                 child: Image(
@@ -139,7 +140,7 @@ class ActorCast extends StatelessWidget {
               textAlign: TextAlign.center,
               softWrap: true,
               style: const TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w400,
               ),
             ),
             const SizedBox(
@@ -152,15 +153,14 @@ class ActorCast extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.fade,
               style: const TextStyle(
-                color: Colors.white54,
-              ),
+                  color: Colors.white54, fontWeight: FontWeight.w400),
               textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      width: 120,
+      padding: const EdgeInsets.only(right: 10),
+      width: 105,
     );
   }
 }

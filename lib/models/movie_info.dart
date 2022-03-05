@@ -125,7 +125,7 @@ class MovieInfo {
     String genre = '';
     for (int i = 0; i < genres.length; i++) {
       if (i < 3) {
-        genre += ', ${genres[i].name}';
+        i == 0 ? genre += '${genres[i].name}' : genre += ', ${genres[i].name}';
       } else {
         break;
       }

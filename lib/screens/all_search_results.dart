@@ -45,7 +45,7 @@ class _AllSearchResultState extends State<AllSearchResult> {
     });
     try {
       await _provider.searchAllMovie(_searchText).then((_) => {
-            _movies = _provider.items,
+            _movies = _provider.itemsMovies,
             _movies.sort((a, b) => b.voteCount!.compareTo(a.voteCount as int)),
             setState(
               () {

@@ -88,7 +88,7 @@ class _AllCrewScreenState extends State<AllCrewScreen> {
               return SinglePersonItem(
                 castPers: crewList[index],
                 isActor: false,
-                heroKey: 'allCrewHero$index',
+                heroKey: '${title}_hero_$index',
               );
             },
             itemCount: crewList.length,

@@ -44,7 +44,7 @@ class Movie with ChangeNotifier {
     final url = Uri.parse(
         'https://api.themoviedb.org/3/movie/$id?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru');
 
-    print(id);
+    // print(id);
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {

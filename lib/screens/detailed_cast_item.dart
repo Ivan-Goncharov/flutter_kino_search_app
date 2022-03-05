@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/cast.dart';
+import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
+import 'package:provider/provider.dart';
 
 import '../models/credits_info.dart';
+import '../providers/movie.dart';
+import '../providers/movies.dart';
+import 'detailed_movie_info.dart';
 
 //экран с детальным описанием актера
 class DetailedCastInfo extends StatefulWidget {
@@ -19,16 +24,33 @@ class DetailedCastInfo extends StatefulWidget {
 }
 
 class _DetailedCastInfoState extends State<DetailedCastInfo> {
+  //Создаем объект класса с детальным описанием работника
   ItemCastInfo? _castInfo;
   bool _isLoading = false;
+  List<Movie> _moviesActor = [];
+  List<Movie> _moviesCrew = [];
+  late DraggableScrollableController _scrContr;
+  var _hideBackBut = false;
 
   @override
   void initState() {
     setState(() {
       _isLoading = true;
     });
+    _scrContr = DraggableScrollableController();
+    _scrContr.addListener(_listener);
     _castInfo = ItemCastInfo(widget.castItem.id);
-    _castInfo!.getCastInfo().then((_) {
+    _castInfo!.getCastInfo();
+    _castInfo!.getMovieInfo().then((_) {
+      _moviesActor = _castInfo?.mapMovies['Актер'] ?? [];
+      _moviesCrew = _castInfo?.mapMovies['Съемочная группа'] ?? [];
+      _moviesActor.sort(
+        (a, b) => b.voteCount!.compareTo(a.voteCount as int),
+      );
+      _moviesCrew.sort(
+        (a, b) => b.voteCount!.compareTo(a.voteCount as int),
+      );
+
       setState(() {
         _isLoading = false;
       });
@@ -36,9 +58,22 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
     super.initState();
   }
 
+  _listener() {
+    if (_scrContr.size < 0.93 && _hideBackBut) {
+      setState(() {
+        _hideBackBut = false;
+      });
+    }
+    if (_scrContr.size > 0.90 && !_hideBackBut) {
+      setState(() {
+        _hideBackBut = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(widget.castItem.id);
+    print(_castInfo?.id);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black26,
@@ -49,35 +84,56 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
           child: Stack(
             children: [
               Positioned(
-                top: 60,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Hero(
-                    tag: widget.heroKey,
-                    child: Image(
-                      image: widget.castItem.getImage(),
-                      height: MediaQuery.of(context).size.height * 0.70,
-                      fit: BoxFit.cover,
+                // top: 90,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Hero(
+                      tag: widget.heroKey,
+                      child: Image(
+                        image: widget.castItem.getImage(),
+                        height: MediaQuery.of(context).size.height * 0.89,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
               ),
+              _hideBackBut
+                  ? const SizedBox()
+                  :
+                  //кнопка "назад"
+                  Positioned(
+                      top: 10,
+                      left: 8,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back_outlined,
+                          size: 35,
+                        ),
+                      ),
+                    ),
               DraggableScrollableSheet(
-                initialChildSize: 0.2,
-                minChildSize: 0.2,
-                maxChildSize: 0.95,
+                // controller: _scrContr,
+                initialChildSize: 0.16,
+                minChildSize: 0.16,
+                maxChildSize: 0.93,
                 builder: (context, scrollController) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
                       color: Colors.black,
-                      padding: EdgeInsets.only(top: 20),
+                      padding: const EdgeInsets.only(top: 27),
                       child: SingleChildScrollView(
                         controller: scrollController,
                         child: Column(
                           children: [
                             Text(
-                              '${widget.castItem.name}',
+                              widget.castItem.name,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -91,7 +147,39 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
                                     child: const CircularProgressIndicator(
                                         color: Colors.white38),
                                   )
-                                : Text('Загрузилось')
+                                : Column(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          _castInfo!.birthday +
+                                              _castInfo!.deathday,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          '${_castInfo?.age}',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      _moviesActor.isNotEmpty
+                                          ? createDeportament(
+                                              context, _moviesActor, 'Актер')
+                                          : const SizedBox(),
+                                      _moviesCrew.isNotEmpty
+                                          ? createDeportament(context,
+                                              _moviesCrew, 'Съемочная группа')
+                                          : const SizedBox(),
+                                    ],
+                                  ),
                           ],
                         ),
                       ),
@@ -102,6 +190,76 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Column createDeportament(
+      BuildContext context, List<Movie> list, String depName) {
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            depName,
+            textAlign: TextAlign.start,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: Colors.white54,
+            ),
+          ),
+        ),
+        createGridView(context, list),
+      ],
+    );
+  }
+
+  Widget createGridView(BuildContext ctx, List<Movie> movie) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      width: double.infinity,
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          childAspectRatio: 2 / 3,
+          crossAxisCount: 3,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+        ),
+        itemBuilder: (ctx, index) {
+          final heroTag = 'gridView$index${movie[index].id}';
+          return GestureDetector(
+            onTap: () {
+              Provider.of<Movies>(context, listen: false)
+                  .addMovieHistory(movie[index]);
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: ((context, animation, secondaryAnimation) {
+                    return DetailedInfo(
+                      movie: movie[index],
+                      heroTag: heroTag,
+                    );
+                  }),
+                  transitionDuration: const Duration(milliseconds: 700),
+                  reverseTransitionDuration: const Duration(milliseconds: 300),
+                ),
+              );
+            },
+            child: Hero(
+              tag: heroTag,
+              child: GetImage(
+                  imageUrl: movie[index].imageUrl,
+                  title: movie[index].title,
+                  height: 300,
+                  width: 150),
+            ),
+          );
+        },
+        itemCount: movie.length,
       ),
     );
   }

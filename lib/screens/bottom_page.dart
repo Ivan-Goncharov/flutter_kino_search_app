@@ -16,8 +16,8 @@ class _BottomPageState extends State<BottomPage> {
   //список экранов для навигации
   final List<Widget> _pages = [
     OverviewMovieScreen(),
-    SearchMovieScreen(),
-    AboutIt(),
+    const SearchMovieScreen(),
+    const AboutIt(),
   ];
 
   //переменная для сохранения индекса выбранной страницы
@@ -36,24 +36,22 @@ class _BottomPageState extends State<BottomPage> {
       //наполнение меняем, взависимости от экрана
       body: _pages[_selectedPage],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        selectedItemColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        iconSize: 30,
         currentIndex: _selectedPage,
+        showUnselectedLabels: false,
         onTap: _changeIndex,
-        items: [
+        items: const [
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            icon: const Icon(Icons.home_outlined),
+            icon: Icon(Icons.home_outlined),
             label: 'Обзор',
           ),
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            icon: const Icon(Icons.search),
+            icon: Icon(Icons.search),
             label: 'Поиск',
           ),
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            icon: const Icon(Icons.info_outline),
+            icon: Icon(Icons.info_outline),
             label: 'О нас',
           )
         ],

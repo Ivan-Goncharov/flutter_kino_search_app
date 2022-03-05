@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 
 import '../providers/movie.dart';
 import '../widgets/detailed_widget/videoPlayer.dart';
@@ -10,12 +11,7 @@ import '../widgets/detailed_widget/movie_details_column.dart';
 class DetailedInfo extends StatefulWidget {
   final Movie movie;
   final String heroTag;
-  final Image image;
-  const DetailedInfo(
-      {required this.movie,
-      required this.heroTag,
-      required this.image,
-      Key? key})
+  const DetailedInfo({required this.movie, required this.heroTag, Key? key})
       : super(key: key);
   static const routName = '/detailed_info';
 
@@ -37,7 +33,6 @@ class _DetailedInfoState extends State<DetailedInfo> {
   //получаем размеры экрана и задаем начальные размеры для постера фильма
   @override
   void didChangeDependencies() {
-    // _movie = ModalRoute.of(context)!.settings.arguments as Movie;
     _iniz();
     super.didChangeDependencies();
   }
@@ -63,7 +58,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Поймана ошибка $error');
+      print('ошибка в _iniz/detaled movie $error');
       setState(() {
         _isError = true;
       });
@@ -115,13 +110,15 @@ class _DetailedInfoState extends State<DetailedInfo> {
                         //постер на переднем плане, подключаем анимацию -
                         //для плавного изменеия размеров и положения виджета
                         Positioned(
-                          bottom: 170,
-                          child: SizedBox(
-                            width: _myWidth * 0.75,
-                            height: _myHeight * 0.5,
-                            child: Hero(
-                              tag: widget.heroTag,
-                              child: widget.image,
+                          bottom: 110,
+                          child: Hero(
+                            tag: widget.heroTag,
+                            child: GetImage(
+                              imageUrl: widget.movie.imageUrl,
+                              title: widget.movie.title,
+                              height: _myHeight * 0.6,
+                              width: _myWidth * 0.8,
+                              titleFontSize: 25,
                             ),
                           ),
                         ),
@@ -149,9 +146,9 @@ class _DetailedInfoState extends State<DetailedInfo> {
 
                   // расширяющийся список
                   DraggableScrollableSheet(
-                    initialChildSize: 0.25,
+                    initialChildSize: 0.18,
                     maxChildSize: 1,
-                    minChildSize: 0.20,
+                    minChildSize: 0.18,
                     builder: (BuildContext context,
                         ScrollController scrollController) {
                       return Opacity(
@@ -159,11 +156,11 @@ class _DetailedInfoState extends State<DetailedInfo> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.surface,
                             child: SingleChildScrollView(
                               controller: scrollController,
                               child: Padding(
-                                padding: EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   children: [
                                     //Название фильма на русском
@@ -172,16 +169,18 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 24,
+                                        fontSize: 22,
                                       ),
                                     ),
                                     //название фильма на языке оригинала
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0),
                                       child: Text(
                                         '${widget.movie.originalTitle}',
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w400),
                                       ),
                                     ),
@@ -196,7 +195,8 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                                     color: Colors.white38),
                                           )
                                         : Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
                                             child: MovieDetailsColumn(
                                                 movie: _movie,
                                                 myHeight: _myHeight),
@@ -219,8 +219,8 @@ class _DetailedInfoState extends State<DetailedInfo> {
 // Кнопка для воспроизведения видео трейлера
   Positioned playVideoButton(BuildContext context) {
     return Positioned(
-      right: 65,
-      bottom: 180,
+      right: 55,
+      bottom: 125,
       child: CircleAvatar(
         radius: 22,
         backgroundColor: const Color.fromARGB(255, 71, 70, 70),

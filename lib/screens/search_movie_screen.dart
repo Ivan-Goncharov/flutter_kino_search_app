@@ -3,7 +3,7 @@ import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_my_kino_app/providers/movies.dart';
 import 'package:flutter_my_kino_app/screens/all_search_results.dart';
 import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
-import 'package:flutter_my_kino_app/widgets/movie_item.dart';
+import 'package:flutter_my_kino_app/widgets/search_item.dart';
 import 'package:provider/provider.dart';
 
 class SearchMovieScreen extends StatefulWidget {
@@ -20,12 +20,15 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   //провайдер получим позже, когда будет доступен context
   late Movies _movieProvider;
   //список с фильмами из поиска
-  List<Movie> movie = [];
+  List<Movie> movies = [];
+
+  List<Movie> tvShows = [];
+
   // контроллер для перемещания по ListView и для отслеживания положения
   late ScrollController _scrollController;
-  //страница поиска фильмов по умолчанию
-  var page = 1;
-  var _isLoading = false;
+
+  var _showCirculCenter = false;
+  var _showCirculTexField = false;
   var _isConnectError = false;
   var text = '';
   //инициализируем контроллеры с функцией
@@ -39,47 +42,58 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
 
   // метод вызывается при изменении текста в поле ввода
   _inputTextChange() async {
+    final _isEmpty = movies.isEmpty;
     //производим поиск, если поле ввода не пустое
     // и не совпадает с вводом, которое было до этого
     //это обход, т.к. при  скрытии клавиатуры TextField (при скроллинге)
     // вызывается слушатель и перестраивает ListView
     if (_myTextController.text.isNotEmpty && _myTextController.text != text) {
       text = _myTextController.text;
-      setState(() {
-        _isLoading = true;
-        _isConnectError = false;
-      });
+      if (_isEmpty) {
+        setState(() {
+          _showCirculCenter = true;
+          _isConnectError = false;
+        });
+      } else {
+        setState(() {
+          _showCirculTexField = true;
+        });
+      }
       try {
-        page = 1;
-        //вызываем метод поиска с текстом от пользователя
-        await _movieProvider
-            .searchMovie(name: _myTextController.text, page: page)
-            .then((_) => {
-                  setState(() {
-                    _isLoading = false;
-                  }),
-                });
-        changeText();
+        //вызываем метод поиска фильмов с текстом от пользователя
+        await _movieProvider.searchMovie(name: _myTextController.text);
+        await _movieProvider.searchTVShow(name: _myTextController.text).then(
+          (_) {
+            changeText();
+          },
+        );
+        if (_isEmpty) {
+          setState(() {
+            _showCirculCenter = false;
+          });
+        } else {
+          setState(() {
+            _showCirculTexField = false;
+          });
+        }
       } catch (er) {
-        //вызываем экран с ошибкой
+        // вызываем экран с ошибкой
         setState(() {
           _isConnectError = true;
         });
+        print('возникла ошибка в search_movie/iniz: $er');
       }
     }
+
     // если клаиватура скрыта, то просто выводим предыдущие результаты
     else if (_myTextController.text.isNotEmpty) {
-      setState(() {
-        movie = _movieProvider.items;
-        movie.sort(
-          (a, b) => b.voteCount!.compareTo(a.voteCount as int),
-        );
-      });
+      changeText();
     } else {
       //если в поле ввода пусто, то выводим на экран последние 10 фильмов,
       //которые открывал пользователь
       setState(() {
-        movie = _movieProvider.historySearch;
+        tvShows = [];
+        movies = [];
       });
     }
   }
@@ -89,20 +103,20 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   _errorUpdateScreen() async {
     if (_myTextController.text.isNotEmpty) {
       setState(() {
-        _isLoading = true;
+        _showCirculCenter = true;
         _isConnectError = false;
       });
       try {
-        page = 1;
-        //вызываем метод поиска с текстом от пользователя
-        await _movieProvider
-            .searchMovie(name: _myTextController.text, page: page)
-            .then((_) => {
-                  setState(() {
-                    _isLoading = false;
-                  }),
-                });
-        changeText();
+        //вызываем метод поиска фильмов с текстом от пользователя
+        await _movieProvider.searchMovie(name: _myTextController.text);
+        await _movieProvider.searchTVShow(name: _myTextController.text).then(
+          (_) {
+            changeText();
+            setState(() {
+              _showCirculCenter = false;
+            });
+          },
+        );
       } catch (er) {
         //вызываем экран с ошибкой
         setState(() {
@@ -114,13 +128,17 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
 
   //метод для изменения списка с информацией о найденных фильмах
   void changeText() {
-    setState(() {
-      movie = _movieProvider.items;
-      //сортируем фильмы по популярности
-      movie.sort(
-        (a, b) => b.voteCount!.compareTo(a.voteCount as int),
-      );
-    });
+    movies = _movieProvider.itemsMovies;
+    tvShows = _movieProvider.itemsTVshows;
+
+    //сортируем фильмы по популярности
+    movies.sort(
+      (a, b) => b.voteCount!.compareTo(a.voteCount as int),
+    );
+    tvShows.sort(
+      (a, b) => b.voteCount!.compareTo(a.voteCount as int),
+    );
+    // print('длина тв списка ${tvShows.length}');
   }
 
   //переопределяем метод для вызова провайдера поиска фильмов
@@ -137,116 +155,203 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
     super.dispose();
   }
 
-  //кнопка перехода на экран со всеми результатми
-  Widget getEndButton(Size size) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: SizedBox(
-        height: size.height * 0.06,
-        width: size.width * 0.9,
-        child: TextButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-                const Color.fromRGBO(20, 20, 20, 1)),
-          ),
-          onPressed: () {
-            Navigator.pushNamed(
-              context,
-              AllSearchResult.routNamed,
-              arguments: _myTextController.text,
-            );
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
           },
-          child: const Text(
-            'Все результаты',
-            style: TextStyle(color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                //поле для ввода названия фильма
+                Container(
+                  height: size.height * 0.1,
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search_outlined),
+                      // Если в полу ввода изменился текст, а в списках
+                      // фильмов и сериалов еще есть фильмы, то мы индикатор
+                      // загрузки показываем в поле ввода
+                      suffixIcon: _showCirculTexField
+                          ? Container(
+                              margin: const EdgeInsets.all(7),
+                              child: const CircularProgressIndicator(),
+                            )
+                          //если поле ввода не пустое, то выводим иконку,
+                          // которая позволяет стереть поле ввода
+                          : _myTextController.text.isNotEmpty
+                              ? IconButton(
+                                  onPressed: () {
+                                    _myTextController.clear();
+                                  },
+                                  icon: const Icon(
+                                    Icons.clear_rounded,
+                                  ),
+                                )
+                              : const SizedBox(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      hintText: 'Введите название фильма',
+                    ),
+                    controller: _myTextController,
+                  ),
+                ),
+                // если будет ошибка, то показываем виджет с описанием
+                // и кнопкой для обновления
+                Expanded(
+                  child: ListView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    children: [
+                      _isConnectError
+                          ? ErrorMessageWidget(
+                              handler: _errorUpdateScreen, size: size)
+                          :
+                          // в зависимости от значения загрузки: выводим виджеты
+                          _showCirculCenter && _myTextController.text.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.all(40),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      CircularProgressIndicator(),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Идет поиск фильмов',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              :
+                              //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    //выводим заголовок поиска Фильмов
+                                    _myTextController.text.isNotEmpty
+                                        ? createTitleSearch(' Фильмы')
+                                        : const SizedBox(),
+                                    // если поиск не удался: выводим сообщение об ошибке
+                                    // иначе выводим скроллинг лист с фильмами
+                                    movies.isEmpty &&
+                                            _myTextController.text.isNotEmpty
+                                        ? createFalseFound()
+                                        : createSearchListView(size, movies),
+
+                                    //выводим сериалы
+                                    //заголовок
+                                    //выводим заголовок поиска Фильмов
+                                    _myTextController.text.isNotEmpty
+                                        ? createTitleSearch(' Сериалы')
+                                        : const SizedBox(),
+                                    // если поиск не удался: выводим сообщение об ошибке
+                                    // иначе выводим скроллинг лист с фильмами
+                                    movies.isEmpty &&
+                                            _myTextController.text.isNotEmpty
+                                        ? createFalseFound()
+                                        : createSearchListView(size, tvShows),
+                                  ],
+                                ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Поиск фильмов'),
+  // данный метод создает список фильмов/сериалов на основе поиска
+  Container createSearchListView(Size size, List<Movie> list) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      height: 200,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          //если конец списка, то выводим кнопку,
+          //которая предлагает перейти на экран со всеми результатами
+          if (index == list.length - 1 && list.length > 9) {
+            return getEndButton(size);
+          }
+          return SearchItem(movie: list[index]);
+        },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            //поле для ввода названия фильма
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  hintText: 'Введите название фильма',
-                ),
-                controller: _myTextController,
-              ),
-            ),
-            // если будет ошибка, то показываем виджет с описанием
-            // и кнопкой для обновления
-            _isConnectError
-                ? ErrorMessageWidget(handler: _errorUpdateScreen, size: size)
-                :
-                // в зависимости от значения загрузки: выводим виджеты
-                _isLoading && _myTextController.text.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(40),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            CircularProgressIndicator(),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Идет поиск фильмов',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    :
-                    //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
-                    movie.isEmpty && _myTextController.text.isNotEmpty
-                        ? const Center(
-                            // padding: EdgeInsets.only(top: 10),
-                            heightFactor: 8,
-                            child: Text(
-                              'Ничего не нашлось',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView.builder(
-                              keyboardDismissBehavior:
-                                  ScrollViewKeyboardDismissBehavior.onDrag,
-                              itemCount: movie.length,
-                              itemBuilder: (context, index) {
-                                //если конец списка, то выводим кнопку,
-                                //которая предлагает перейти на экран со всеми результатами
-                                if (index == movie.length - 1 &&
-                                    movie.length > 1 &&
-                                    movie.length > 9) {
-                                  return getEndButton(size);
-                                }
+    );
+  }
 
-                                return MovieItem(movie: movie[index]);
-                              },
-                            ),
-                          ),
-          ],
+  //кнопка перехода на экран со всеми результатми
+  Widget getEndButton(Size size) {
+    // const Color.fromRGBO(20, 20, 20, 1)
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      height: size.height * 0.15,
+      width: size.width * 0.35,
+      child: TextButton(
+        // style: ButtonStyle(
+        //   backgroundColor: MaterialStateProperty.all<Color>(
+        //       Theme.of(context).colorScheme.surface),
+        // ),
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            AllSearchResult.routNamed,
+            arguments: _myTextController.text,
+          );
+        },
+        child: Text(
+          'Все результаты',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
+      ),
+    );
+  }
+
+// создает виджет с ошибкой поиска
+  Center createFalseFound() {
+    return const Center(
+      heightFactor: 8,
+      child: Text(
+        'Ничего не нашлось',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+    );
+  }
+
+  // заголовок поиска
+  Text createTitleSearch(String titelSearch) {
+    final title = titelSearch;
+    return Text(
+      title,
+      textAlign: TextAlign.start,
+      style: const TextStyle(
+        color: Colors.white38,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
       ),
     );
   }

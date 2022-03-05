@@ -8,11 +8,14 @@ class Ratings extends StatelessWidget {
   const Ratings(this.imdbRat, this.imdbVotes);
 
   //динамический стиль для текста, меняем цвет, взависимости от оценки
-  TextStyle ratTextStyle(String rat) => TextStyle(
-      fontSize: 50, color: getColor(rat), fontWeight: FontWeight.bold);
+  TextStyle ratTextStyle(String rat) {
+    print(rat);
+    return TextStyle(
+        fontSize: 50, color: getColor(rat), fontWeight: FontWeight.bold);
+  }
 
   Color getColor(String rat) {
-    if (rat.isNotEmpty) {
+    if (rat.isNotEmpty && !rat.contains('N/A')) {
       final double movieRat = double.parse(rat);
       if (movieRat >= 7.0) {
         return Colors.green;
@@ -33,11 +36,11 @@ class Ratings extends StatelessWidget {
       children: [
         //заголовок
         const Padding(
-          padding: EdgeInsets.only(bottom: 6.0),
+          padding: EdgeInsets.only(bottom: 8.0),
           child: Text(
             'Рейтинг IMDB',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -45,7 +48,11 @@ class Ratings extends StatelessWidget {
         //цвет контейнера чуть светлее, чем фон
         Container(
           width: double.infinity,
-          color: const Color.fromRGBO(20, 20, 20, 1),
+          // color: const Color.fromRGBO(20, 20, 20, 1),
+
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(8.0)),
           child: Column(
             children: [
               // оценка фильма
@@ -61,9 +68,9 @@ class Ratings extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 6.0, bottom: 18.0),
                 child: Text(
                   imdbVotes,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    color: Colors.white54,
+                    color: Theme.of(context).colorScheme.onSecondaryContainer,
                   ),
                 ),
               ),

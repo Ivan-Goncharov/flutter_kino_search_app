@@ -23,7 +23,7 @@ class MovieDetailsColumn extends StatelessWidget {
     String text = '';
     if (_movie?.date != null) {
       if (_movie?.genres != null) {
-        text = '${_movie!.date}${_movie!.genres}';
+        text = '${_movie!.date} г. ${_movie!.genres}';
       } else {
         text = '${_movie!.date}';
       }
@@ -43,8 +43,7 @@ class MovieDetailsColumn extends StatelessWidget {
           child: Text(
             getDateAndGenre(),
             textAlign: TextAlign.center,
-            style: const TextStyle(
-                fontWeight: FontWeight.w400, color: Colors.white38),
+            style: const TextStyle(fontWeight: FontWeight.w300),
           ),
         ),
         // длительность фильма
@@ -55,8 +54,7 @@ class MovieDetailsColumn extends StatelessWidget {
                 child: Text(
                   _movie!.duration,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w400, color: Colors.white38),
+                  style: const TextStyle(fontWeight: FontWeight.w300),
                 ),
               ),
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/movies.dart';
+import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
@@ -14,64 +15,74 @@ class MovieItem extends StatelessWidget {
     required this.movie,
   }) : super(key: key);
 
-// проверяем на переданное изображение - постер,
-// если ссылка на изображение noImageFound,
-// то возвращаем соотвествующий файл
-  Image getImage(String? imageUrl) {
-    if (imageUrl!.contains('noImageFound')) {
-      return Image.asset(imageUrl);
-    } else {
-      return Image.network('https://image.tmdb.org/t/p/w300$imageUrl');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     final heroTag = 'movieItem${movie.id}';
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        leading: SizedBox(
-          width: 60,
-          height: 100,
-          child: FittedBox(
-            fit: BoxFit.contain,
-            //выводим постер на экран
-
-            child: Hero(
-              child: getImage(movie.imageUrl),
-              tag: heroTag,
-            ),
+    return GestureDetector(
+      onTap: () {
+        Provider.of<Movies>(context, listen: false).addMovieHistory(movie);
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: ((context, animation, secondaryAnimation) {
+              return DetailedInfo(
+                movie: movie,
+                heroTag: heroTag,
+              );
+            }),
+            transitionDuration: const Duration(milliseconds: 700),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+          ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Hero(
+                child: GetImage(
+                  imageUrl: movie.imageUrl,
+                  title: movie.title,
+                  height: size.height * 0.15,
+                  width: size.width * 0.2,
+                ),
+                tag: heroTag,
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${movie.title}',
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${movie.originalTitle}, ${movie.date}',
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-
-        title: Text(
-          '${movie.title}',
-        ),
-        subtitle: Text('${movie.originalTitle}, ${movie.date}'),
-
-        //по нажатию переходим на экран с подробным описанием фильма
-        onTap: () {
-          Provider.of<Movies>(context, listen: false).addMovieHistory(movie);
-          // Navigator.pushNamed(
-          //   context,
-          //   DetailedInfo.routName,
-          //   arguments: movie,
-          // );
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: ((context, animation, secondaryAnimation) {
-                return DetailedInfo(
-                    movie: movie,
-                    heroTag: heroTag,
-                    image: getImage(movie.imageUrl));
-              }),
-              transitionDuration: const Duration(milliseconds: 700),
-              reverseTransitionDuration: const Duration(milliseconds: 300),
-            ),
-          );
-        },
       ),
     );
   }

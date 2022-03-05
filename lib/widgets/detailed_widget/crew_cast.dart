@@ -23,7 +23,7 @@ class CrewCast extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(bottom: 8.0, right: 8.0, left: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -31,7 +31,7 @@ class CrewCast extends StatelessWidget {
                 'Съемочная группа',
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -46,15 +46,15 @@ class CrewCast extends StatelessWidget {
                   children: [
                     Text(
                       '$lenghtCrewList',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white54,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.white54,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ],
                 ),
@@ -65,7 +65,7 @@ class CrewCast extends StatelessWidget {
         // контейнер содержит горизонтальный скроллинг
         // выводим фото, имя и должность
         Container(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(top: 6.0),
           width: double.infinity,
           height: height * 0.18,
           child: ListView.builder(
@@ -111,11 +111,11 @@ class CrewCast extends StatelessWidget {
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
-        color: const Color.fromRGBO(20, 20, 20, 1),
+        color: const Color.fromARGB(0, 20, 20, 20),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 6.0),
             width: 240,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -145,7 +145,7 @@ class CrewCast extends StatelessWidget {
                         textAlign: TextAlign.start,
                         softWrap: true,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -155,9 +155,9 @@ class CrewCast extends StatelessWidget {
                         textAlign: TextAlign.center,
                         softWrap: true,
                         style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.white70,
-                        ),
+                            fontSize: 14,
+                            color: Colors.white54,
+                            fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
