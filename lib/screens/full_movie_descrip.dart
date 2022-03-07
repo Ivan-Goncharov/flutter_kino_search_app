@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/details_media_mod.dart';
 
 import '../providers/movie.dart';
 
@@ -13,7 +14,7 @@ class FullMovieDesciption extends StatefulWidget {
 
 class _FullMovieDesciptionState extends State<FullMovieDesciption> {
   //принимаем фильм через аргументы Навигатора
-  late final Movie _movie;
+  late final DetailsMediaMod _details;
   var _isLoading = false;
 
   @override
@@ -28,11 +29,9 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
     setState(() {
       _isLoading = true;
     });
-    _movie = ModalRoute.of(context)!.settings.arguments as Movie;
-    _movie.getCertification().then((_) {
-      setState(() {
-        _isLoading = false;
-      });
+    _details = ModalRoute.of(context)!.settings.arguments as DetailsMediaMod;
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -91,7 +90,7 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Text(
-                      '${_movie.overview}',
+                      '${_details.overview}',
                       style: const TextStyle(
                           fontWeight: FontWeight.w400, height: 1.4),
                     ),
@@ -99,7 +98,7 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                   Row(
                     children: [
                       // возрастной рейтинг RASR, если отсуствует, то пустой текст
-                      _movie.ageLimitRu.isNotEmpty
+                      _details.ageLimitRu.isNotEmpty
                           ? Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Image(
@@ -107,20 +106,20 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                                 height: 60,
                                 fit: BoxFit.contain,
                                 image: AssetImage(
-                                  getImageLimitRu(_movie.ageLimitRu),
+                                  getImageLimitRu(_details.ageLimitRu),
                                 ),
                               ),
                             )
                           : const Text(''),
                       //возрастной рейтинг US
-                      _movie.ageLimitUS.isNotEmpty
+                      _details.ageLimitUS.isNotEmpty
                           ? Image(
                               width: 80,
                               height: 80,
                               fit: BoxFit.contain,
                               color: Colors.white,
                               image: AssetImage(
-                                getImageLimitUs(_movie.ageLimitUS),
+                                getImageLimitUs(_details.ageLimitUS),
                               ),
                             )
                           : const Text(''),

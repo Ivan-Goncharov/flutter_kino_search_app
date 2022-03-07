@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../screens/all_actor_screen.dart';
-import '../../models/credits_info.dart';
+import '../../models/credits_info_request.dart';
 import '../../screens/detailed_cast_item.dart';
 
 //виджет для вывода актеров
 class ActorCast extends StatelessWidget {
   //принимаем информацию об актерском составе
   // и высоту
-  final CreditsMovieInfo? creditsInfo;
+  final CreditsInfoRequest? creditsInfo;
   final double height;
   const ActorCast({
     Key? key,
@@ -19,7 +19,7 @@ class ActorCast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // проверяем длину списка актеров
-    final actors = creditsInfo?.cast;
+    final actors = creditsInfo?.getCast();
     final lenghtActorsList = actors?.length ?? 0;
     return Column(
       children: [
@@ -148,7 +148,7 @@ class ActorCast extends StatelessWidget {
             ),
             // если есть, то имя персонажа
             Text(
-              actor.character ?? '',
+              '${getActorChapter(actor)}',
               softWrap: true,
               maxLines: 2,
               overflow: TextOverflow.fade,
@@ -162,5 +162,22 @@ class ActorCast extends StatelessWidget {
       padding: const EdgeInsets.only(right: 10),
       width: 105,
     );
+  }
+
+  // возвращаем имя персонажа,
+  // для сериалов и для фильмов различная запись ролей,
+  // поэтому проверяем как записано и возвращаем имя героя, исходя из записи
+  String? getActorChapter(Cast actor) {
+    if (actor.roles != null) {
+      if (actor.roles?[0].character != null) {
+        return actor.roles![0].character;
+      } else {
+        return '';
+      }
+    } else if (actor.character != null) {
+      return actor.character;
+    } else {
+      return '';
+    }
   }
 }

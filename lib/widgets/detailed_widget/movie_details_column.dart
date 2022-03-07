@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/details_media_mod.dart';
+import 'package:flutter_my_kino_app/screens/wath_providers_screen.dart';
 
 import '../../providers/movie.dart';
 import '../../screens/full_movie_descrip.dart';
@@ -10,25 +12,32 @@ import 'crew_cast.dart';
 class MovieDetailsColumn extends StatelessWidget {
   const MovieDetailsColumn({
     Key? key,
-    required Movie? movie,
+    required DetailsMediaMod? details,
     required double myHeight,
-  })  : _movie = movie,
+    required MediaBasicInfo? media,
+  })  : _details = details,
         _myHeight = myHeight,
+        _media = media,
         super(key: key);
 
-  final Movie? _movie;
+  final DetailsMediaMod? _details;
   final double _myHeight;
+  final MediaBasicInfo? _media;
 
   String getDateAndGenre() {
+    String date = _details?.date ?? '';
+    if (_details!.lastEpisodeDate != '') {
+      date += ' - ${_details!.lastEpisodeDate}';
+    }
     String text = '';
-    if (_movie?.date != null) {
-      if (_movie?.genres != null) {
-        text = '${_movie!.date} г. ${_movie!.genres}';
+    if (date != '') {
+      if (date != '') {
+        text = '$date г.  ${_details!.genres}';
       } else {
-        text = '${_movie!.date}';
+        text = '$date г.';
       }
-    } else if (_movie?.genres != null) {
-      text = _movie!.genres;
+    } else if (_details?.genres != null) {
+      text = _details!.genres;
     }
     return text;
   }
@@ -38,38 +47,43 @@ class MovieDetailsColumn extends StatelessWidget {
     return Column(
       children: [
         // информация о жанрах и годе производства
-        Padding(
-          padding: const EdgeInsets.only(top: 4.0),
-          child: Text(
-            getDateAndGenre(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.w300),
-          ),
-        ),
+        getDateAndGenre() != ''
+            ? Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  getDateAndGenre(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w300, color: Colors.white54),
+                ),
+              )
+            : const SizedBox(),
         // длительность фильма
-        _movie!.duration.isEmpty
+        _details!.duration.isEmpty
             ? const SizedBox()
             : Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
-                  _movie!.duration,
+                  '${_details!.duration}${_details!.numberOfSeasons()}',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.w300),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w300, color: Colors.white54),
                 ),
               ),
 
         //описание фильма
-        _movie!.overview!.isEmpty
+        _details!.overview.isEmpty
             ? const SizedBox()
             : Column(
                 children: [
                   Container(
                     width: double.infinity,
-                    height: _myHeight * 0.15,
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(
+                        top: 8.0, right: 8.0, left: 8.0, bottom: 2.0),
                     child: Text(
-                      '${_movie!.overview}',
+                      _details!.overview,
                       textAlign: TextAlign.start,
+                      maxLines: 6,
                       overflow: TextOverflow.fade,
                       style: const TextStyle(
                           fontWeight: FontWeight.w400, height: 1.4),
@@ -82,7 +96,7 @@ class MovieDetailsColumn extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         FullMovieDesciption.routNamed,
-                        arguments: _movie,
+                        arguments: _details,
                       );
                     },
                     child: Row(
@@ -94,27 +108,78 @@ class MovieDetailsColumn extends StatelessWidget {
                   ),
                 ],
               ),
-        _movie!.imdbRat.isEmpty
+        _details!.imdbRat.isEmpty
             ? const SizedBox()
             :
             //рейтинг фильма и количество оценок
             Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(8.0),
-                child: Ratings(_movie!.imdbRat, _movie!.imdbVotes),
+                child: Ratings(_details!.imdbRat, _details!.imdbVotes),
               ),
 
-        //горизонтальный скроллинг список актеров
-        ActorCast(
-          height: _myHeight,
-          creditsInfo: _movie!.creditsInfo,
-        ),
+        // проверяем есть ли данные о прокатчике в России
+        _details?.watchProviders?.results.ru == null
+            ? const SizedBox()
+            :
+            // кнопка переход на страницу с ссылками на сервисы для просмотра онлайн
+            GestureDetector(
+                onTap: (() {
+                  Navigator.pushNamed(context, WatchProvidersScreen.routNamed,
+                      arguments: {
+                        'details': _details,
+                        'media': _media,
+                      });
+                }),
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  height: _myHeight * 0.07,
+                  margin: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.live_tv_rounded,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Смотреть онлайн',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-        //горизонтальный скроллинг список съемочной группы
-        CrewCast(
-          height: _myHeight,
-          creditsInfo: _movie!.creditsInfo,
-        ),
+        _details?.creditsInfo?.cast.isEmpty ?? false
+            ? const SizedBox()
+            :
+            //горизонтальный скроллинг список актеров
+            ActorCast(
+                height: _myHeight,
+                creditsInfo: _details!.creditsInfo,
+              ),
+
+        _details?.creditsInfo?.crew.isEmpty ?? false
+            ? const SizedBox()
+            :
+            //горизонтальный скроллинг список съемочной группы
+            CrewCast(
+                height: _myHeight,
+                creditsInfo: _details!.creditsInfo,
+              ),
       ],
     );
   }

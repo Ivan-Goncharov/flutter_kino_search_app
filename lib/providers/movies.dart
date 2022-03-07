@@ -1,43 +1,60 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_my_kino_app/models/search_tvshow_model.dart';
+import 'package:flutter_my_kino_app/models/search_tvshow_request.dart';
 import 'package:http/http.dart' as http;
 
 import 'movie.dart';
-import '../models/search_movie_model.dart';
+import '../models/search_movie_request.dart';
 
 //класс провайдер для создания списка фильмов в поиске
 class Movies with ChangeNotifier {
   //список фильмов
-  List<Movie> _itemsMovies = [];
+  List<MediaBasicInfo> _itemsMovies = [];
+  //сортируем по популярности и возвращаем список фильмов
+  List<MediaBasicInfo> get itemsMovies {
+    _itemsMovies.sort(
+      (a, b) => b.voteCount!.compareTo(a.voteCount as int),
+    );
+    return _itemsMovies;
+  }
 
-  List<Movie> get itemsMovies {
-    return [..._itemsMovies];
+  setItemsMovie() {
+    _itemsMovies = [];
+    notifyListeners();
   }
 
   // список актеров
-  List<Movie> _itemsTVshows = [];
-
-  List<Movie> get itemsTVshows {
+  List<MediaBasicInfo> _itemsTVshows = [];
+  //сортируем по популярности и возвращаем список сериалов
+  List<MediaBasicInfo> get itemsTVshows {
+    _itemsTVshows.sort(
+      (a, b) => b.voteCount!.compareTo(a.voteCount as int),
+    );
     return [..._itemsTVshows];
   }
 
+  setItemsTVshows() {
+    _itemsTVshows = [];
+    notifyListeners();
+  }
+
   //список фильмов, которые открывал пользователь
-  List<Movie> historySearch = [];
+  List<MediaBasicInfo> historySearch = [];
 
   //добавляем фильм в историю поиска
   //при открытии экрана с подробным описанием фильма
   // если фильм уже есть в истории, то ничего не делаем
   // если размер списка больше 10,
   //то удаляем самый первый фильм в истории и добавляем новый
-  void addMovieHistory(Movie movie) {
+  void addMovieHistory(MediaBasicInfo movie) {
     int index = historySearch.indexWhere((el) => el.id == movie.id);
     if (index == -1) {
       if (historySearch.length < 11) {
         historySearch.insert(0, movie);
-        print('добавили ${movie.title}');
       } else {
         historySearch.removeLast();
         historySearch.insert(0, movie);
@@ -83,7 +100,7 @@ class Movies with ChangeNotifier {
     for (int i = 0; i < search.results.length; i++) {
       final movieItem = search.results[i];
       _itemsMovies.add(
-        Movie(
+        MediaBasicInfo(
           id: movieItem.id,
           // imageUrl: 'assets/image/noImageFound.png',
           imageUrl: movieItem.posterPath == null
@@ -94,6 +111,7 @@ class Movies with ChangeNotifier {
           overview: movieItem.overview ?? '',
           date: getMovieDate(movieItem.releaseDate),
           voteCount: movieItem.voteCount,
+          type: MediaType.movie,
         ),
       );
     }
@@ -104,7 +122,6 @@ class Movies with ChangeNotifier {
     final url = Uri.parse(
         'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=1&include_adult=false');
     final response = await http.get(url);
-    // print(url);
     if (response.statusCode == 200) {
       _itemsMovies = [];
       try {
@@ -126,7 +143,6 @@ class Movies with ChangeNotifier {
     final url = Uri.parse(
         'https://api.themoviedb.org/3/search/tv?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&page=1&query=${Uri.encodeFull(name)}&include_adult=false');
     final response = await http.get(url);
-    print(url);
     if (response.statusCode == 200) {
       _itemsTVshows = [];
       try {
@@ -137,7 +153,7 @@ class Movies with ChangeNotifier {
           for (int i = 0; i < tvShowSearch.results.length; i++) {
             final show = tvShowSearch.results[i];
             _itemsTVshows.add(
-              Movie(
+              MediaBasicInfo(
                 id: show.id,
                 imageUrl: show.posterPath == null
                     ? "assets/image/noImageFound.png"
@@ -147,6 +163,7 @@ class Movies with ChangeNotifier {
                 overview: show.overview ?? '',
                 date: getMovieDate(show.firstAirDate),
                 voteCount: show.voteCount,
+                type: MediaType.tvShow,
               ),
             );
           }

@@ -3,7 +3,7 @@ import 'package:flutter_my_kino_app/providers/cast.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
-import '../models/credits_info.dart';
+import '../models/credits_info_request.dart';
 import '../providers/movie.dart';
 import '../providers/movies.dart';
 import 'detailed_movie_info.dart';
@@ -27,8 +27,8 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
   //Создаем объект класса с детальным описанием работника
   ItemCastInfo? _castInfo;
   bool _isLoading = false;
-  List<Movie> _moviesActor = [];
-  List<Movie> _moviesCrew = [];
+  List<MediaBasicInfo> _moviesActor = [];
+  List<MediaBasicInfo> _moviesCrew = [];
   late DraggableScrollableController _scrContr;
   var _hideBackBut = false;
 
@@ -73,7 +73,6 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
 
   @override
   Widget build(BuildContext context) {
-    print(_castInfo?.id);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black26,
@@ -195,7 +194,7 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
   }
 
   Column createDeportament(
-      BuildContext context, List<Movie> list, String depName) {
+      BuildContext context, List<MediaBasicInfo> list, String depName) {
     return Column(
       children: [
         Container(
@@ -216,7 +215,7 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
     );
   }
 
-  Widget createGridView(BuildContext ctx, List<Movie> movie) {
+  Widget createGridView(BuildContext ctx, List<MediaBasicInfo> movie) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       width: double.infinity,
@@ -239,7 +238,7 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: ((context, animation, secondaryAnimation) {
-                    return DetailedInfo(
+                    return DetailedInfoScreen(
                       movie: movie[index],
                       heroTag: heroTag,
                     );

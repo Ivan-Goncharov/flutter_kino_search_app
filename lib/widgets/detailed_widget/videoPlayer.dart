@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/details_media_mod.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../../providers/movie.dart';
+// import '../../providers/movie.dart';
 
 // Видео плеер, который использует пакет youtube_player_flutter
 class VideoPlayerScreen extends StatefulWidget {
@@ -14,27 +15,30 @@ class VideoPlayerScreen extends StatefulWidget {
 
 class _VideoPlayerState extends State<VideoPlayerScreen> {
   // получаем наш фильм через аргументы навигации
-  late Movie _movie;
+  late String _keyVideo;
   // контроллер для получения видео с платформы Youtube
   late YoutubePlayerController _controller;
 
   @override
   void didChangeDependencies() {
     //инициализруем данные о фильме
-    _movie = ModalRoute.of(context)!.settings.arguments as Movie;
+    _keyVideo = ModalRoute.of(context)!.settings.arguments as String;
+
     // создаем контроллер, передаем ключ от видео трейлера
-    _controller = _controller = YoutubePlayerController(
-      initialVideoId: _movie.keyVideo,
-      flags: const YoutubePlayerFlags(
-        mute: false,
-        autoPlay: true,
-        disableDragSeek: false,
-        loop: false,
-        isLive: false,
-        forceHD: false,
-        enableCaption: true,
-      ),
-    );
+    if (_keyVideo.isNotEmpty) {
+      _controller = _controller = YoutubePlayerController(
+        initialVideoId: _keyVideo,
+        flags: const YoutubePlayerFlags(
+          mute: false,
+          autoPlay: true,
+          disableDragSeek: false,
+          loop: false,
+          isLive: false,
+          forceHD: false,
+          enableCaption: true,
+        ),
+      );
+    }
 
     super.didChangeDependencies();
   }

@@ -9,7 +9,6 @@ class Ratings extends StatelessWidget {
 
   //динамический стиль для текста, меняем цвет, взависимости от оценки
   TextStyle ratTextStyle(String rat) {
-    print(rat);
     return TextStyle(
         fontSize: 50, color: getColor(rat), fontWeight: FontWeight.bold);
   }

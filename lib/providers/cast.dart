@@ -16,8 +16,8 @@ class ItemCastInfo {
     return _birthday;
   }
 
-  Map<String, List<Movie>> _mapMovies = {};
-  Map<String, List<Movie>> get mapMovies {
+  Map<String, List<MediaBasicInfo>> _mapMovies = {};
+  Map<String, List<MediaBasicInfo>> get mapMovies {
     return _mapMovies;
   }
 
@@ -111,8 +111,8 @@ class ItemCastInfo {
     }
   }
 
-  List<Movie> addListMovie(List<dynamic> list) {
-    final List<Movie> listMovies = [];
+  List<MediaBasicInfo> addListMovie(List<dynamic> list) {
+    final List<MediaBasicInfo> listMovies = [];
     if (list.isNotEmpty) {
       for (int a = 0; a < list.length; a++) {
         final movie = list[a];
@@ -120,7 +120,7 @@ class ItemCastInfo {
             listMovies.indexWhere((element) => element.id == movie['id']);
         if (isContain == -1) {
           listMovies.add(
-            Movie(
+            MediaBasicInfo(
               id: movie['id'],
               imageUrl: movie['poster_path'] ?? "assets/image/noImageFound.png",
               title: movie['title'] ?? '',
@@ -128,6 +128,7 @@ class ItemCastInfo {
               overview: movie['overview'] ?? '',
               date: getMovieDate(movie['release_date'] as String?),
               voteCount: movie['vote_count'] ?? 0,
+              type: MediaType.movie,
             ),
           );
         }

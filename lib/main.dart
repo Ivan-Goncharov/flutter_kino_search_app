@@ -9,6 +9,7 @@ import './screens/bottom_page.dart';
 import './screens/full_movie_descrip.dart';
 import './widgets/detailed_widget/videoPlayer.dart';
 import '../providers/movies.dart';
+import 'screens/wath_providers_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -118,6 +119,11 @@ class MyApp extends StatelessWidget {
             case AllCrewScreen.routNamed:
               return CustomPageRoute(
                 child: const AllCrewScreen(),
+                settings: settings,
+              );
+            case WatchProvidersScreen.routNamed:
+              return CustomPageRoute(
+                child: const WatchProvidersScreen(),
                 settings: settings,
               );
           }

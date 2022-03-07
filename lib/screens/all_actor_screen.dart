@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/single_person_item.dart';
 
-import '../models/credits_info.dart';
+import '../models/credits_info_request.dart';
 
 //Экран со списком всех актеров фильма
 class AllActorScreen extends StatefulWidget {

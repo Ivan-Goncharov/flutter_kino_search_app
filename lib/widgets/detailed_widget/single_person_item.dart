@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/credits_info.dart';
+import 'package:flutter_my_kino_app/models/credits_info_request.dart';
 import 'package:flutter_my_kino_app/screens/detailed_cast_item.dart';
 
 //виджет для вывода одного работника фильма
@@ -91,7 +91,7 @@ class SinglePersonItem extends StatelessWidget {
                       // если не актер, то должность
                       isActor
                           ? Text(
-                              castPers.character ?? '',
+                              '${getActorChapter(castPers)}',
                               softWrap: true,
                               style: const TextStyle(
                                 color: Colors.white54,
@@ -101,7 +101,7 @@ class SinglePersonItem extends StatelessWidget {
                               textAlign: TextAlign.start,
                             )
                           : Text(
-                              castPers.job ?? '',
+                              '${getCrewJobs(castPers)}',
                               softWrap: true,
                               style: const TextStyle(
                                 color: Colors.white54,
@@ -119,5 +119,39 @@ class SinglePersonItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // возвращаем имя персонажа,
+  // для сериалов и для фильмов различная запись ролей,
+  // поэтому проверяем как записано и возвращаем имя героя, исходя из записи
+  String? getActorChapter(Cast actor) {
+    if (actor.roles != null) {
+      if (actor.roles?[0].character != null) {
+        return actor.roles![0].character;
+      } else {
+        return '';
+      }
+    } else if (actor.character != null) {
+      return actor.character;
+    } else {
+      return '';
+    }
+  }
+
+  // возвращаем название должности у персонала съемочной группы
+  String? getCrewJobs(Cast crew) {
+    // если персонал сериалов, то получаем должность так
+    if (crew.jobs != null) {
+      if (crew.jobs?[0].job != null) {
+        return crew.jobs![0].job;
+      } else {
+        return '';
+      }
+      // если персонал фильма, то так
+    } else if (crew.job != null) {
+      return crew.job;
+    } else {
+      return '';
+    }
   }
 }

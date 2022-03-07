@@ -76,7 +76,13 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
         });
         print('возникла ошибка в search_movie/iniz: $er');
       }
-    } else {}
+    } // если клаиватура скрыта, то просто выводим предыдущие результаты
+    else if (_myTextController.text.isNotEmpty) {
+      return;
+    } else {
+      _movieProvider.setItemsMovie();
+      _movieProvider.setItemsTVshows();
+    }
   }
 
   //метод для повторной попытки поиска,
@@ -216,7 +222,9 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                             _myTextController.text.isNotEmpty
                                         ? createFalseFound()
                                         : createSearchListView(
-                                            size, _movieProvider.itemsMovies),
+                                            size,
+                                            _movieProvider.itemsMovies,
+                                          ),
 
                                     //выводим сериалы
                                     //заголовок
@@ -245,7 +253,10 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   }
 
   // данный метод создает список фильмов/сериалов на основе поиска
-  Container createSearchListView(Size size, List<Movie> list) {
+  Container createSearchListView(
+    Size size,
+    List<MediaBasicInfo> list,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       height: 200,

@@ -1,5 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/details_media_mod.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 
 import '../providers/movie.dart';
@@ -8,49 +11,60 @@ import '../widgets/error_message_widg.dart';
 import '../widgets/detailed_widget/movie_details_column.dart';
 
 //класс с подробным описанием фильма
-class DetailedInfo extends StatefulWidget {
-  final Movie movie;
+class DetailedInfoScreen extends StatefulWidget {
+  final MediaBasicInfo movie;
   final String heroTag;
-  const DetailedInfo({required this.movie, required this.heroTag, Key? key})
+  const DetailedInfoScreen(
+      {required this.movie, required this.heroTag, Key? key})
       : super(key: key);
   static const routName = '/detailed_info';
 
   @override
-  State<DetailedInfo> createState() => _DetailedInfoState();
+  State<DetailedInfoScreen> createState() => _DetailedInfoScreenState();
 }
 
-class _DetailedInfoState extends State<DetailedInfo> {
+class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   var _isLoading = false;
-  Movie? _movie;
+  MediaBasicInfo? _movie;
+  DetailsMediaMod? _details;
   var _isError = false;
 
   @override
   void initState() {
     _movie = widget.movie;
+    _details = DetailsMediaMod(
+      _movie?.id ?? 0,
+      _movie?.date ?? '',
+    );
     super.initState();
   }
 
   //получаем размеры экрана и задаем начальные размеры для постера фильма
   @override
   void didChangeDependencies() {
-    _iniz();
+    if (_movie!.type == MediaType.movie) {
+      _inizMovie();
+    }
+    if (_movie!.type == MediaType.tvShow) {
+      _inizTVShow();
+    }
     super.didChangeDependencies();
   }
 
-  // метод для запуска запросов
-  // после завершения запроса о деталях фильма, делаем запрос о рейтинге фильма
-  _iniz() async {
+  // метод для инициализации подробных данных о фильме
+  _inizMovie() async {
     try {
       setState(() {
         _isLoading = true;
         _isError = false;
       });
-      if (_movie != null) {
-        await _movie!.detailedMovie().then(
+      if (_details != null) {
+        await _details!.getDetailesMovie().then(
               (_) => {
-                _movie!.getRating(),
-                _movie!.getTrailer(),
-                _movie!.getMovieCredits()
+                _details!.getRating(),
+                _details!.getMovieCredits(),
+                _details!.getTrailer(_movie!.type),
+                _details!.getWatchProviders(_movie!.type),
               },
             );
       }
@@ -58,7 +72,33 @@ class _DetailedInfoState extends State<DetailedInfo> {
         _isLoading = false;
       });
     } catch (error) {
-      print('ошибка в _iniz/detaled movie $error');
+      print('ошибка в _inizMovie/detaled movie $error');
+      setState(() {
+        _isError = true;
+      });
+    }
+  }
+
+  //методя для инициализации подробных данных о сериале
+  _inizTVShow() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _isError = false;
+      });
+      if (_details != null) {
+        await _details!.getDetailesTVShow().then((_) {
+          _details!.getRating();
+          _details!.getTVShowCredits();
+          _details!.getTrailer(_movie!.type);
+          _details!.getWatchProviders(_movie!.type);
+        });
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (error) {
+      print('ошибка в _inizMovie/detaled movie $error');
       setState(() {
         _isError = true;
       });
@@ -81,7 +121,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
       child: Scaffold(
         body: _isError
             ? ErrorMessageWidget(
-                handler: _iniz,
+                handler: _inizMovie,
                 size: MediaQuery.of(context).size,
               )
             : Stack(
@@ -139,7 +179,9 @@ class _DetailedInfoState extends State<DetailedInfo> {
                         ),
 
                         // кнопка для воспроизведения видео трейлера
-                        _isLoading ? SizedBox() : playVideoButton(context),
+                        _isLoading
+                            ? const SizedBox()
+                            : playVideoButton(context),
                       ],
                     ),
                   ),
@@ -198,8 +240,10 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 4.0),
                                             child: MovieDetailsColumn(
-                                                movie: _movie,
-                                                myHeight: _myHeight),
+                                              details: _details,
+                                              myHeight: _myHeight,
+                                              media: _movie,
+                                            ),
                                           ),
                                   ],
                                 ),
@@ -231,11 +275,11 @@ class _DetailedInfoState extends State<DetailedInfo> {
             size: 25,
           ),
           onPressed: () {
-            _movie!.keyVideo.isNotEmpty
+            _details!.keyVideo.isNotEmpty
                 ? Navigator.pushNamed(
                     context,
                     VideoPlayerScreen.routNamed,
-                    arguments: _movie,
+                    arguments: _details?.keyVideo ?? '',
                   )
                 : showDialog(
                     context: context,

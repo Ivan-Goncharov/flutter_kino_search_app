@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/credits_info.dart';
+import '../../models/credits_info_request.dart';
 import '../../screens/all_crew_screen.dart';
 import '../../screens/detailed_cast_item.dart';
 
@@ -7,7 +7,7 @@ import '../../screens/detailed_cast_item.dart';
 class CrewCast extends StatelessWidget {
   //принимаем информацию о съемочной группе
   // и высоту
-  final CreditsMovieInfo? creditsInfo;
+  final CreditsInfoRequest? creditsInfo;
   final double height;
   const CrewCast({
     Key? key,
@@ -18,7 +18,7 @@ class CrewCast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // получаем список работников съемочной группы
-    final crewList = creditsInfo?.customCrewList;
+    final crewList = creditsInfo?.getcustomCrewList();
     final lenghtCrewList = crewList?.length ?? 0;
     return Column(
       children: [
@@ -151,7 +151,7 @@ class CrewCast extends StatelessWidget {
                       const SizedBox(height: 10),
                       // должность
                       Text(
-                        crew.job ?? '',
+                        '${getCrewJobs(crew)}',
                         textAlign: TextAlign.center,
                         softWrap: true,
                         style: const TextStyle(
@@ -168,5 +168,22 @@ class CrewCast extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // возвращаем название должности у персонала съемочной группы
+  String? getCrewJobs(Cast crew) {
+    // если персонал сериалов, то получаем должность так
+    if (crew.jobs != null) {
+      if (crew.jobs?[0].job != null) {
+        return crew.jobs![0].job;
+      } else {
+        return '';
+      }
+      // если персонал фильма, то так
+    } else if (crew.job != null) {
+      return crew.job;
+    } else {
+      return '';
+    }
   }
 }

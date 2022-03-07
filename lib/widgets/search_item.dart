@@ -9,7 +9,7 @@ import '../screens/detailed_movie_info.dart';
 //виджет для вывода карточки с одним фильмом/сериалом в поиске
 class SearchItem extends StatelessWidget {
   //принимаем информацию о фильме в аргументе и выводим ее на экран
-  final Movie movie;
+  final MediaBasicInfo movie;
   const SearchItem({
     Key? key,
     required this.movie,
@@ -26,7 +26,7 @@ class SearchItem extends StatelessWidget {
           context,
           PageRouteBuilder(
             pageBuilder: ((context, animation, secondaryAnimation) {
-              return DetailedInfo(
+              return DetailedInfoScreen(
                 movie: movie,
                 heroTag: heroTag,
               );

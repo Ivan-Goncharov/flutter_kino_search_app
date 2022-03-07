@@ -19,7 +19,7 @@ class AllSearchResult extends StatefulWidget {
 
 class _AllSearchResultState extends State<AllSearchResult> {
   //переменные для работы с данными фильмов
-  List<Movie> _movies = [];
+  List<MediaBasicInfo> _movies = [];
   String _searchText = '';
   late Movies _provider;
   var _isLoading = false;
