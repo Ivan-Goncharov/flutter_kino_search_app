@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../models/details_media_mod.dart';
-import '../models/watch_providers_request.dart';
+import '../../models/details_media_mod.dart';
+import '../../models/watch_providers_request.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // экран для вывода всех возможных вариантов просмотра контента

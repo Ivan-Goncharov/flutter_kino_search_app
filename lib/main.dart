@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/favorite_movie.dart';
 import 'package:flutter_my_kino_app/models/movies_history.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_my_kino_app/screens/auth_screen/login_page.dart';
@@ -9,15 +10,15 @@ import 'package:flutter_my_kino_app/screens/auth_screen/password_reset.dart';
 import 'package:flutter_my_kino_app/widgets/movie_item.dart';
 import 'package:provider/provider.dart';
 
-import './screens/all_actor_screen.dart';
-import './screens/all_crew_screen.dart';
+import 'screens/cast_screens/all_actor_screen.dart';
+import 'screens/cast_screens/all_crew_screen.dart';
 import './screens/all_search_results.dart';
 import './widgets/custom_page_route.dart';
 import './screens/bottom_page.dart';
-import './screens/full_movie_descrip.dart';
+import 'screens/movie_detailes_info/full_movie_descrip.dart';
 import './widgets/detailed_widget/videoPlayer.dart';
 import '../providers/movies.dart';
-import 'screens/wath_providers_screen.dart';
+import 'screens/movie_detailes_info/wath_providers_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(
           value: Movies(),
+        ),
+        ChangeNotifierProvider.value(
+          value: FavoriteMovie(),
         ),
       ],
       child: MaterialApp(

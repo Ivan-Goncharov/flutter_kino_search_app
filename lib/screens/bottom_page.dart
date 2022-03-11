@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/screens/favorites_movies_screen.dart';
 
 import './about_it.dart';
 import './overview_movie_screen.dart';
@@ -16,12 +17,13 @@ class _BottomPageState extends State<BottomPage> {
   //список экранов для навигации
   final List<Widget> _pages = [
     OverviewMovieScreen(),
-    const SearchMovieScreen(),
-    const AboutIt(),
+    FavoritesMoviesScreen(),
+    SearchMovieScreen(),
+    AboutIt(),
   ];
 
   //переменная для сохранения индекса выбранной страницы
-  var _selectedPage = 1;
+  var _selectedPage = 0;
 
   //метод для изменения индекса
   void _changeIndex(int index) {
@@ -32,28 +34,39 @@ class _BottomPageState extends State<BottomPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorSc = Theme.of(context).colorScheme;
     return Scaffold(
       //наполнение меняем, взависимости от экрана
       body: _pages[_selectedPage],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        type: BottomNavigationBarType.shifting,
         iconSize: 30,
         currentIndex: _selectedPage,
+        selectedItemColor: colorSc.secondary,
+        unselectedItemColor: colorSc.primary,
         showUnselectedLabels: false,
         onTap: _changeIndex,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: const Icon(Icons.home_outlined),
             label: 'Обзор',
+            backgroundColor: colorSc.surfaceVariant,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.star_border),
+            label: 'Избранные',
+            backgroundColor: colorSc.surfaceVariant,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.search),
             label: 'Поиск',
+            backgroundColor: colorSc.surfaceVariant,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline),
             label: 'О нас',
-          )
+            backgroundColor: colorSc.surfaceVariant,
+          ),
         ],
       ),
     );

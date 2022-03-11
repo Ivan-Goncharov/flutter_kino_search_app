@@ -5,7 +5,7 @@ import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
-import '../screens/detailed_movie_info.dart';
+import '../screens/movie_detailes_info/detailed_movie_info.dart';
 
 //виджет для вывода карточки с одним фильмом в поиске фильмов
 class MovieItem extends StatelessWidget {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
 
-import '../../screens/all_actor_screen.dart';
+import '../../screens/cast_screens/all_actor_screen.dart';
 import '../../models/credits_info_request.dart';
-import '../../screens/detailed_cast_item.dart';
+import '../../screens/cast_screens/detailed_cast_item.dart';
 
 //виджет для вывода актеров
 class ActorCast extends StatelessWidget {

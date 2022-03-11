@@ -4,10 +4,10 @@ import 'package:flutter_my_kino_app/models/movies_history.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
-import '../models/credits_info_request.dart';
-import '../providers/movie.dart';
-import '../providers/movies.dart';
-import 'detailed_movie_info.dart';
+import '../../models/credits_info_request.dart';
+import '../../providers/movie.dart';
+import '../../providers/movies.dart';
+import '../movie_detailes_info/detailed_movie_info.dart';
 
 //экран с детальным описанием актера
 class DetailedCastInfo extends StatefulWidget {
@@ -233,8 +233,6 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
           final heroTag = 'gridView$index${movie[index].id}';
           return GestureDetector(
             onTap: () {
-              Provider.of<MovieHistory>(context, listen: false)
-                  .addMovie(movie[index]);
               Navigator.push(
                 context,
                 PageRouteBuilder(

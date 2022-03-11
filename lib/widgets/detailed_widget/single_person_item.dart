@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/credits_info_request.dart';
-import 'package:flutter_my_kino_app/screens/detailed_cast_item.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
+import 'package:flutter_my_kino_app/screens/cast_screens/detailed_cast_item.dart';
 
 //виджет для вывода одного работника фильма
 //в расширенном списке фильмов

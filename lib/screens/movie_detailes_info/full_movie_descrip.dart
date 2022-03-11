@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/details_media_mod.dart';
 
-import '../providers/movie.dart';
+import '../../../providers/movie.dart';
 
 //экран для подробного описания фильма и возрастных ограничений
 class FullMovieDesciption extends StatefulWidget {

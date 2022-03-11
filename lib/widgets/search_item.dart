@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
 import '../models/movies_history.dart';
-import '../screens/detailed_movie_info.dart';
+import '../screens/movie_detailes_info/detailed_movie_info.dart';
 
 //виджет для вывода карточки с одним фильмом/сериалом в поиске
 class SearchItem extends StatelessWidget {

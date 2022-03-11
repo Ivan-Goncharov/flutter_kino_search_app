@@ -29,18 +29,27 @@ class MediaBasicInfo with ChangeNotifier {
   });
 
   final _userUid = FirebaseAuth.instance.currentUser?.uid;
+
+  // по умолчанию статус фильма "не любимый"
   bool status = false;
 
+  // метод для изменения статуса фильма
   void toogleStatus() {
     status = !status;
+
+    //если пользователь изменил на любимый, то добавляем в firebase
     if (status) {
       newFavorite();
-    } else {
+    }
+    //если пользователь удалил из любимых, то удаляем из firebase
+    else {
       deletFavoriteNote();
     }
     notifyListeners();
   }
 
+  // метод, который просматривает список любимых фильмов на firebse,
+  // если такой есть, то возвращает true
   Future<bool> isfavorte() async {
     bool ret = false;
     final url = Uri.https(
@@ -50,12 +59,13 @@ class MediaBasicInfo with ChangeNotifier {
     try {
       final response = await http.get(url);
       final extradata = json.decode(response.body) as Map<String, dynamic>?;
+      // если список пустой
       if (extradata?.isEmpty ?? true) {
         return false;
       }
       extradata!.forEach(
         (key, value) {
-          print(id == value['mediaId']);
+          // если в базе любимых фильмов есть фильм с таким id
           if (id == value['mediaId']) {
             ret = true;
           }
@@ -106,6 +116,7 @@ class MediaBasicInfo with ChangeNotifier {
     }
   }
 
+// метод для удаления записи из любимых
   Future<void> deletFavoriteNote() async {
     // получаем id записи в firebase
     String id = '';
@@ -127,7 +138,7 @@ class MediaBasicInfo with ChangeNotifier {
     }
   }
 
-  // метод для получения индекса самой старшей записи
+  // метод для получения индекса записи
   Future<String> searchIndexNote() async {
     final url = Uri.https(
       'search-movie-app-809ca-default-rtdb.firebaseio.com',

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
 import '../../models/credits_info_request.dart';
-import '../../screens/all_crew_screen.dart';
-import '../../screens/detailed_cast_item.dart';
+import '../../screens/cast_screens/all_crew_screen.dart';
+import '../../screens/cast_screens/detailed_cast_item.dart';
 
 //виджет для вывода съемочной группы
 class CrewCast extends StatelessWidget {

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/details_media_mod.dart';
-import 'package:flutter_my_kino_app/screens/wath_providers_screen.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
+import 'package:flutter_my_kino_app/screens/movie_detailes_info/wath_providers_screen.dart';
 
 import '../../providers/movie.dart';
-import '../../screens/full_movie_descrip.dart';
+import '../../screens/movie_detailes_info/full_movie_descrip.dart';
 import 'ratings.dart';
 import 'actor_cast.dart';
 import 'crew_cast.dart';

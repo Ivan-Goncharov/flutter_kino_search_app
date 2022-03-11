@@ -3,22 +3,24 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/details_media_mod.dart';
+import 'package:flutter_my_kino_app/models/favorite_movie.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/movie.dart';
-import '../models/movies_history.dart';
-import '../widgets/detailed_widget/videoPlayer.dart';
-import '../widgets/error_message_widg.dart';
-import '../widgets/detailed_widget/movie_details_column.dart';
+import '../../providers/movie.dart';
+import '../../widgets/detailed_widget/videoPlayer.dart';
+import '../../widgets/error_message_widg.dart';
+import '../../widgets/detailed_widget/movie_details_column.dart';
 
 //класс с подробным описанием фильма
 class DetailedInfoScreen extends StatefulWidget {
   final MediaBasicInfo movie;
   final String heroTag;
-  const DetailedInfoScreen(
-      {required this.movie, required this.heroTag, Key? key})
-      : super(key: key);
+  DetailedInfoScreen({
+    required this.movie,
+    required this.heroTag,
+    Key? key,
+  }) : super(key: key);
   static const routName = '/detailed_info';
 
   @override
@@ -29,8 +31,9 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   var _isLoading = false;
   MediaBasicInfo? _movie;
   DetailsMediaMod? _details;
+  FavoriteMovie? _favoriteMovie;
   var _isError = false;
-  MediaBasicInfo? _movieProv;
+  bool _isClick = false;
 
   @override
   void initState() {
@@ -45,13 +48,20 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   //получаем размеры экрана и задаем начальные размеры для постера фильма
   @override
   void didChangeDependencies() {
-    _movie!.isfavorte().then((value) => _movie!.status = value);
-    if (_movie!.type == MediaType.movie) {
-      _inizMovie();
-    }
-    if (_movie!.type == MediaType.tvShow) {
-      _inizTVShow();
-    }
+    _favoriteMovie = Provider.of<FavoriteMovie>(context);
+    setState(() {
+      _isLoading = true;
+    });
+    _movie!.isfavorte().then((value) {
+      _movie!.status = value;
+      if (_movie!.type == MediaType.movie) {
+        _inizMovie();
+      }
+      if (_movie!.type == MediaType.tvShow) {
+        _inizTVShow();
+      }
+    });
+
     super.didChangeDependencies();
   }
 
@@ -59,9 +69,9 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   _inizMovie() async {
     try {
       setState(() {
-        _isLoading = true;
         _isError = false;
       });
+
       if (_details != null) {
         await _details!.getDetailesMovie().then(
               (_) => {
@@ -91,6 +101,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
         _isError = false;
       });
       if (_details != null) {
+        _movie!.isfavorte().then((value) => _movie!.status = value);
         await _details!.getDetailesTVShow().then((_) {
           _details!.getRating();
           _details!.getTVShowCredits();
@@ -174,7 +185,9 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                           left: 8,
                           child: IconButton(
                             onPressed: () {
-                              Navigator.pop(context);
+                              _isClick
+                                  ? Navigator.pop(context, true)
+                                  : Navigator.pop(context);
                             },
                             icon: const Icon(
                               Icons.arrow_back_outlined,
@@ -184,27 +197,30 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                         ),
 
                         //кнопка "добавить в любимые фильмы"
-                        Positioned(
-                          top: 10,
-                          right: 8,
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _movie?.toogleStatus();
-                                print(_movie!.status);
-                              });
-                            },
-                            icon: _movie!.status
-                                ? const Icon(
-                                    Icons.favorite,
-                                    size: 35,
-                                  )
-                                : const Icon(
-                                    Icons.favorite_border,
-                                    size: 35,
-                                  ),
-                          ),
-                        ),
+
+                        _isLoading
+                            ? const SizedBox()
+                            : Positioned(
+                                top: 10,
+                                right: 8,
+                                child: IconButton(
+                                  onPressed: () {
+                                    _isClick = !_isClick;
+                                    setState(() {
+                                      _movie?.toogleStatus();
+                                    });
+                                  },
+                                  icon: _movie!.status
+                                      ? const Icon(
+                                          Icons.favorite,
+                                          size: 35,
+                                        )
+                                      : const Icon(
+                                          Icons.favorite_border,
+                                          size: 35,
+                                        ),
+                                ),
+                              ),
 
                         // кнопка для воспроизведения видео трейлера
                         _isLoading
