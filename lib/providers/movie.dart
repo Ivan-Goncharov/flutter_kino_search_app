@@ -1,4 +1,10 @@
+// ignore_for_file: use_rethrow_when_possible, avoid_print
+
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 //класс - провайдер для создания одного фильма
 class MediaBasicInfo with ChangeNotifier {
@@ -21,6 +27,127 @@ class MediaBasicInfo with ChangeNotifier {
     required this.voteCount,
     required this.type,
   });
+
+  final _userUid = FirebaseAuth.instance.currentUser?.uid;
+  bool status = false;
+
+  void toogleStatus() {
+    status = !status;
+    if (status) {
+      newFavorite();
+    } else {
+      deletFavoriteNote();
+    }
+    notifyListeners();
+  }
+
+  Future<bool> isfavorte() async {
+    bool ret = false;
+    final url = Uri.https(
+      'search-movie-app-809ca-default-rtdb.firebaseio.com',
+      '/favoriteMovies/$_userUid.json',
+    );
+    try {
+      final response = await http.get(url);
+      final extradata = json.decode(response.body) as Map<String, dynamic>?;
+      if (extradata?.isEmpty ?? true) {
+        return false;
+      }
+      extradata!.forEach(
+        (key, value) {
+          print(id == value['mediaId']);
+          if (id == value['mediaId']) {
+            ret = true;
+          }
+        },
+      );
+      print(ret);
+      return ret;
+    } catch (e) {
+      print(e);
+      return ret;
+    }
+  }
+
+  // метод для добавления фильма в любимые фильмы
+  Future<void> newFavorite() async {
+    final url = Uri.https(
+      'search-movie-app-809ca-default-rtdb.firebaseio.com',
+      '/favoriteMovies/$_userUid.json',
+    );
+
+    try {
+      await http.post(
+        url,
+        body: json.encode({
+          'mediaId': id,
+          'imageUrl': imageUrl,
+          'title': title,
+          'originalTitle': originalTitle,
+          'overview': overview,
+          'date': date,
+          'voteCount': voteCount,
+          'type': getStringType(type),
+        }),
+      );
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
+  // форматирование типа медиа
+  String getStringType(MediaType type) {
+    if (type == MediaType.movie) {
+      return 'movie';
+    } else {
+      return 'tvShow';
+    }
+  }
+
+  Future<void> deletFavoriteNote() async {
+    // получаем id записи в firebase
+    String id = '';
+    await searchIndexNote().then((value) {
+      id = value;
+    });
+
+    //переходим к этой записи
+    final getUrl = Uri.https(
+      'search-movie-app-809ca-default-rtdb.firebaseio.com',
+      '/favoriteMovies/$_userUid/$id.json',
+    );
+
+    // и удаляем ее
+    try {
+      http.delete(getUrl);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // метод для получения индекса самой старшей записи
+  Future<String> searchIndexNote() async {
+    final url = Uri.https(
+      'search-movie-app-809ca-default-rtdb.firebaseio.com',
+      '/favoriteMovies/$_userUid.json',
+    );
+    String keyMedia = '';
+    try {
+      final response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      extractedData.forEach((key, value) {
+        if (id == value['mediaId']) {
+          keyMedia = key.toString();
+        }
+      });
+      print(keyMedia);
+      return keyMedia;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 enum MediaType {

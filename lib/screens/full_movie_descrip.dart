@@ -71,63 +71,89 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Описание',
-          textAlign: TextAlign.center,
-        ),
-      ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Text(
-                      '${_details.overview}',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w400, height: 1.4),
+    return SafeArea(
+      child: Scaffold(
+        body: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_outlined,
+                        size: 35,
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      // возрастной рейтинг RASR, если отсуствует, то пустой текст
-                      _details.ageLimitRu.isNotEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Image(
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.contain,
-                                image: AssetImage(
-                                  getImageLimitRu(_details.ageLimitRu),
-                                ),
-                              ),
-                            )
-                          : const Text(''),
-                      //возрастной рейтинг US
-                      _details.ageLimitUS.isNotEmpty
-                          ? Image(
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.contain,
-                              color: Colors.white,
-                              image: AssetImage(
-                                getImageLimitUs(_details.ageLimitUS),
-                              ),
-                            )
-                          : const Text(''),
-                    ],
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 12, right: 16, left: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Полное описание',
+                            style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16.0,
+                            ),
+                            child: Text(
+                              _details.overview,
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.4),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              // возрастной рейтинг RASR, если отсуствует, то пустой текст
+                              _details.ageLimitRu.isNotEmpty
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Image(
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.contain,
+                                        image: AssetImage(
+                                          getImageLimitRu(_details.ageLimitRu),
+                                        ),
+                                      ),
+                                    )
+                                  : const Text(''),
+                              //возрастной рейтинг US
+                              _details.ageLimitUS.isNotEmpty
+                                  ? Image(
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.contain,
+                                      color: Colors.white,
+                                      image: AssetImage(
+                                        getImageLimitUs(_details.ageLimitUS),
+                                      ),
+                                    )
+                                  : const Text(''),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }

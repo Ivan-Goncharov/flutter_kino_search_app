@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/movies.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,6 @@ class MovieItem extends StatelessWidget {
     final heroTag = 'movieItem${movie.id}';
     return GestureDetector(
       onTap: () {
-        Provider.of<Movies>(context, listen: false).addMovieHistory(movie);
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -45,6 +45,7 @@ class MovieItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Hero(
+                transitionOnUserGestures: true,
                 child: GetImage(
                   imageUrl: movie.imageUrl,
                   title: movie.title,

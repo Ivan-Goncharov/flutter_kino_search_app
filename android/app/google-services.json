@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "550965878393",
+    "project_id": "search-movie-app-809ca",
+    "storage_bucket": "search-movie-app-809ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550965878393:android:3d40fd6ac81d9a2e637ea8",
+        "android_client_info": {
+          "package_name": "com.example.flutter_my_kino_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550965878393-l4su3u7434kkihnathvjpmb5nlqfplcb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRvDJlspVzcqnW5zz5vwTY65YtBii5x8I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550965878393-l4su3u7434kkihnathvjpmb5nlqfplcb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

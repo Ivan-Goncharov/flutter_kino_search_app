@@ -4,15 +4,18 @@ import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
+import '../models/movies_history.dart';
 import '../screens/detailed_movie_info.dart';
 
 //виджет для вывода карточки с одним фильмом/сериалом в поиске
 class SearchItem extends StatelessWidget {
   //принимаем информацию о фильме в аргументе и выводим ее на экран
   final MediaBasicInfo movie;
+  final MovieHistory movieHistory;
   const SearchItem({
     Key? key,
     required this.movie,
+    required this.movieHistory,
   }) : super(key: key);
 
   @override
@@ -21,7 +24,8 @@ class SearchItem extends StatelessWidget {
     final heroTag = 'movieItem${movie.id}';
     return GestureDetector(
       onTap: () {
-        Provider.of<Movies>(context, listen: false).addMovieHistory(movie);
+        //добавляем фильм в историю просмотров
+        movieHistory.addMovie(movie);
         Navigator.push(
           context,
           PageRouteBuilder(

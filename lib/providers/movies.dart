@@ -42,26 +42,6 @@ class Movies with ChangeNotifier {
     notifyListeners();
   }
 
-  //список фильмов, которые открывал пользователь
-  List<MediaBasicInfo> historySearch = [];
-
-  //добавляем фильм в историю поиска
-  //при открытии экрана с подробным описанием фильма
-  // если фильм уже есть в истории, то ничего не делаем
-  // если размер списка больше 10,
-  //то удаляем самый первый фильм в истории и добавляем новый
-  void addMovieHistory(MediaBasicInfo movie) {
-    int index = historySearch.indexWhere((el) => el.id == movie.id);
-    if (index == -1) {
-      if (historySearch.length < 11) {
-        historySearch.insert(0, movie);
-      } else {
-        historySearch.removeLast();
-        historySearch.insert(0, movie);
-      }
-    }
-  }
-
 // метод для поиска всех фильмов возможных фильмов по этому слову
   Future searchAllMovie(String name) async {
     _itemsMovies = [];

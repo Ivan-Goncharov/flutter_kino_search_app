@@ -3,7 +3,6 @@ import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/details_media_mod.dart';
 import '../models/watch_providers_request.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 // экран для вывода всех возможных вариантов просмотра контента
@@ -55,145 +54,172 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
         body: _isLoading
             ? _getProgressBar()
             : SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_outlined,
+                        size: 35,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(
+                          right: 16.0, left: 16.0, bottom: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Cмотреть сейчас',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onBackground,
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Cмотреть сейчас',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
 
-                          // информационное сообщение
-                          IconButton(
-                            icon: const Icon(Icons.info_outline),
-                            color: Colors.white54,
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const AlertDialog(
-                                    title: Text(
-                                      'Информация',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    content: Text(
-                                      'Cписок предоставлен сайтом TMDB для ознакомления и не содержит прямых медиа-ссылок.',
-                                      textAlign: TextAlign.center,
-                                    ),
+                              // информационное сообщение
+                              IconButton(
+                                icon: const Icon(Icons.info_outline),
+                                color: Colors.white54,
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const AlertDialog(
+                                        title: Text(
+                                          'Информация',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        content: Text(
+                                          'Cписок предоставлен сайтом TMDB для ознакомления и не содержит прямых медиа-ссылок.',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
+                              ),
+                            ],
                           ),
+                          // если нет информации по подпискам, то не выводим
+                          watchProv?.flatrate == null
+                              ? const SizedBox()
+                              :
+                              // инфа о сервисах, где доступно видео по подписке
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: 16, bottom: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'По подписке',
+                                        style: _textStyle,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      getListProvider(
+                                          watchProv!.flatrate, height)
+                                    ],
+                                  ),
+                                ),
+
+                          // если нет информации по аренде, то не выводим
+                          watchProv?.rent == null
+                              ? const SizedBox()
+                              :
+                              // инфа о сервисах, где доступно видео по аренде
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Аренда',
+                                        style: _textStyle,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      getListProvider(watchProv!.rent, height)
+                                    ],
+                                  ),
+                                ),
+
+                          // если нет информации по аренде, то не выводим
+                          watchProv?.buy == null
+                              ? const SizedBox()
+                              :
+                              // инфа о сервисах, где доступно видео по аренде
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Покупка',
+                                        style: _textStyle,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      getListProvider(watchProv!.buy, height)
+                                    ],
+                                  ),
+                                ),
+
+                          watchProv?.link == null
+                              ? const SizedBox()
+                              :
+                              // ссылка на информацию о ценых
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Информация о ценах',
+                                        style: _textStyle.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      Container(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        width: width * 0.28,
+                                        height: height * 0.14,
+                                        child: GestureDetector(
+                                          onTap: (() {
+                                            _launchURLBrowser(
+                                                '${watchProv!.link}');
+                                          }),
+                                          child: SvgPicture.network(
+                                            'https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg',
+                                            color: const Color.fromARGB(
+                                                160, 1, 179, 228),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                         ],
                       ),
-                      // если нет информации по подпискам, то не выводим
-                      watchProv?.flatrate == null
-                          ? const SizedBox()
-                          :
-                          // инфа о сервисах, где доступно видео по подписке
-                          Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 16, bottom: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'По подписке',
-                                    style: _textStyle,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  getListProvider(watchProv!.flatrate, height)
-                                ],
-                              ),
-                            ),
-
-                      // если нет информации по аренде, то не выводим
-                      watchProv?.rent == null
-                          ? const SizedBox()
-                          :
-                          // инфа о сервисах, где доступно видео по аренде
-                          Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Аренда',
-                                    style: _textStyle,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  getListProvider(watchProv!.rent, height)
-                                ],
-                              ),
-                            ),
-
-                      // если нет информации по аренде, то не выводим
-                      watchProv?.buy == null
-                          ? const SizedBox()
-                          :
-                          // инфа о сервисах, где доступно видео по аренде
-                          Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Покупка',
-                                    style: _textStyle,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  getListProvider(watchProv!.buy, height)
-                                ],
-                              ),
-                            ),
-
-                      watchProv?.link == null
-                          ? const SizedBox()
-                          :
-                          // ссылка на информацию о ценых
-                          Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Информация о ценах',
-                                    style: _textStyle.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    width: width * 0.28,
-                                    height: height * 0.14,
-                                    child: GestureDetector(
-                                      onTap: (() {
-                                        _launchURLBrowser('${watchProv!.link}');
-                                      }),
-                                      child: SvgPicture.network(
-                                        'https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg',
-                                        color: const Color.fromARGB(
-                                            160, 1, 179, 228),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
       ),

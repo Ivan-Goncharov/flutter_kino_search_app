@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/cast.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
 import 'package:provider/provider.dart';
 
@@ -75,7 +76,7 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.black26,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Container(
           height: double.infinity,
           width: double.infinity,
@@ -125,7 +126,7 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.surface,
                       padding: const EdgeInsets.only(top: 27),
                       child: SingleChildScrollView(
                         controller: scrollController,
@@ -232,8 +233,8 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
           final heroTag = 'gridView$index${movie[index].id}';
           return GestureDetector(
             onTap: () {
-              Provider.of<Movies>(context, listen: false)
-                  .addMovieHistory(movie[index]);
+              Provider.of<MovieHistory>(context, listen: false)
+                  .addMovie(movie[index]);
               Navigator.push(
                 context,
                 PageRouteBuilder(

@@ -4,8 +4,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/details_media_mod.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
+import '../models/movies_history.dart';
 import '../widgets/detailed_widget/videoPlayer.dart';
 import '../widgets/error_message_widg.dart';
 import '../widgets/detailed_widget/movie_details_column.dart';
@@ -28,6 +30,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   MediaBasicInfo? _movie;
   DetailsMediaMod? _details;
   var _isError = false;
+  MediaBasicInfo? _movieProv;
 
   @override
   void initState() {
@@ -42,6 +45,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   //получаем размеры экрана и задаем начальные размеры для постера фильма
   @override
   void didChangeDependencies() {
+    _movie!.isfavorte().then((value) => _movie!.status = value);
     if (_movie!.type == MediaType.movie) {
       _inizMovie();
     }
@@ -152,6 +156,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                         Positioned(
                           bottom: 110,
                           child: Hero(
+                            transitionOnUserGestures: true,
                             tag: widget.heroTag,
                             child: GetImage(
                               imageUrl: widget.movie.imageUrl,
@@ -175,6 +180,29 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                               Icons.arrow_back_outlined,
                               size: 35,
                             ),
+                          ),
+                        ),
+
+                        //кнопка "добавить в любимые фильмы"
+                        Positioned(
+                          top: 10,
+                          right: 8,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _movie?.toogleStatus();
+                                print(_movie!.status);
+                              });
+                            },
+                            icon: _movie!.status
+                                ? const Icon(
+                                    Icons.favorite,
+                                    size: 35,
+                                  )
+                                : const Icon(
+                                    Icons.favorite_border,
+                                    size: 35,
+                                  ),
                           ),
                         ),
 

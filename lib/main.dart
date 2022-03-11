@@ -1,4 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
+import 'package:flutter_my_kino_app/providers/movie.dart';
+import 'package:flutter_my_kino_app/screens/auth_screen/login_page.dart';
+import 'package:flutter_my_kino_app/screens/auth_screen/password_reset.dart';
+import 'package:flutter_my_kino_app/widgets/movie_item.dart';
 import 'package:provider/provider.dart';
 
 import './screens/all_actor_screen.dart';
@@ -11,7 +19,9 @@ import './widgets/detailed_widget/videoPlayer.dart';
 import '../providers/movies.dart';
 import 'screens/wath_providers_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -93,7 +103,25 @@ class MyApp extends StatelessWidget {
               shadow: Color(0xFF000000),
             ),
             fontFamily: 'Roboto'),
-        home: const BottomPage(),
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              print('connectionState');
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              print('error');
+              return errorMessage();
+            } else if (snapshot.hasData) {
+              return BottomPage();
+            } else {
+              print('loginPage');
+              return const LoginPage();
+            }
+          },
+        ),
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case FullMovieDesciption.routNamed:
@@ -126,17 +154,38 @@ class MyApp extends StatelessWidget {
                 child: const WatchProvidersScreen(),
                 settings: settings,
               );
+            case ResetPasswordScreen.routNamed:
+              return CustomPageRoute(
+                child: const ResetPasswordScreen(),
+                settings: settings,
+              );
           }
         },
-        // routes: {
-        //   // DetailedInfo.routName: (context) => const DetailedInfo(),
-        //   FullMovieDesciption.routNamed: (context) =>
-        //       const FullMovieDesciption(),
-        //   VideoPlayerScreen.routNamed: (context) => const VideoPlayerScreen(),
-        //   AllSearchResult.routNamed: (context) => const AllSearchResult(),
-        //   AllActorScreen.routNamed: (context) => const AllActorScreen(),
-        //   AllCrewScreen.routNamed: (context) => const AllCrewScreen(),
-        // },
+      ),
+    );
+  }
+
+  Widget errorMessage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 40,
+      ),
+      child: Column(
+        children: const [
+          Text(
+            'У нас что-то сломалось',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Му уже решаем проблему. Возможно, проблемы с интернет соединением. Попробуйте еще раз обновить',
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

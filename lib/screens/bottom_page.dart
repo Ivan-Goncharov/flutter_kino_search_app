@@ -36,7 +36,7 @@ class _BottomPageState extends State<BottomPage> {
       //наполнение меняем, взависимости от экрана
       body: _pages[_selectedPage],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
         iconSize: 30,
         currentIndex: _selectedPage,
         showUnselectedLabels: false,

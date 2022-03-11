@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_my_kino_app/providers/movies.dart';
+import 'package:flutter_my_kino_app/models/movies_history.dart';
 import 'package:flutter_my_kino_app/screens/all_search_results.dart';
 import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
 import 'package:flutter_my_kino_app/widgets/search_item.dart';
@@ -19,6 +21,8 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
 
   //провайдер получим позже, когда будет доступен context
   late Movies _movieProvider;
+  //класс для сохранения истории поиска
+  late MovieHistory _historySearch;
   // контроллер для перемещания по ListView и для отслеживания положения
   late ScrollController _scrollController;
 
@@ -32,6 +36,9 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   void initState() {
     _scrollController = ScrollController();
     _myTextController.addListener(_inputTextChange);
+    // получаем экземпляр истории поиска и вызываем метод - запрос на получение истории в firebase
+    _historySearch = MovieHistory(FirebaseAuth.instance.currentUser!.uid);
+    _historySearch.getAndFetchNote();
     super.initState();
   }
 
@@ -116,6 +123,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   @override
   void didChangeDependencies() {
     _movieProvider = Provider.of<Movies>(context, listen: true);
+
     super.didChangeDependencies();
   }
 
@@ -209,38 +217,42 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                 )
                               :
                               //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    //выводим заголовок поиска Фильмов
-                                    _myTextController.text.isNotEmpty
-                                        ? createTitleSearch(' Фильмы')
-                                        : const SizedBox(),
-                                    // если поиск не удался: выводим сообщение об ошибке
-                                    // иначе выводим скроллинг лист с фильмами
-                                    _movieProvider.itemsMovies.isEmpty &&
-                                            _myTextController.text.isNotEmpty
-                                        ? createFalseFound()
-                                        : createSearchListView(
-                                            size,
-                                            _movieProvider.itemsMovies,
-                                          ),
+                              // если текст не введен, то выводим прошлый поиск
+                              _myTextController.text.isEmpty
+                                  ? _historySearch.historySearch.isEmpty
+                                      ? const SizedBox()
+                                      : createSearchListView(
+                                          size,
+                                          _historySearch.historySearch,
+                                          ' Ранее вы искали',
+                                        )
+                                  :
+                                  // если не найдено ни сериалов, ни фильмов, выводим сообщение об ошибке поиска
+                                  _movieProvider.itemsMovies.isEmpty &&
+                                          _movieProvider.itemsTVshows.isEmpty
+                                      ? createFalseFound()
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // выводим фильмы, если список пуст, то ничего не выводим
+                                            _movieProvider.itemsMovies.isEmpty
+                                                ? const SizedBox()
+                                                : createSearchListView(
+                                                    size,
+                                                    _movieProvider.itemsMovies,
+                                                    ' Фильмы'),
 
-                                    //выводим сериалы
-                                    //заголовок
-                                    //выводим заголовок поиска Фильмов
-                                    _myTextController.text.isNotEmpty
-                                        ? createTitleSearch(' Сериалы')
-                                        : const SizedBox(),
-                                    // если поиск не удался: выводим сообщение об ошибке
-                                    // иначе выводим скроллинг лист с фильмами
-                                    _movieProvider.itemsTVshows.isEmpty &&
-                                            _myTextController.text.isNotEmpty
-                                        ? createFalseFound()
-                                        : createSearchListView(
-                                            size, _movieProvider.itemsTVshows),
-                                  ],
-                                ),
+                                            //выводим сериалы
+                                            // если список пуст, то ничего не выводим
+                                            _movieProvider.itemsTVshows.isEmpty
+                                                ? const SizedBox()
+                                                : createSearchListView(
+                                                    size,
+                                                    _movieProvider.itemsTVshows,
+                                                    ' Сериалы'),
+                                          ],
+                                        ),
                     ],
                   ),
                 ),
@@ -253,28 +265,39 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   }
 
   // данный метод создает список фильмов/сериалов на основе поиска
-  Container createSearchListView(
+  Column createSearchListView(
     Size size,
     List<MediaBasicInfo> list,
+    String title,
   ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      height: 200,
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          //если конец списка, то выводим кнопку,
-          //которая предлагает перейти на экран со всеми результатами
-          if (index == list.length - 1 && list.length > 9) {
-            return getEndButton(size);
-          }
-          return SearchItem(movie: list[index]);
-        },
-      ),
+    // print(list.length);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        createTitleSearch(title),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          height: 200,
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const ClampingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              //если конец списка, то выводим кнопку,
+              //которая предлагает перейти на экран со всеми результатами
+              if (index == list.length - 1 && list.length > 9) {
+                return getEndButton(size);
+              }
+              return SearchItem(
+                movie: list[index],
+                movieHistory: _historySearch,
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
