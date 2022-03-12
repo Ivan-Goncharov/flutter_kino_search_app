@@ -1,15 +1,16 @@
 import 'dart:convert';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
+import '../providers/movie.dart';
+
+// класс для получения информации об избранных фильмах
 class FavoriteMovie with ChangeNotifier {
   final _userUid = FirebaseAuth.instance.currentUser!.uid;
 
   // получаем любимые фильмы с firebase
-  Future<List<MediaBasicInfo>> getAndFetchFavoriteNote() async {
+  Future<List<MediaBasicInfo>?> getAndFetchFavoriteNote() async {
     final url = Uri.https(
       'search-movie-app-809ca-default-rtdb.firebaseio.com',
       '/favoriteMovies/$_userUid.json',
@@ -41,7 +42,8 @@ class FavoriteMovie with ChangeNotifier {
       );
       return loadedMedia;
     } catch (error) {
-      rethrow;
+      print('ошибка в getand fetch');
+      return null;
     }
   }
 

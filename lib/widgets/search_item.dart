@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/providers/movies.dart';
 import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
-import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
 import '../models/movies_history.dart';
@@ -12,16 +10,18 @@ class SearchItem extends StatelessWidget {
   //принимаем информацию о фильме в аргументе и выводим ее на экран
   final MediaBasicInfo movie;
   final MovieHistory movieHistory;
+  final String typeScroll;
   const SearchItem({
     Key? key,
     required this.movie,
     required this.movieHistory,
+    required this.typeScroll,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    final heroTag = 'movieItem${movie.id}';
+    final heroTag = 'movieItem$typeScroll${movie.id}';
     return GestureDetector(
       onTap: () {
         //добавляем фильм в историю просмотров

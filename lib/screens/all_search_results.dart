@@ -24,12 +24,16 @@ class _AllSearchResultState extends State<AllSearchResult> {
   late Movies _provider;
   var _isLoading = false;
   var _isConnectError = false;
+  var _isMovie = true;
 
   //при загрузке экрана выполняем инициализацию данных
   @override
   void didChangeDependencies() {
     //получаем аргументы(текст поиска) из Navigator
-    _searchText = ModalRoute.of(context)!.settings.arguments as String;
+    final arg =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    _searchText = arg['searchText'] as String;
+    _isMovie = arg['isMovie'] as bool;
     // и подключаем провайдер Movies
     _provider = Provider.of<Movies>(context, listen: false);
     _iniz();
@@ -44,15 +48,29 @@ class _AllSearchResultState extends State<AllSearchResult> {
       _isLoading = true;
     });
     try {
-      await _provider.searchAllMovie(_searchText).then((_) => {
-            _movies = _provider.itemsMovies,
-            _movies.sort((a, b) => b.voteCount!.compareTo(a.voteCount as int)),
-            setState(
-              () {
-                _isLoading = false;
-              },
-            )
-          });
+      if (_isMovie) {
+        await _provider.searchAllMovie(_searchText).then((_) => {
+              _movies = _provider.itemsMovies,
+              _movies
+                  .sort((a, b) => b.voteCount!.compareTo(a.voteCount as int)),
+              setState(
+                () {
+                  _isLoading = false;
+                },
+              )
+            });
+      } else {
+        await _provider.searchAllTVShow(name: _searchText).then((_) => {
+              _movies = _provider.itemsMovies,
+              _movies
+                  .sort((a, b) => b.voteCount!.compareTo(a.voteCount as int)),
+              setState(
+                () {
+                  _isLoading = false;
+                },
+              )
+            });
+      }
     } on SocketException catch (er) {
       setState(() {
         _isConnectError = true;
@@ -66,6 +84,7 @@ class _AllSearchResultState extends State<AllSearchResult> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: Text('Поиск: $_searchText'),
       ),

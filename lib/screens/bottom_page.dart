@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/screens/favorites_movies_screen.dart';
 
 import './about_it.dart';
-import './overview_movie_screen.dart';
+import 'overview_movies_screns/overview_movie_screen.dart';
 import './search_movie_screen.dart';
+import '../screens/overview_movies_screns/overview_movie_screen.dart';
 
 /// Экран для BottomNavigation
 class BottomPage extends StatefulWidget {

@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/providers/movie.dart';
-import 'package:flutter_my_kino_app/providers/movies.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-import 'package:flutter_my_kino_app/screens/all_search_results.dart';
-import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
-import 'package:flutter_my_kino_app/widgets/search_item.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/movies.dart';
+import '../models/movies_history.dart';
+import '../widgets/error_message_widg.dart';
+import '../widgets/horizont_movie_scroll.dart';
 
 class SearchMovieScreen extends StatefulWidget {
   const SearchMovieScreen({Key? key}) : super(key: key);
@@ -29,6 +28,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   var _showCirculCenter = false;
   var _showCirculTexField = false;
   var _isConnectError = false;
+  var _isLoading = true;
   var text = '';
 
   //инициализируем контроллеры с функцией
@@ -36,9 +36,14 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   void initState() {
     _scrollController = ScrollController();
     _myTextController.addListener(_inputTextChange);
+
     // получаем экземпляр истории поиска и вызываем метод - запрос на получение истории в firebase
     _historySearch = MovieHistory(FirebaseAuth.instance.currentUser!.uid);
-    _historySearch.getAndFetchNote();
+    //делаем запрос и перестраиваем экран после завершения метода
+    _historySearch.getAndFetchNote().then(
+          (_) => setState(() => _isLoading = false),
+        );
+
     super.initState();
   }
 
@@ -137,6 +142,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -192,7 +198,9 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                     children: [
                       _isConnectError
                           ? ErrorMessageWidget(
-                              handler: _errorUpdateScreen, size: size)
+                              handler: _errorUpdateScreen,
+                              size: size,
+                            )
                           :
                           // в зависимости от значения загрузки: выводим виджеты
                           _showCirculCenter && _myTextController.text.isNotEmpty
@@ -219,12 +227,19 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                               //выводим снизу от поиска ListView с кастомными карточками найденных фильмов
                               // если текст не введен, то выводим прошлый поиск
                               _myTextController.text.isEmpty
-                                  ? _historySearch.historySearch.isEmpty
+                                  ? _historySearch.historySearch.isEmpty &&
+                                          _isLoading
                                       ? const SizedBox()
-                                      : createSearchListView(
-                                          size,
-                                          _historySearch.historySearch,
-                                          ' Ранее вы искали',
+                                      : HorrizontalMovieScroll(
+                                          title: ' Ранее вы искали',
+                                          list: _historySearch.historySearch,
+                                          size: size,
+                                          isMovie: false,
+                                          isSearch: false,
+                                          historySearch: _historySearch,
+                                          textController:
+                                              _myTextController.text,
+                                          typeScroll: 'ранее вы искали',
                                         )
                                   :
                                   // если не найдено ни сериалов, ни фильмов, выводим сообщение об ошибке поиска
@@ -238,19 +253,38 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                             // выводим фильмы, если список пуст, то ничего не выводим
                                             _movieProvider.itemsMovies.isEmpty
                                                 ? const SizedBox()
-                                                : createSearchListView(
-                                                    size,
-                                                    _movieProvider.itemsMovies,
-                                                    ' Фильмы'),
+                                                : HorrizontalMovieScroll(
+                                                    title: ' Фильмы',
+                                                    list: _movieProvider
+                                                        .itemsMovies,
+                                                    size: size,
+                                                    isMovie: true,
+                                                    isSearch: true,
+                                                    historySearch:
+                                                        _historySearch,
+                                                    textController:
+                                                        _myTextController.text,
+                                                    typeScroll: 'поиск фильмов',
+                                                  ),
 
                                             //выводим сериалы
                                             // если список пуст, то ничего не выводим
                                             _movieProvider.itemsTVshows.isEmpty
                                                 ? const SizedBox()
-                                                : createSearchListView(
-                                                    size,
-                                                    _movieProvider.itemsTVshows,
-                                                    ' Сериалы'),
+                                                : HorrizontalMovieScroll(
+                                                    title: ' Cериалы',
+                                                    list: _movieProvider
+                                                        .itemsTVshows,
+                                                    size: size,
+                                                    isMovie: false,
+                                                    isSearch: true,
+                                                    historySearch:
+                                                        _historySearch,
+                                                    textController:
+                                                        _myTextController.text,
+                                                    typeScroll:
+                                                        'поиск сериалов',
+                                                  ),
                                           ],
                                         ),
                     ],
@@ -264,74 +298,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
     );
   }
 
-  // данный метод создает список фильмов/сериалов на основе поиска
-  Column createSearchListView(
-    Size size,
-    List<MediaBasicInfo> list,
-    String title,
-  ) {
-    // print(list.length);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        createTitleSearch(title),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          height: 200,
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              //если конец списка, то выводим кнопку,
-              //которая предлагает перейти на экран со всеми результатами
-              if (index == list.length - 1 && list.length > 9) {
-                return getEndButton(size);
-              }
-              return SearchItem(
-                movie: list[index],
-                movieHistory: _historySearch,
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  //кнопка перехода на экран со всеми результатми
-  Widget getEndButton(Size size) {
-    // const Color.fromRGBO(20, 20, 20, 1)
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      height: size.height * 0.15,
-      width: size.width * 0.35,
-      child: TextButton(
-        // style: ButtonStyle(
-        //   backgroundColor: MaterialStateProperty.all<Color>(
-        //       Theme.of(context).colorScheme.surface),
-        // ),
-        onPressed: () {
-          Navigator.pushNamed(
-            context,
-            AllSearchResult.routNamed,
-            arguments: _myTextController.text,
-          );
-        },
-        child: Text(
-          'Все результаты',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-        ),
-      ),
-    );
-  }
-
 // создает виджет с ошибкой поиска
   Center createFalseFound() {
     return const Center(
@@ -339,20 +305,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
       child: Text(
         'Ничего не нашлось',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      ),
-    );
-  }
-
-  // заголовок поиска
-  Text createTitleSearch(String titelSearch) {
-    final title = titelSearch;
-    return Text(
-      title,
-      textAlign: TextAlign.start,
-      style: const TextStyle(
-        color: Colors.white38,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
       ),
     );
   }

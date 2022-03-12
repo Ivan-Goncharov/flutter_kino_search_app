@@ -7,6 +7,7 @@ import 'package:flutter_my_kino_app/models/movies_history.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_my_kino_app/screens/auth_screen/login_page.dart';
 import 'package:flutter_my_kino_app/screens/auth_screen/password_reset.dart';
+import 'package:flutter_my_kino_app/screens/overview_movies_screns/genre_of_movies.dart';
 import 'package:flutter_my_kino_app/widgets/movie_item.dart';
 import 'package:provider/provider.dart';
 
@@ -161,6 +162,11 @@ class MyApp extends StatelessWidget {
             case ResetPasswordScreen.routNamed:
               return CustomPageRoute(
                 child: const ResetPasswordScreen(),
+                settings: settings,
+              );
+            case GenresOfMovies.routNamed:
+              return CustomPageRoute(
+                child: const GenresOfMovies(),
                 settings: settings,
               );
           }

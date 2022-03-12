@@ -7,7 +7,10 @@ import 'package:http/http.dart' as http;
 // класс для получния истории поиска
 class MovieHistory {
   //список фильмов
-  List<MediaBasicInfo> historySearch = [];
+  List<MediaBasicInfo> _historySearch = [];
+  List<MediaBasicInfo> get historySearch {
+    return _historySearch.reversed.toList();
+  }
 
   final String _userUid;
   MovieHistory(this._userUid);
@@ -15,9 +18,9 @@ class MovieHistory {
   // метод для добавления медиа в историю
   // добавляем максимум 11 фильмов, если список больше, то удаляем самый старый фильм ив поиске
   Future<void> addMovie(MediaBasicInfo media) async {
-    int index = historySearch.indexWhere((el) => el.id == media.id);
+    int index = _historySearch.indexWhere((el) => el.id == media.id);
     if (index == -1) {
-      if (historySearch.length < 11) {
+      if (_historySearch.length < 11) {
         newNote(media);
       } else {
         deleteAndAddNote().then((_) {
@@ -49,7 +52,7 @@ class MovieHistory {
         }),
       );
 
-      historySearch.add(media);
+      _historySearch.add(media);
     } catch (error) {
       print(error);
       throw error;
@@ -74,7 +77,7 @@ class MovieHistory {
     // и удаляем ее
     try {
       http.delete(getUrl);
-      historySearch.removeAt(0);
+      _historySearch.removeAt(0);
     } catch (error) {
       throw error;
     }
@@ -125,7 +128,7 @@ class MovieHistory {
           );
         },
       );
-      historySearch = loadedMedia;
+      _historySearch = loadedMedia;
     } catch (error) {
       rethrow;
     }

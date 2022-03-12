@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 //принимает функцию, которая вызывается про нажатии кнопки 'обновить'
 // и размер, который будет использоваться для размера кнопки
 class ErrorMessageWidget extends StatelessWidget {
-  final dynamic handler;
+  final VoidCallback handler;
   final Size size;
   ErrorMessageWidget({required this.handler, required this.size});
 
@@ -26,7 +26,7 @@ class ErrorMessageWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Му уже решаем проблему. Возможно, проблемы с интернет соединением. Попробуйте еще раз обновить',
+            'Мы уже решаем проблему. Возможно, проблемы с интернет соединением. Попробуйте обновить чуть позже',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 15),
@@ -40,9 +40,7 @@ class ErrorMessageWidget extends StatelessWidget {
                   backgroundColor: MaterialStateProperty.all<Color>(
                       const Color.fromRGBO(20, 20, 20, 1)),
                 ),
-                onPressed: () {
-                  handler();
-                },
+                onPressed: handler,
                 child: const Text('Обновить'),
               ),
             ),
