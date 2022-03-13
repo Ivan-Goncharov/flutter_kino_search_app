@@ -1,4 +1,4 @@
-// ignore_for_file: use_rethrow_when_possible
+// ignore_for_file: use_rethrow_when_possible, avoid_print
 
 import 'dart:convert';
 import '../providers/movie.dart';
@@ -38,7 +38,7 @@ class MovieHistory {
     );
 
     try {
-      final response = await http.post(
+      await http.post(
         url,
         body: json.encode({
           'mediaId': media.id,

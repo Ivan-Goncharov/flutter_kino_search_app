@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 // класс для обработки json результата запроса детальной информации
 class TvShowDetailsInfo {
   TvShowDetailsInfo({

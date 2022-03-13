@@ -1,12 +1,9 @@
 // ignore_for_file: avoid_print
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/details_media_mod.dart';
-import 'package:flutter_my_kino_app/models/favorite_movie.dart';
-import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
-import 'package:provider/provider.dart';
 
+import '../../models/details_media_mod.dart';
+import '../../widgets/detailed_widget/get_image.dart';
 import '../../providers/movie.dart';
 import '../../widgets/detailed_widget/videoPlayer.dart';
 import '../../widgets/error_message_widg.dart';
@@ -16,7 +13,7 @@ import '../../widgets/detailed_widget/movie_details_column.dart';
 class DetailedInfoScreen extends StatefulWidget {
   final MediaBasicInfo movie;
   final String heroTag;
-  DetailedInfoScreen({
+  const DetailedInfoScreen({
     required this.movie,
     required this.heroTag,
     Key? key,
@@ -31,7 +28,6 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   var _isLoading = false;
   MediaBasicInfo? _movie;
   DetailsMediaMod? _details;
-  FavoriteMovie? _favoriteMovie;
   var _isError = false;
   bool _isClick = false;
 
@@ -48,7 +44,6 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   //получаем размеры экрана и задаем начальные размеры для постера фильма
   @override
   void didChangeDependencies() {
-    _favoriteMovie = Provider.of<FavoriteMovie>(context);
     setState(() {
       _isLoading = true;
     });
@@ -73,18 +68,17 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
       });
 
       if (_details != null) {
-        await _details!.getDetailesMovie().then(
-              (_) => {
-                _details!.getRating(),
-                _details!.getMovieCredits(),
-                _details!.getTrailer(_movie!.type),
-                _details!.getWatchProviders(_movie!.type),
-              },
-            );
+        _details!.getDetailesMovie();
+        await Future.wait([
+          _details!.getRating(),
+          _details!.getMovieCredits(),
+          _details!.getTrailer(_movie!.type),
+          _details!.getWatchProviders(_movie!.type),
+        ]).then((_) {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+        });
       }
-      setState(() {
-        _isLoading = false;
-      });
     } catch (error) {
       print('ошибка в _inizMovie/detaled movie $error');
       setState(() {
@@ -102,22 +96,31 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
       });
       if (_details != null) {
         _movie!.isfavorte().then((value) => _movie!.status = value);
-        await _details!.getDetailesTVShow().then((_) {
-          _details!.getRating();
-          _details!.getTVShowCredits();
-          _details!.getTrailer(_movie!.type);
-          _details!.getWatchProviders(_movie!.type);
+        _details!.getDetailesTVShow();
+        await Future.wait([
+          _details!.getRating(),
+          _details!.getTVShowCredits(),
+          _details!.getTrailer(_movie!.type),
+          _details!.getWatchProviders(_movie!.type),
+        ]).then((_) {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
         });
       }
-      setState(() {
-        _isLoading = false;
-      });
     } catch (error) {
       print('ошибка в _inizMovie/detaled movie $error');
+      if (!mounted) return;
       setState(() {
         _isError = true;
       });
     }
+  }
+
+  void _likeStatus() {
+    _isClick = !_isClick;
+    setState(() {
+      _movie?.toogleStatus();
+    });
   }
 
   ImageProvider getImage(String? imageUrl) {
@@ -166,15 +169,20 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                         //для плавного изменеия размеров и положения виджета
                         Positioned(
                           bottom: 110,
-                          child: Hero(
-                            transitionOnUserGestures: true,
-                            tag: widget.heroTag,
-                            child: GetImage(
-                              imageUrl: widget.movie.imageUrl,
-                              title: widget.movie.title,
-                              height: _myHeight * 0.6,
-                              width: _myWidth * 0.8,
-                              titleFontSize: 25,
+                          child: GestureDetector(
+                            onDoubleTap: (() {
+                              _likeStatus();
+                            }),
+                            child: Hero(
+                              transitionOnUserGestures: true,
+                              tag: widget.heroTag,
+                              child: GetImage(
+                                imageUrl: widget.movie.imageUrl,
+                                title: widget.movie.title,
+                                height: _myHeight * 0.6,
+                                width: _myWidth * 0.8,
+                                titleFontSize: 25,
+                              ),
                             ),
                           ),
                         ),
@@ -183,42 +191,47 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                         Positioned(
                           top: 10,
                           left: 8,
-                          child: IconButton(
-                            onPressed: () {
-                              _isClick
-                                  ? Navigator.pop(context, true)
-                                  : Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_outlined,
-                              size: 35,
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Color.fromARGB(66, 12, 12, 12),
+                            child: IconButton(
+                              onPressed: () {
+                                _isClick
+                                    ? Navigator.pop(context, true)
+                                    : Navigator.pop(context);
+                              },
+                              icon: const Icon(
+                                Icons.arrow_back_outlined,
+                                size: 30,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
 
                         //кнопка "добавить в любимые фильмы"
-
                         _isLoading
                             ? const SizedBox()
                             : Positioned(
                                 top: 10,
                                 right: 8,
-                                child: IconButton(
-                                  onPressed: () {
-                                    _isClick = !_isClick;
-                                    setState(() {
-                                      _movie?.toogleStatus();
-                                    });
-                                  },
-                                  icon: _movie!.status
-                                      ? const Icon(
-                                          Icons.favorite,
-                                          size: 35,
-                                        )
-                                      : const Icon(
-                                          Icons.favorite_border,
-                                          size: 35,
-                                        ),
+                                child: CircleAvatar(
+                                  radius: 30,
+                                  backgroundColor:
+                                      Color.fromARGB(66, 12, 12, 12),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      _likeStatus();
+                                    },
+                                    icon: _movie!.status
+                                        ? const Icon(
+                                            Icons.favorite,
+                                            size: 30,
+                                            color: Colors.white,
+                                          )
+                                        : const Icon(Icons.favorite_border,
+                                            size: 33, color: Colors.white),
+                                  ),
                                 ),
                               ),
 

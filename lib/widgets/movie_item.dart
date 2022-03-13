@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/providers/movies.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
-import 'package:provider/provider.dart';
 
+import 'detailed_widget/get_image.dart';
 import '../providers/movie.dart';
 import '../screens/movie_detailes_info/detailed_movie_info.dart';
 

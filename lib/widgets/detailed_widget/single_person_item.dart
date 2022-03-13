@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/credits_info_request.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-import 'package:flutter_my_kino_app/screens/cast_screens/detailed_cast_item.dart';
+import '../../models/credits_info_request.dart';
+import '../../screens/cast_screens/detailed_cast_item.dart';
 
 //виджет для вывода одного работника фильма
 //в расширенном списке фильмов
@@ -18,6 +17,9 @@ class SinglePersonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: () {
         // обрабатываем нажатие на карту -
@@ -36,6 +38,7 @@ class SinglePersonItem extends StatelessWidget {
         );
       },
       child: Card(
+        elevation: 8,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
           width: double.infinity,
@@ -51,67 +54,58 @@ class SinglePersonItem extends StatelessWidget {
                       tag: heroKey,
                       child: Image(
                         image: castPers.getImage(),
-                        height: 80,
-                        width: 55,
+                        height: size.height * 0.15,
+                        width: size.width * 0.2,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   const SizedBox(width: 10.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //имя актера
-                      Text(
-                        castPers.name,
-                        textAlign: TextAlign.start,
-                        softWrap: true,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //имя актера
+                        Text(
+                          castPers.name,
+                          textAlign: TextAlign.start,
+                          softWrap: true,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      //Оригинальное имя актера
-                      Text(
-                        castPers.originalName,
-                        softWrap: true,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300,
+
+                        const SizedBox(
+                          height: 20,
                         ),
-                        textAlign: TextAlign.start,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //имя персонажа или должность
-                      //если актер - то выводим имя персонажа,
-                      // если не актер, то должность
-                      isActor
-                          ? Text(
-                              '${getActorChapter(castPers)}',
-                              softWrap: true,
-                              style: const TextStyle(
-                                color: Colors.white54,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w200,
+                        //имя персонажа или должность
+                        //если актер - то выводим имя персонажа,
+                        // если не актер, то должность
+                        isActor
+                            ? Text(
+                                '${getActorChapter(castPers)}',
+                                softWrap: true,
+                                maxLines: 2,
+                                overflow: TextOverflow.fade,
+                                style: TextStyle(
+                                  color: colorScheme.onInverseSurface,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                textAlign: TextAlign.start,
+                              )
+                            : Text(
+                                '${getCrewJobs(castPers)}',
+                                softWrap: true,
+                                style: TextStyle(
+                                  color: colorScheme.onInverseSurface,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                textAlign: TextAlign.start,
                               ),
-                              textAlign: TextAlign.start,
-                            )
-                          : Text(
-                              '${getCrewJobs(castPers)}',
-                              softWrap: true,
-                              style: const TextStyle(
-                                color: Colors.white54,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w200,
-                              ),
-                              textAlign: TextAlign.start,
-                            ),
-                    ],
+                      ],
+                    ),
                   )
                 ],
               ),

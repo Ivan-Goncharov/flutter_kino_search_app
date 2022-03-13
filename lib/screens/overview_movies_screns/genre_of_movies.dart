@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../providers/movie.dart';
 import '../../widgets/error_message_widg.dart';
 import '../../models/popular_movies.dart';
-import '../../widgets/detailed_widget/getImage.dart';
+import '../../widgets/detailed_widget/get_image.dart';
 import '../movie_detailes_info/detailed_movie_info.dart';
 
 //экран для вывода фильмов соотвествующего жанра

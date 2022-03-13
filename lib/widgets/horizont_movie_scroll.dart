@@ -30,14 +30,19 @@ class HorrizontalMovieScroll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         //выводим необходимый заголовок, сопровождающий скроллинг
-        createTitleSearch(title),
+        Text(
+          title,
+          textAlign: TextAlign.start,
+          style: Theme.of(context).textTheme.displayMedium,
+        ),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
-          height: 200,
+          height: size.height * 0.29,
           child: ListView.builder(
             //так как это внутренний скролл, то указываем эти свойства
             shrinkWrap: true,
@@ -58,6 +63,7 @@ class HorrizontalMovieScroll extends StatelessWidget {
                 movie: list[index],
                 movieHistory: historySearch,
                 typeScroll: typeScroll,
+                isSearch: isSearch,
               );
             },
           ),
@@ -91,20 +97,6 @@ class HorrizontalMovieScroll extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
-      ),
-    );
-  }
-
-  // заголовок поиска
-  Text createTitleSearch(String titelSearch) {
-    final title = titelSearch;
-    return Text(
-      title,
-      textAlign: TextAlign.start,
-      style: const TextStyle(
-        color: Colors.white38,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
       ),
     );
   }

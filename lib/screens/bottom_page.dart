@@ -17,10 +17,10 @@ class BottomPage extends StatefulWidget {
 class _BottomPageState extends State<BottomPage> {
   //список экранов для навигации
   final List<Widget> _pages = [
-    OverviewMovieScreen(),
-    FavoritesMoviesScreen(),
-    SearchMovieScreen(),
-    AboutIt(),
+    const OverviewMovieScreen(),
+    const FavoritesMoviesScreen(),
+    const SearchMovieScreen(),
+    const AboutIt(),
   ];
 
   //переменная для сохранения индекса выбранной страницы

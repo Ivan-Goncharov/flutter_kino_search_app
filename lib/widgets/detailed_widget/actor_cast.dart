@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-
 import '../../screens/cast_screens/all_actor_screen.dart';
 import '../../models/credits_info_request.dart';
 import '../../screens/cast_screens/detailed_cast_item.dart';
@@ -22,6 +20,8 @@ class ActorCast extends StatelessWidget {
     // проверяем длину списка актеров
     final actors = creditsInfo?.getCast();
     final lenghtActorsList = actors?.length ?? 0;
+    final size = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Padding(
@@ -73,7 +73,7 @@ class ActorCast extends StatelessWidget {
         Container(
           padding: const EdgeInsets.only(top: 8),
           width: double.infinity,
-          height: height * 0.25,
+          height: height * 0.27,
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -82,10 +82,11 @@ class ActorCast extends StatelessWidget {
               final actor = actors![index];
 
               return actorInfo(
-                context: context,
-                actor: actor,
-                heroKey: 'actorHero$index',
-              );
+                  context: context,
+                  actor: actor,
+                  heroKey: 'actorHero$index',
+                  size: size,
+                  colorScheme: colorScheme);
             },
             itemCount: lenghtActorsList > 10 ? 10 : lenghtActorsList,
           ),
@@ -95,10 +96,13 @@ class ActorCast extends StatelessWidget {
   }
 
   // Шаблон для вывода одного актера
-  Container actorInfo(
-      {required BuildContext context,
-      required Cast actor,
-      required String heroKey}) {
+  Container actorInfo({
+    required BuildContext context,
+    required Cast actor,
+    required String heroKey,
+    required Size size,
+    required ColorScheme colorScheme,
+  }) {
     return Container(
       child: GestureDetector(
         onTap: () {
@@ -128,7 +132,7 @@ class ActorCast extends StatelessWidget {
                 tag: heroKey,
                 child: Image(
                   image: actor.getImage(),
-                  height: 100,
+                  height: size.height * 0.15,
                 ),
               ),
             ),
@@ -139,13 +143,15 @@ class ActorCast extends StatelessWidget {
             Text(
               actor.name,
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.fade,
               softWrap: true,
               style: const TextStyle(
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(
-              height: 5,
+            SizedBox(
+              height: size.height * 0.005,
             ),
             // если есть, то имя персонажа
             Text(
@@ -153,15 +159,16 @@ class ActorCast extends StatelessWidget {
               softWrap: true,
               maxLines: 2,
               overflow: TextOverflow.fade,
-              style: const TextStyle(
-                  color: Colors.white54, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                  color: colorScheme.onInverseSurface,
+                  fontWeight: FontWeight.w400),
               textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
       padding: const EdgeInsets.only(right: 10),
-      width: 105,
+      width: size.width * 0.33,
     );
   }
 

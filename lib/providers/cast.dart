@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, curly_braces_in_flow_control_structures
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -28,8 +30,10 @@ class ItemCastInfo {
       return '$_age года';
     } else if (remaind == 1 && _age > 20) {
       return '$_age год';
-    } else {
+    } else if (_age > 0) {
       return '$_age лет';
+    } else {
+      return '';
     }
   }
 

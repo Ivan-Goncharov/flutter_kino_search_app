@@ -119,9 +119,9 @@ class Cast {
         id: json["id"],
         name: json["name"],
         originalName: json["original_name"],
-        profilePath: json["profile_path"] ?? null,
-        character: json["character"] ?? null,
-        job: json["job"] ?? null,
+        profilePath: json["profile_path"],
+        character: json["character"],
+        job: json["job"],
         roles: json["roles"] == null
             ? null
             : List<RoleTV>.from(json["roles"].map((x) => RoleTV.fromJson(x))),

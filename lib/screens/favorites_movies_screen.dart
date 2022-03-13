@@ -3,7 +3,7 @@ import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
 
 import '../models/favorite_movie.dart';
 import '../providers/movie.dart';
-import '../widgets/detailed_widget/getImage.dart';
+import '../widgets/detailed_widget/get_image.dart';
 import '../screens/movie_detailes_info/detailed_movie_info.dart';
 
 // Экран для вывода избранных фильмов и сериалов

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
+import 'package:flutter_my_kino_app/widgets/detailed_widget/get_image.dart';
 
 import '../providers/movie.dart';
 import '../models/movies_history.dart';
@@ -11,11 +11,13 @@ class SearchItem extends StatelessWidget {
   final MediaBasicInfo movie;
   final MovieHistory movieHistory;
   final String typeScroll;
+  final bool isSearch;
   const SearchItem({
     Key? key,
     required this.movie,
     required this.movieHistory,
     required this.typeScroll,
+    required this.isSearch,
   }) : super(key: key);
 
   @override
@@ -25,7 +27,9 @@ class SearchItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         //добавляем фильм в историю просмотров
-        movieHistory.addMovie(movie);
+        if (isSearch) {
+          movieHistory.addMovie(movie);
+        }
         Navigator.push(
           context,
           PageRouteBuilder(

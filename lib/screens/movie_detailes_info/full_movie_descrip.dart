@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/details_media_mod.dart';
-
-import '../../../providers/movie.dart';
+import '../../models/details_media_mod.dart';
 
 //экран для подробного описания фильма и возрастных ограничений
 class FullMovieDesciption extends StatefulWidget {
@@ -71,6 +69,7 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         body: _isLoading
@@ -124,8 +123,8 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                                       padding:
                                           const EdgeInsets.only(right: 8.0),
                                       child: Image(
-                                        width: 60,
-                                        height: 60,
+                                        width: size.width * 0.15,
+                                        height: size.height * 0.15,
                                         fit: BoxFit.contain,
                                         image: AssetImage(
                                           getImageLimitRu(_details.ageLimitRu),
@@ -136,8 +135,8 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                               //возрастной рейтинг US
                               _details.ageLimitUS.isNotEmpty
                                   ? Image(
-                                      width: 80,
-                                      height: 80,
+                                      width: size.width * 0.22,
+                                      height: size.height * 0.22,
                                       fit: BoxFit.contain,
                                       color: Colors.white,
                                       image: AssetImage(

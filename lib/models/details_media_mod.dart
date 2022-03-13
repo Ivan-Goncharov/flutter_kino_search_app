@@ -161,7 +161,7 @@ class DetailsMediaMod {
   }
 
   //получаем рейтинг IMDB, используя API OMDB
-  Future getRating() async {
+  Future<void> getRating() async {
     if (imdbId != '') {
       final url =
           Uri.parse('http://www.omdbapi.com/?apikey=bcfb41e2&i=$imdbId');
@@ -197,7 +197,7 @@ class DetailsMediaMod {
 
   //метод для запроса видео трейлеров фильма
   //принимаем тип медиа, чтобы скорректировать запрос по фильмам или тв
-  Future getTrailer(MediaType type) async {
+  Future<void> getTrailer(MediaType type) async {
     final mediaType = setStringMediaType(type);
 
     // сначала делаем запрос по трейлерам на Русском,

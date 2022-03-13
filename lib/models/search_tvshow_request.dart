@@ -43,7 +43,7 @@ class Result {
         name: json["name"],
         originalName: json["original_name"],
         overview: json["overview"],
-        posterPath: json["poster_path"] ?? null,
+        posterPath: json["poster_path"],
         voteCount: json["vote_count"],
       );
 }

@@ -154,9 +154,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
-                //поле для ввода названия фильма
-                Container(
-                  height: size.height * 0.1,
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: TextField(
                     decoration: InputDecoration(
@@ -184,11 +182,13 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      hintText: 'Введите название фильма',
+
+                      hintText: 'Поиск',
                     ),
                     controller: _myTextController,
                   ),
                 ),
+
                 // если будет ошибка, то показываем виджет с описанием
                 // и кнопкой для обновления
                 Expanded(
@@ -215,6 +215,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                       ),
                                       Text(
                                         'Идет поиск фильмов',
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,

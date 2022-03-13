@@ -45,6 +45,7 @@ dependencies:
   firebase_core: ^1.13.1
   email_validator: ^2.0.1
   toggle_switch: ^1.4.0
+  lottie: ^1.2.2
   # auto_orientation: 1.0.1
 
 dev_dependencies:

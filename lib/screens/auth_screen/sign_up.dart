@@ -51,13 +51,6 @@ class SignUpPage extends StatelessWidget {
   }
 
   // cтиль текста для заголовков
-  TextStyle _textStyle() {
-    return const TextStyle(
-      color: Colors.white54,
-      fontSize: 22,
-      fontWeight: FontWeight.bold,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +105,7 @@ class SignUpPage extends StatelessWidget {
 
                   Text(
                     'Электронная почта',
-                    style: _textStyle(),
+                    style: Theme.of(context).textTheme.displayMedium,
                   ),
                   //  Ввод логина
                   Container(
@@ -149,7 +142,7 @@ class SignUpPage extends StatelessWidget {
 
                   Text(
                     'Пароль',
-                    style: _textStyle(),
+                    style: Theme.of(context).textTheme.displayMedium,
                   ),
 
                   //Ввод пароля
@@ -223,9 +216,12 @@ class SignUpPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'Есть аккаунт ?',
-                        style: TextStyle(color: Colors.white54, fontSize: 16),
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).colorScheme.onInverseSurface,
+                            fontSize: 16),
                       ),
                       TextButton(
                         onPressed: onCklickedSignIn,

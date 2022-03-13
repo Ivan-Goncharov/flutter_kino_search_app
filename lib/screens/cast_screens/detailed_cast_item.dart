@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/providers/cast.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-import 'package:flutter_my_kino_app/widgets/detailed_widget/getImage.dart';
-import 'package:provider/provider.dart';
 
+import '../../providers/cast.dart';
+import '../../widgets/detailed_widget/get_image.dart';
 import '../../models/credits_info_request.dart';
 import '../../providers/movie.dart';
-import '../../providers/movies.dart';
 import '../movie_detailes_info/detailed_movie_info.dart';
 
 //экран с детальным описанием актера
@@ -74,6 +71,7 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -84,7 +82,6 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
           child: Stack(
             children: [
               Positioned(
-                // top: 90,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: ClipRRect(
@@ -171,12 +168,15 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
                                         ),
                                       ),
                                       _moviesActor.isNotEmpty
-                                          ? createDeportament(
-                                              context, _moviesActor, 'Актер')
+                                          ? createDeportament(context,
+                                              _moviesActor, 'Актер', size)
                                           : const SizedBox(),
                                       _moviesCrew.isNotEmpty
-                                          ? createDeportament(context,
-                                              _moviesCrew, 'Съемочная группа')
+                                          ? createDeportament(
+                                              context,
+                                              _moviesCrew,
+                                              'Съемочная группа',
+                                              size)
                                           : const SizedBox(),
                                     ],
                                   ),
@@ -194,29 +194,24 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
     );
   }
 
-  Column createDeportament(
-      BuildContext context, List<MediaBasicInfo> list, String depName) {
+  Column createDeportament(BuildContext context, List<MediaBasicInfo> list,
+      String depName, Size size) {
     return Column(
       children: [
         Container(
           alignment: Alignment.topLeft,
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-            depName,
-            textAlign: TextAlign.start,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
-              color: Colors.white54,
-            ),
-          ),
+          child: Text(depName,
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.displayMedium),
         ),
-        createGridView(context, list),
+        createGridView(context, list, size),
       ],
     );
   }
 
-  Widget createGridView(BuildContext ctx, List<MediaBasicInfo> movie) {
+  Widget createGridView(
+      BuildContext ctx, List<MediaBasicInfo> movie, Size size) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       width: double.infinity,
@@ -252,8 +247,8 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
               child: GetImage(
                   imageUrl: movie[index].imageUrl,
                   title: movie[index].title,
-                  height: 300,
-                  width: 150),
+                  height: size.height * 0.1,
+                  width: size.width * 0.2),
             ),
           );
         },

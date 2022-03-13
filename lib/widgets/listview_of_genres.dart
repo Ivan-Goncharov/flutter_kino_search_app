@@ -90,7 +90,12 @@ class ListViewOfGenres extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        createTitleSearch(' Фильмы по жанрам'),
+        Text(
+          ' Фильмы по жанрам',
+          style: Theme.of(context).textTheme.displayMedium,
+          textAlign: TextAlign.start,
+          overflow: TextOverflow.ellipsis,
+        ),
         Container(
           padding: const EdgeInsets.only(top: 8),
           height: 250,
@@ -162,36 +167,27 @@ class ListViewOfGenres extends StatelessWidget {
           ),
         ),
         // название жанра
-        Container(
-          padding: const EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            color: const Color.fromARGB(94, 56, 55, 55),
-          ),
-          child: Text(
-            genreName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: size.width * 0.49),
+          child: Container(
+            padding: const EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: const Color.fromARGB(94, 56, 55, 55),
+            ),
+            child: Text(
+              genreName,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         )
       ],
-    );
-  }
-
-  // заголовок поиска
-  Text createTitleSearch(String titelSearch) {
-    final title = titelSearch;
-    return Text(
-      title,
-      textAlign: TextAlign.start,
-      style: const TextStyle(
-        color: Colors.white38,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
     );
   }
 }

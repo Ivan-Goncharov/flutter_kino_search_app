@@ -35,13 +35,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'Укажите email для сброса пароля',
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.displayMedium,
               ),
               //  Ввод логина
               Container(

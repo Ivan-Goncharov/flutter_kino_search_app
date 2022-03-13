@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/details_media_mod.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-import 'package:flutter_my_kino_app/screens/movie_detailes_info/wath_providers_screen.dart';
 
+import '../../models/details_media_mod.dart';
+import '../../screens/movie_detailes_info/wath_providers_screen.dart';
 import '../../providers/movie.dart';
 import '../../screens/movie_detailes_info/full_movie_descrip.dart';
 import 'ratings.dart';
@@ -45,6 +44,7 @@ class MovieDetailsColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         // информация о жанрах и годе производства
@@ -54,8 +54,9 @@ class MovieDetailsColumn extends StatelessWidget {
                 child: Text(
                   getDateAndGenre(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w300, color: Colors.white54),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      color: colorScheme.onInverseSurface),
                 ),
               )
             : const SizedBox(),
@@ -67,8 +68,9 @@ class MovieDetailsColumn extends StatelessWidget {
                 child: Text(
                   '${_details!.duration}${_details!.numberOfSeasons()}',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w300, color: Colors.white54),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      color: colorScheme.onInverseSurface),
                 ),
               ),
 
@@ -134,10 +136,10 @@ class MovieDetailsColumn extends StatelessWidget {
                 }),
                 child: Container(
                   alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width * 0.6,
+                  width: MediaQuery.of(context).size.width * 0.8,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.tertiary,
                   ),
                   height: _myHeight * 0.07,
                   margin: const EdgeInsets.all(8.0),
@@ -151,12 +153,15 @@ class MovieDetailsColumn extends StatelessWidget {
                         size: 30,
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        'Смотреть онлайн',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          'Смотреть онлайн',
+                          style: TextStyle(
+                            fontSize: 16,
+                            overflow: TextOverflow.ellipsis,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -178,7 +183,6 @@ class MovieDetailsColumn extends StatelessWidget {
             :
             //горизонтальный скроллинг список съемочной группы
             CrewCast(
-                height: _myHeight,
                 creditsInfo: _details!.creditsInfo,
               ),
       ],

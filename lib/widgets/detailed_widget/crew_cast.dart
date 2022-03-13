@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
 import '../../models/credits_info_request.dart';
 import '../../screens/cast_screens/all_crew_screen.dart';
 import '../../screens/cast_screens/detailed_cast_item.dart';
@@ -9,10 +8,8 @@ class CrewCast extends StatelessWidget {
   //принимаем информацию о съемочной группе
   // и высоту
   final CreditsInfoRequest? creditsInfo;
-  final double height;
   const CrewCast({
     Key? key,
-    required this.height,
     required this.creditsInfo,
   }) : super(key: key);
 
@@ -21,6 +18,9 @@ class CrewCast extends StatelessWidget {
     // получаем список работников съемочной группы
     final crewList = creditsInfo?.getcustomCrewList();
     final lenghtCrewList = crewList?.length ?? 0;
+    final size = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Padding(
@@ -68,7 +68,7 @@ class CrewCast extends StatelessWidget {
         Container(
           padding: const EdgeInsets.only(top: 6.0),
           width: double.infinity,
-          height: height * 0.18,
+          height: size.height * 0.18,
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -79,6 +79,8 @@ class CrewCast extends StatelessWidget {
                 context: context,
                 crew: crew,
                 heroKey: 'crewHero$index',
+                size: size,
+                colors: colorScheme,
               );
             },
             itemCount: lenghtCrewList > 10 ? 10 : lenghtCrewList,
@@ -89,10 +91,13 @@ class CrewCast extends StatelessWidget {
   }
 
 // карта одного работнка
-  Widget crewInfo(
-      {required BuildContext context,
-      required Cast crew,
-      required String heroKey}) {
+  Widget crewInfo({
+    required BuildContext context,
+    required Cast crew,
+    required String heroKey,
+    required Size size,
+    required ColorScheme colors,
+  }) {
     return GestureDetector(
       onTap: () {
         //при нажатии на экран с работником -
@@ -112,12 +117,16 @@ class CrewCast extends StatelessWidget {
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
-        color: const Color.fromARGB(0, 20, 20, 20),
+        color: colors.shadow,
+        elevation: 8,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6.0),
-            width: 240,
+            width: size.width * 0.65,
+            decoration: BoxDecoration(
+              // border: Border.all(color: colors.onSurface),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -129,7 +138,7 @@ class CrewCast extends StatelessWidget {
                     tag: heroKey,
                     child: Image(
                       image: crew.getImage(),
-                      height: 80,
+                      height: size.height * 0.13,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -153,11 +162,11 @@ class CrewCast extends StatelessWidget {
                       // должность
                       Text(
                         '${getCrewJobs(crew)}',
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.start,
                         softWrap: true,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 14,
-                            color: Colors.white54,
+                            color: colors.onInverseSurface,
                             fontWeight: FontWeight.w400),
                       ),
                     ],
