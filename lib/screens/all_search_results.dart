@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movie.dart';
@@ -53,30 +54,20 @@ class _AllSearchResultState extends State<AllSearchResult> {
               _movies = _provider.itemsMovies,
               _movies
                   .sort((a, b) => b.voteCount!.compareTo(a.voteCount as int)),
-              setState(
-                () {
-                  _isLoading = false;
-                },
-              )
+              if (mounted) {setState(() => _isLoading = false)}
             });
       } else {
         await _provider.searchAllTVShow(name: _searchText).then((_) => {
               _movies = _provider.itemsMovies,
               _movies
                   .sort((a, b) => b.voteCount!.compareTo(a.voteCount as int)),
-              setState(
-                () {
-                  _isLoading = false;
-                },
-              )
+              if (mounted) {setState(() => _isLoading = false)}
             });
       }
-    } on SocketException catch (er) {
+    } catch (er) {
       setState(() {
         _isConnectError = true;
       });
-    } catch (er) {
-      print('Произошла ошибка при вызове _iniz в AllSearch:  $er');
     }
   }
 
@@ -95,17 +86,11 @@ class _AllSearchResultState extends State<AllSearchResult> {
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      CircularProgressIndicator(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        'Загружаем результаты',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    children: [
+                      Lottie.asset(
+                        'assets/animation_lottie/search_movie.json',
+                        height: size.height * 0.6,
+                        width: size.width * 0.6,
                       ),
                     ],
                   ),

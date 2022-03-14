@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../providers/movie.dart';
 import '../../widgets/error_message_widg.dart';
@@ -53,6 +54,7 @@ class _GenresOfMoviesState extends State<GenresOfMovies> {
     });
     // вызываем метод для api запроса, ждем результат и обрабатываем его
     await _popMovies.getListOfGenres(genre: _genreId).then((value) {
+      if (!mounted) return;
       if (value != null) {
         _listMedia = value;
         setState(() => _isLoading = false);
@@ -86,7 +88,7 @@ class _GenresOfMoviesState extends State<GenresOfMovies> {
             //выводим ошибку, если произошел сбой в поиске
             ? ErrorMessageWidget(handler: _iniz, size: size)
             : _isLoading
-                ? getProgressBar()
+                ? getProgressBar(size)
                 : SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -166,18 +168,13 @@ class _GenresOfMoviesState extends State<GenresOfMovies> {
   }
 
 //загрузочный спиннер
-  Container getProgressBar() {
+  Container getProgressBar(Size size) {
     return Container(
       alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
-          CircularProgressIndicator(),
-          SizedBox(
-            height: 10,
-          ),
-        ],
+      child: Lottie.asset(
+        'assets/animation_lottie/movie_loading.json',
+        height: size.height * 0.4,
+        width: size.width * 0.4,
       ),
     );
   }

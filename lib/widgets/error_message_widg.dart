@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 //виджет - сообщение об ошибке
 //принимает функцию, которая вызывается про нажатии кнопки 'обновить'
@@ -6,7 +7,9 @@ import 'package:flutter/material.dart';
 class ErrorMessageWidget extends StatelessWidget {
   final VoidCallback handler;
   final Size size;
-  ErrorMessageWidget({required this.handler, required this.size});
+  const ErrorMessageWidget(
+      {Key? key, required this.handler, required this.size})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +20,11 @@ class ErrorMessageWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
+          Lottie.asset(
+            'assets/animation_lottie/error_message.json',
+            height: size.height * 0.25,
+            width: size.width * 0.6,
+          ),
           const Text(
             'У нас что-то сломалось',
             style: TextStyle(
@@ -26,7 +34,7 @@ class ErrorMessageWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Мы уже решаем проблему. Возможно, проблемы с интернет соединением. Попробуйте обновить чуть позже',
+            'Мы уже решаем проблему. Попробуйте обновить чуть позже',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 15),

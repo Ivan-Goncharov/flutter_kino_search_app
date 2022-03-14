@@ -80,7 +80,7 @@ class Movies with ChangeNotifier {
         if (response.statusCode == 200) {
           //получаем результаты поиска и проходимся по списку, создавая фильмы
           final movieSearch = SearchMovie.fromJson(json.decode(response.body));
-          if (movieSearch.results.isNotEmpty) {
+          if (movieSearch.results.isNotEmpty && _itemsMovies.length < 30) {
             addMoviesInList(movieSearch);
           } else {
             isNotEmptySearch = false;
@@ -160,7 +160,7 @@ class Movies with ChangeNotifier {
               SearchTVShowModel.fromJson(json.decode(response.body));
 
           //если список содержит результаты, то добавляем их в лист
-          if (tvShowSearch.results.isNotEmpty) {
+          if (tvShowSearch.results.isNotEmpty && _itemsMovies.length < 30) {
             addTvShowInList(tvShowSearch);
           }
           // если нет, то выходим из метода

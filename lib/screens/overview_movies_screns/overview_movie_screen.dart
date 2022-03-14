@@ -93,7 +93,7 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
                       //создаем переключатель между страницами
                       createToogleSwitch(colors, size),
                       _isLoading
-                          ? animated()
+                          ? animated(size)
                           : _isMovieScreen
                               ? MoviesOverView(popMovies: _popularMovies)
                               : TvShowsOverview(popTvShows: _popularTvShows),
@@ -105,10 +105,16 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
     );
   }
 
-  Widget animated() {
-    return Center(
-      child: Lottie.network(
-          'https://assets1.lottiefiles.com/datafiles/ZHlTlyhzTLf9ImW/data.json'),
+  //анимированный виджет загрузки
+  Widget animated(Size size) {
+    return Container(
+      padding: const EdgeInsets.only(top: 150),
+      alignment: Alignment.center,
+      child: Lottie.asset(
+        'assets/animation_lottie/movie_loading.json',
+        height: size.height * 0.4,
+        width: size.width * 0.4,
+      ),
     );
   }
 

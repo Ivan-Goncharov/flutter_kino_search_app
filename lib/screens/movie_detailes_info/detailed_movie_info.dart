@@ -289,9 +289,10 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                                             alignment: Alignment.topCenter,
                                             padding:
                                                 const EdgeInsets.only(top: 20),
-                                            child:
-                                                const CircularProgressIndicator(
-                                                    color: Colors.white38),
+                                            child: CircularProgressIndicator(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onInverseSurface),
                                           )
                                         : Padding(
                                             padding: const EdgeInsets.symmetric(

@@ -90,7 +90,7 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
                       tag: widget.heroKey,
                       child: Image(
                         image: widget.castItem.getImage(),
-                        height: MediaQuery.of(context).size.height * 0.89,
+                        height: MediaQuery.of(context).size.height * 0.9,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -141,8 +141,10 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
                                 ? Container(
                                     alignment: Alignment.topCenter,
                                     padding: const EdgeInsets.only(top: 20),
-                                    child: const CircularProgressIndicator(
-                                        color: Colors.white38),
+                                    child: CircularProgressIndicator(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onInverseSurface),
                                   )
                                 : Column(
                                     children: [

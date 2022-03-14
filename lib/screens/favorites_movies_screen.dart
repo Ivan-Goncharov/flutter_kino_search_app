@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
+import 'package:lottie/lottie.dart';
 
 import '../models/favorite_movie.dart';
 import '../providers/movie.dart';
@@ -42,15 +43,14 @@ class _FavoritesMoviesScreenState extends State<FavoritesMoviesScreen> {
     });
 
     _favoriteMovie!.getAndFetchFavoriteNote().then((value) {
+      if (!mounted) return;
       if (value != null) {
         setState(() {
           _listMedia = value;
           _isLoading = false;
         });
       } else {
-        setState(() {
-          _isError = true;
-        });
+        setState(() => _isError = true);
       }
     });
   }
@@ -65,8 +65,12 @@ class _FavoritesMoviesScreenState extends State<FavoritesMoviesScreen> {
         body: _isError
             ? ErrorMessageWidget(handler: getFavorite, size: size)
             : _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
+                ? Center(
+                    child: Lottie.asset(
+                      'assets/animation_lottie/favorite_loading.json',
+                      height: size.height * 0.7,
+                      width: size.width * 0.7,
+                    ),
                   )
                 : Padding(
                     padding: const EdgeInsets.all(16.0),
