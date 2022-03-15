@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
+import 'package:flutter_my_kino_app/widgets/tmdb_icon.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../models/details_media_mod.dart';
 import '../../models/watch_providers_request.dart';
@@ -36,18 +37,11 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
     super.didChangeDependencies();
   }
 
-  final TextStyle _textStyle = const TextStyle(
-    color: Colors.white60,
-    fontSize: 22,
-    fontWeight: FontWeight.bold,
-  );
-
   @override
   Widget build(BuildContext context) {
     final watchProv = _details!.watchProviders!.results.ru;
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-
+    final textTheme = Theme.of(context).textTheme;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -124,7 +118,7 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                                     children: [
                                       Text(
                                         'По подписке',
-                                        style: _textStyle,
+                                        style: textTheme.displayMedium,
                                         textAlign: TextAlign.start,
                                       ),
                                       getListProvider(
@@ -147,7 +141,7 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                                     children: [
                                       Text(
                                         'Аренда',
-                                        style: _textStyle,
+                                        style: textTheme.displayMedium,
                                         textAlign: TextAlign.start,
                                       ),
                                       getListProvider(watchProv!.rent, height)
@@ -169,7 +163,7 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                                     children: [
                                       Text(
                                         'Покупка',
-                                        style: _textStyle,
+                                        style: textTheme.displayMedium,
                                         textAlign: TextAlign.start,
                                       ),
                                       getListProvider(watchProv!.buy, height)
@@ -188,31 +182,22 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Информация о ценах',
-                                        style: _textStyle.copyWith(
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Text(
+                                          'Информация о ценах',
+                                          style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .primary),
-                                        textAlign: TextAlign.start,
-                                      ),
-                                      Container(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        width: width * 0.28,
-                                        height: height * 0.14,
-                                        child: GestureDetector(
-                                          onTap: (() {
-                                            _launchURLBrowser(
-                                                '${watchProv!.link}');
-                                          }),
-                                          child: SvgPicture.network(
-                                            'https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg',
-                                            color: const Color.fromARGB(
-                                                160, 1, 179, 228),
+                                                .primary,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
                                           ),
+                                          textAlign: TextAlign.start,
                                         ),
                                       ),
+                                      TmdbIcon(link: '${watchProv!.link}')
                                     ],
                                   ),
                                 ),

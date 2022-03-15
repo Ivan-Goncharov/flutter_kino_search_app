@@ -1,35 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/screens/auth_screen/password_reset.dart';
+import 'package:flutter_my_kino_app/screens/bottom_page.dart';
 
-class SignInPage extends StatelessWidget {
-  // контроллеры для полей ввода логина и пароля
-  final _loginController = TextEditingController();
-  final _passwordContoller = TextEditingController();
-
+class SignInPage extends StatefulWidget {
   final VoidCallback onCklickedSignUp;
 
   SignInPage({required this.onCklickedSignUp, Key? key}) : super(key: key);
 
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  // контроллеры для полей ввода логина и пароля
+  final _loginController = TextEditingController();
+
+  final _passwordContoller = TextEditingController();
+
+  bool _isPressed = false;
+
 // метод для авторизации на Firebase
   Future signIn(BuildContext context) async {
     try {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          });
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-            email: _loginController.text.trim(),
-            password: _passwordContoller.text.trim(),
-          )
-          .then(
-            (_) => Navigator.of(context).popUntil((route) => route.isFirst),
-          );
+      setState(() => _isPressed = true);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _loginController.text.trim(),
+        password: _passwordContoller.text.trim(),
+      );
     } on FirebaseAuthException catch (e) {
+      setState(() => _isPressed = false);
       if (e.toString().contains('The password is invalid')) {
         _showSnackBar(context, 'Неверный пароль');
       } else if (e
@@ -37,7 +37,6 @@ class SignInPage extends StatelessWidget {
           .contains('There is no user record corresponding')) {
         _showSnackBar(context, 'Пользователь с таким email не найден');
       }
-      Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
 
@@ -198,15 +197,22 @@ class SignInPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(20.0),
                                   color:
                                       Theme.of(context).colorScheme.secondary),
-                              child: Text(
-                                'ВОЙТИ',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.onSecondary,
-                                ),
-                              ),
+                              child: _isPressed
+                                  ? CircularProgressIndicator(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    )
+                                  : Text(
+                                      'ВОЙТИ',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondary,
+                                      ),
+                                    ),
                             ),
                           ),
                         ],
@@ -230,7 +236,7 @@ class SignInPage extends StatelessWidget {
                               fontSize: 16),
                         ),
                         TextButton(
-                          onPressed: onCklickedSignUp,
+                          onPressed: widget.onCklickedSignUp,
                           child: const Text('Создать аккаунт',
                               style: TextStyle(fontSize: 16)),
                         ),

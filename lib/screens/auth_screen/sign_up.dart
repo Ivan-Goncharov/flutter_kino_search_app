@@ -2,35 +2,37 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 
-class SignUpPage extends StatelessWidget {
-  // контроллеры для полей ввода логина и пароля
-  final _loginController = TextEditingController();
-  final _passwordContoller = TextEditingController();
-  final globalKey = GlobalKey<FormState>();
-
+class SignUpPage extends StatefulWidget {
   final VoidCallback onCklickedSignIn;
 
   SignUpPage({required this.onCklickedSignIn, Key? key}) : super(key: key);
 
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  // контроллеры для полей ввода логина и пароля
+  final _loginController = TextEditingController();
+
+  final _passwordContoller = TextEditingController();
+
+  final globalKey = GlobalKey<FormState>();
+
+  bool _isPressed = false;
+
   // метод для регитрации на firebase
   Future signUp(BuildContext context) async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
     // если не прошли проверку, то возвращаем ошибку
     final isValid = globalKey.currentState!.validate();
     if (!isValid) return;
 
+    setState(() => _isPressed = true);
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _loginController.text.trim(),
         password: _passwordContoller.text.trim(),
       );
-      Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
       // если пользователь с таким email уже есть, то показываем ошибку
       if (e.toString().contains('The email address is already')) {
@@ -46,12 +48,11 @@ class SignUpPage extends StatelessWidget {
           ),
         );
       }
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      setState(() => _isPressed = false);
     }
   }
 
   // cтиль текста для заголовков
-
   @override
   Widget build(BuildContext context) {
     final scrHeight = MediaQuery.of(context).size.height;
@@ -199,15 +200,22 @@ class SignUpPage extends StatelessWidget {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20.0),
                                 color: Theme.of(context).colorScheme.secondary),
-                            child: Text(
-                              'Зарегистрироваться',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    Theme.of(context).colorScheme.onSecondary,
-                              ),
-                            ),
+                            child: _isPressed
+                                ? CircularProgressIndicator(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
+                                  )
+                                : Text(
+                                    'Зарегистрироваться',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
@@ -224,7 +232,7 @@ class SignUpPage extends StatelessWidget {
                             fontSize: 16),
                       ),
                       TextButton(
-                        onPressed: onCklickedSignIn,
+                        onPressed: widget.onCklickedSignIn,
                         child:
                             const Text('Войти', style: TextStyle(fontSize: 16)),
                       ),
