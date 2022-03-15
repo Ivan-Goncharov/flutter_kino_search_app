@@ -22,7 +22,9 @@ class OverviewMovieScreen extends StatefulWidget {
 // экран для вывода обзорной информации по популярным фильмам и сериалам
 class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
   // флаг для переключения между страницами Сериалов/фильмов
-  bool _isMovieScreen = true;
+  PageController _controller = PageController(
+    initialPage: 0,
+  );
   bool _isError = false;
   bool _isLoading = false;
 
@@ -32,7 +34,14 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
   @override
   void initState() {
     _iniz();
+    _controller.addListener(_listenerPage);
     super.initState();
+  }
+
+  _listenerPage() {
+    setState(() {
+      _count = _controller.page?.toInt() ?? 0;
+    });
   }
 
   _iniz() async {
@@ -83,24 +92,33 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
                 handler: _iniz,
                 size: size,
               )
-            : SingleChildScrollView(
-                child: Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      //создаем переключатель между страницами
-                      createToogleSwitch(colors, size),
-                      _isLoading
-                          ? animated(size)
-                          : _isMovieScreen
-                              ? MoviesOverView(popMovies: _popularMovies)
-                              : TvShowsOverview(popTvShows: _popularTvShows),
-                    ],
-                  ),
+            :
+            // SingleChildScrollView(
+            //   child:
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    //создаем переключатель между страницами
+                    createToogleSwitch(colors, size),
+                    _isLoading
+                        ? animated(size)
+                        : Expanded(
+                            child: PageView(
+                              controller: _controller,
+                              children: [
+                                MoviesOverView(popMovies: _popularMovies),
+                                TvShowsOverview(popTvShows: _popularTvShows),
+                              ],
+                            ),
+                          ),
+                  ],
                 ),
               ),
+
+        // ),
       ),
     );
   }
@@ -124,8 +142,6 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
       minWidth: size.width * 0.4,
       initialLabelIndex: _count,
       cornerRadius: 8.0,
-      animate: true,
-      animationDuration: 100,
       activeBgColor: [
         colors.surface,
         colors.surface,
@@ -145,12 +161,16 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
       onToggle: (index) {
         if (index == 0) {
           setState(() {
-            _isMovieScreen = true;
+            _controller.animateToPage(0,
+                duration: const Duration(microseconds: 300),
+                curve: Curves.easeInBack);
             _setCount(true);
           });
         } else {
           setState(() {
-            _isMovieScreen = false;
+            _controller.animateToPage(1,
+                duration: const Duration(microseconds: 300),
+                curve: Curves.easeIn);
             _setCount(false);
           });
         }

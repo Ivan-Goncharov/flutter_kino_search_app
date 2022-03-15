@@ -14,36 +14,42 @@ class TvShowsOverview extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     //если ошибка, то выводим экран для ошибки
-    return Container(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Column(
-        children: [
-          //популярные сериалы
-          HorrizontalMovieScroll(
-            title: 'Популярные сериалы',
-            list: popTvShows.popularTvShows,
-            size: size,
-            isMovie: false,
-            isSearch: false,
-            historySearch: MovieHistory(''),
-            textController: '',
-            typeScroll: 'PopularTvShows',
-          ),
+    return ListView(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      children: [
+        Container(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: Column(
+            children: [
+              //популярные сериалы
+              HorrizontalMovieScroll(
+                title: 'Популярные сериалы',
+                list: popTvShows.popularTvShows,
+                size: size,
+                isMovie: false,
+                isSearch: false,
+                historySearch: MovieHistory(''),
+                textController: '',
+                typeScroll: 'PopularTvShows',
+              ),
 
-          //рейтинговые сериалы
-          //популярные сериалы
-          HorrizontalMovieScroll(
-            title: 'Лучшие сериалы',
-            list: popTvShows.topRatedTvShow,
-            size: size,
-            isMovie: false,
-            isSearch: false,
-            historySearch: MovieHistory(''),
-            textController: '',
-            typeScroll: 'PopularTvShows',
+              //рейтинговые сериалы
+              //популярные сериалы
+              HorrizontalMovieScroll(
+                title: 'Лучшие сериалы',
+                list: popTvShows.topRatedTvShow,
+                size: size,
+                isMovie: false,
+                isSearch: false,
+                historySearch: MovieHistory(''),
+                textController: '',
+                typeScroll: 'PopularTvShows',
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
