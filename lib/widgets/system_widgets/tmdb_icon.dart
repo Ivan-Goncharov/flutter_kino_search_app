@@ -28,9 +28,8 @@ class TmdbIcon extends StatelessWidget {
         onTap: (() {
           _launchURLBrowser(link);
         }),
-        child: SvgPicture.network(
-          'https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg',
-          color: const Color.fromARGB(160, 1, 179, 228),
+        child: SvgPicture.asset(
+          'assets/image/tmdb_icon.svg',
         ),
       ),
     );

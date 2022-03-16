@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'detailed_widget/get_image.dart';
-import '../providers/movie.dart';
-import '../screens/movie_detailes_info/detailed_movie_info.dart';
+import '../detailed_widget/get_image.dart';
+import '../../providers/movie.dart';
+import '/screens/movie_detailes_info/detailed_movie_info.dart';
 
-//виджет для вывода карточки с одним фильмом в поиске фильмов
+//виджет для вывода карточки с одним фильмом во всех результатах поиска
 class MovieItem extends StatelessWidget {
   //принимаем информацию о фильме в аргументе и выводим ее на экран
   final MediaBasicInfo movie;
@@ -19,6 +19,7 @@ class MovieItem extends StatelessWidget {
     final heroTag = 'movieItem${movie.id}';
     return GestureDetector(
       onTap: () {
+        //по нажатию на постер - переходим на экран с детальным описанием
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -33,6 +34,8 @@ class MovieItem extends StatelessWidget {
           ),
         );
       },
+
+      //карта одного фильма
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 4),
         child: Container(
@@ -41,6 +44,7 @@ class MovieItem extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              //постер
               Hero(
                 transitionOnUserGestures: true,
                 child: GetImage(
@@ -57,6 +61,7 @@ class MovieItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    //название фильма
                     Text(
                       '${movie.title}',
                       softWrap: true,
@@ -68,6 +73,8 @@ class MovieItem extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
+
+                    //название фильма на языке оригинала
                     Text(
                       '${movie.originalTitle}, ${movie.date}',
                       softWrap: true,

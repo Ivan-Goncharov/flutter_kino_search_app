@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/providers/movie.dart';
-import 'package:flutter_my_kino_app/widgets/tmdb_icon.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../models/details_media_mod.dart';
-import '../../models/watch_providers_request.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../providers/movie.dart';
+import '../../models/media_models/details_media_mod.dart';
+import '../../models/request_querry/watch_providers_request.dart';
+import '../../widgets/system_widgets/tmdb_icon.dart';
 
 // экран для вывода всех возможных вариантов просмотра контента
 class WatchProvidersScreen extends StatefulWidget {
@@ -21,12 +21,13 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
   MediaBasicInfo? _media;
   var _isLoading = false;
 
-  //запускаем метод для поиска доступных
   @override
   void didChangeDependencies() {
     setState(() {
       _isLoading = true;
     });
+
+    //принимаем аргументы через навигатор
     final arguments =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _details = arguments['details'];
@@ -51,6 +52,7 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    //кнопка "Назад"
                     IconButton(
                       onPressed: () {
                         Navigator.pop(context);
@@ -60,6 +62,8 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                         size: 35,
                       ),
                     ),
+
+                    //выводим списки провайдеров для фильма
                     Container(
                       padding: const EdgeInsets.only(
                           right: 16.0, left: 16.0, bottom: 16.0),
@@ -104,6 +108,7 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                               ),
                             ],
                           ),
+
                           // если нет информации по подпискам, то не выводим
                           watchProv?.flatrate == null
                               ? const SizedBox()

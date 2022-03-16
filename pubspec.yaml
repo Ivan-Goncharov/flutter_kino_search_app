@@ -48,11 +48,17 @@ dependencies:
   lottie: ^1.2.2
   smooth_page_indicator: ^1.0.0+2
   shared_preferences: ^2.0.13
+  flutter_launcher_icons: ^0.9.2
   # auto_orientation: 1.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/image/logo/logo.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -77,6 +83,7 @@ flutter:
     - assets/image/
     - assets/image/genres/
     - assets/animation_lottie/
+    - assets/image/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

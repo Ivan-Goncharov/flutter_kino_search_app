@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/widgets/detailed_widget/get_image.dart';
+import '../detailed_widget/get_image.dart';
 
-import '../providers/movie.dart';
-import '../models/movies_history.dart';
-import '../screens/movie_detailes_info/detailed_movie_info.dart';
+import '../../providers/movie.dart';
+import '../../models/firebase_models/movies_history.dart';
+import '../../screens/movie_detailes_info/detailed_movie_info.dart';
 
 //виджет для вывода карточки с одним фильмом/сериалом в поиске
 class SearchItem extends StatelessWidget {

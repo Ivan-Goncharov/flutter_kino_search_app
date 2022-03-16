@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 
-import '../../models/movies_history.dart';
-import '../../widgets/listview_of_genres.dart';
-import '../../models/lists_of_media.dart';
-import '../../widgets/horizont_movie_scroll.dart';
+import '../../models/firebase_models/movies_history.dart';
+import '../../models/media_models/lists_of_media.dart';
+import '../../widgets/media_widgets/horizont_movie_scroll.dart';
+import '../../widgets/media_widgets/listview_of_genres.dart';
 
 // Обзорный экран популярных фильмов
 class MoviesOverView extends StatelessWidget {

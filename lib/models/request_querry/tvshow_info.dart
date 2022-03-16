@@ -1,4 +1,4 @@
-// класс для обработки json результата запроса детальной информации
+// класс для обработки json результата запроса детальной информации о сериалах
 class TvShowDetailsInfo {
   TvShowDetailsInfo({
     required this.episodeRunTime,

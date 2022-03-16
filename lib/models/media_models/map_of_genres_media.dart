@@ -1,4 +1,6 @@
+//класс с данными о жанрах фильмов и сериалов
 class GenresOfMedia {
+  //фильмы
   static final List<Map<String, dynamic>> genresOfMovies = [
     {
       "id": 28,
@@ -75,6 +77,7 @@ class GenresOfMedia {
     },
   ];
 
+  //сериалы
   static final List<Map<String, dynamic>> genresOfTvShow = [
     {
       "id": 10759,

@@ -1,11 +1,8 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-import 'package:flutter_my_kino_app/models/lists_of_media.dart';
-import 'package:flutter_my_kino_app/widgets/horizont_movie_scroll.dart';
-import 'package:flutter_my_kino_app/widgets/listview_of_genres.dart';
-import '../../models/popular_tv_shows.dart';
+import '../../models/firebase_models/movies_history.dart';
+import '../../models/media_models/lists_of_media.dart';
+import '../../widgets/media_widgets/horizont_movie_scroll.dart';
+import '../../widgets/media_widgets/listview_of_genres.dart';
 
 //экран для вывода поплуряных и рейтинговых сериалов
 class TvShowsOverview extends StatelessWidget {

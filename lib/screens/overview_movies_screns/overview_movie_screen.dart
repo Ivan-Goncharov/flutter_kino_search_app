@@ -1,15 +1,10 @@
-// ignore_for_file: prefer_final_fields
-
-import 'package:flutter_my_kino_app/models/lists_of_media.dart';
-import 'package:flutter_my_kino_app/models/popular_tv_shows.dart';
-import 'package:flutter_my_kino_app/providers/movie.dart';
-import 'package:flutter_my_kino_app/screens/overview_movies_screns/tv_shows_overview.dart';
-import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
-import 'package:flutter_my_kino_app/widgets/progress_indicator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/media_models/lists_of_media.dart';
+import '../../screens/overview_movies_screns/tv_shows_overview.dart';
+import '../../widgets/system_widgets/error_message_widg.dart';
 import '../../screens/overview_movies_screns/movies_overview.dart';
 
 class OverviewMovieScreen extends StatefulWidget {
@@ -28,8 +23,8 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
   bool _isError = false;
   bool _isLoading = false;
 
-  ListsOfMedia _popularMovies = ListsOfMedia();
-  PopularTvShowsModel _popularTvShows = PopularTvShowsModel();
+  //создаем экземпляр модели, которая выполняет запросы по популярным фильмам
+  ListsOfMedia _popularMedia = ListsOfMedia();
 
   @override
   void initState() {
@@ -38,19 +33,22 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
     super.initState();
   }
 
+  //метод для переключения toogleSwithc, если пользователь свайпнул страницу
   _listenerPage() {
     setState(() {
       _count = _controller.page?.toInt() ?? 0;
     });
   }
 
+  //метод для инициализации данных
   _iniz() async {
     setState(() {
       _isError = false;
       _isLoading = true;
     });
 
-    await _popularMovies.requestMediaLists().then((value) {
+    //выполняем запрос поиск популярных фильмов и сериалов
+    await _popularMedia.requestMediaLists().then((value) {
       if (!value) setState(() => _isError = true);
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -80,33 +78,35 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
                 handler: _iniz,
                 size: size,
               )
-            :
-            // SingleChildScrollView(
-            //   child:
-            Container(
+            : Container(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(right: 16, left: 16, top: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //создаем переключатель между страницами
                     createToogleSwitch(colors, size),
                     _isLoading
-                        ? animated(size)
-                        : Expanded(
+                        ?
+                        //виджет загрузки
+                        animated(size)
+                        :
+                        //все остальное место занимает PageView
+                        Expanded(
                             child: PageView(
                               controller: _controller,
                               children: [
-                                MoviesOverView(popMovies: _popularMovies),
-                                TvShowsOverview(popTvShows: _popularMovies),
+                                //страница с фильмами
+                                MoviesOverView(popMovies: _popularMedia),
+
+                                //страница с сериалами
+                                TvShowsOverview(popTvShows: _popularMedia),
                               ],
                             ),
                           ),
                   ],
                 ),
               ),
-
-        // ),
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/credits_info_request.dart';
+import '../../models/request_querry/credits_info_request.dart';
 import '../../screens/cast_screens/all_crew_screen.dart';
 import '../../screens/cast_screens/detailed_cast_item.dart';
 
@@ -68,7 +68,7 @@ class CrewCast extends StatelessWidget {
         Container(
           padding: const EdgeInsets.only(top: 6.0),
           width: double.infinity,
-          height: size.height * 0.18,
+          height: size.height * 0.21,
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -116,9 +116,8 @@ class CrewCast extends StatelessWidget {
         );
       },
       child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 8.0),
-        color: colors.shadow,
-        elevation: 8,
+        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15.0),
+        elevation: 10,
         child: ClipRRect(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6.0),

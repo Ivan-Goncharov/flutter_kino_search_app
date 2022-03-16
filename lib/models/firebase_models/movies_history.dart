@@ -1,7 +1,5 @@
-// ignore_for_file: use_rethrow_when_possible, avoid_print
-
 import 'dart:convert';
-import '../providers/movie.dart';
+import '../../providers/movie.dart';
 import 'package:http/http.dart' as http;
 
 // класс для получния истории поиска
@@ -54,7 +52,6 @@ class MovieHistory {
 
       _historySearch.add(media);
     } catch (error) {
-      print(error);
       throw error;
     }
   }

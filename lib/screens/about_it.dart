@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/widgets/tmdb_icon.dart';
 
-/// Для описания сервиса
+import '../widgets/system_widgets/tmdb_icon.dart';
+
+// Страница для описания сервисе
 class AboutIt extends StatefulWidget {
   const AboutIt({Key? key}) : super(key: key);
 
@@ -26,15 +27,19 @@ class _AboutItState extends State<AboutIt> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               createTitle('O сервисе', theme.textTheme.displayMedium),
+
+              //описание сервиса
               const Padding(
                 padding: EdgeInsets.only(bottom: 16.0),
                 child: Text(
                   'Данный сервис позволяет вам  искать различные фильмы и сериалы. '
                   'Выбирайте любимого провайдера и наслаждайтесь самыми яркими и интересными картинами. \n'
-                  'Если вы не знаете, что сегодня посмотреть, откройте вкладку "обзор" и там вы найдете сотни популярных фильмов на любой вкус',
+                  'Если вы не знаете, что сегодня посмотреть, откройте вкладку "Обзор" и там вы найдете сотни популярных фильмов на любой вкус',
                   style: TextStyle(fontSize: 16),
                 ),
               ),
+
+              //ссылка на иконку TMDB
               createTitle(
                   'Все данные взяты с сервиса', theme.textTheme.displayMedium),
               const Padding(
@@ -42,6 +47,8 @@ class _AboutItState extends State<AboutIt> {
                 child:
                     TmdbIcon(link: 'https://www.themoviedb.org/?language=ru'),
               ),
+
+              //кнопка выхода с профиля
               createTitle('Выход из профиля', theme.textTheme.displayMedium),
               GestureDetector(
                   onTap: () async {

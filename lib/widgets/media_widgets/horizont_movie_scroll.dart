@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/movies_history.dart';
-import 'package:flutter_my_kino_app/providers/movie.dart';
-import 'package:flutter_my_kino_app/widgets/search_item.dart';
 
-import '../screens/all_search_results.dart';
+import '../../models/firebase_models/movies_history.dart';
+import '../../providers/movie.dart';
+import 'search_item.dart';
+import '../../screens/all_search_results.dart';
 
 // виджет для горизонтального скроллинuга фильмов и сералов
 class HorrizontalMovieScroll extends StatelessWidget {

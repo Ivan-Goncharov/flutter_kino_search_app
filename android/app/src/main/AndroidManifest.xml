@@ -2,7 +2,7 @@
     package="com.example.flutter_my_kino_app">
    <uses-permission android:name="android.permission.INTERNET" /> 
    <application
-        android:label="flutter_my_kino_app"
+        android:label="Search movies"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

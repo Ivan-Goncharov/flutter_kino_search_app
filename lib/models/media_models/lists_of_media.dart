@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -49,8 +47,6 @@ class ListsOfMedia {
       return true;
       //если ошибка, то возвращаем false, чтобы обработать запрос
     } catch (e) {
-      print(
-          "Unhandled exception in PopularMovies/requestMovies: ${e.toString()}");
       return false;
     }
   }
@@ -100,23 +96,26 @@ class ListsOfMedia {
 
         //обрабатываем ошибки
       } catch (e) {
-        "Unhandled exception in PopularMovies/getPopularMovie: ${e.toString()}";
         rethrow;
       }
     }
     return list;
   }
 
-  //метод для поиска резульатов по жанрам
-  // принимает жанр
+  //метод для поиска результатов по жанрам
+  // принимает жанр и тип медиа
   Future<List<MediaBasicInfo>?> getListOfGenres(
       {required int genre, required mediaType}) async {
+    //список для записи медиа
     List<MediaBasicInfo>? list = [];
+
+    //переменная, которая ограничивает количество найденных сериалов и фильмов
     int maxLenght = mediaType == 'tv' ? 20 : 30;
 
     //флаг для прекрщаения поиска поле 30 фильмов
     bool _isSearch = true;
     int page = 0;
+
     //ищем фильмы с соотвествующим жанром в разделе топ фильмов,
     //пока не закончится список или не наберется 30 фильмов
     while (_isSearch) {

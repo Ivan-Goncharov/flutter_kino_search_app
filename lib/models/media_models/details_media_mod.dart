@@ -1,15 +1,13 @@
-// ignore_for_file: avoid_print, duplicate_ignore
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_my_kino_app/models/movie_info_request.dart';
-import 'package:flutter_my_kino_app/models/tvshow_info.dart';
-import 'package:flutter_my_kino_app/models/watch_providers_request.dart';
-import '../providers/movie.dart';
 import 'package:http/http.dart' as http;
 
-import 'credits_info_request.dart';
+import '../request_querry/movie_info_request.dart';
+import '../request_querry/tvshow_info.dart';
+import '../request_querry/watch_providers_request.dart';
+import '../../providers/movie.dart';
+import '../request_querry/credits_info_request.dart';
 
 //класс для получения детальной информации об одном медиа продутке
 class DetailsMediaMod {
@@ -29,6 +27,7 @@ class DetailsMediaMod {
   String _title = '';
   String _originalTitle = '';
 
+  //дата последнего эпизода
   String _lastEpisodeDate = '';
   String get lastEpisodeDate => _lastEpisodeDate;
 
@@ -90,6 +89,7 @@ class DetailsMediaMod {
           'https://api.themoviedb.org/3/movie/$id?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&append_to_response=credits,release_dates,watch/providers');
       try {
         final response = await http.get(url);
+        //обрабатываем запрос
         if (response.statusCode == 200) {
           final _movie = MovieInfoRequest.fromJson(json.decode(response.body));
           _genres = _movie.getGenres();
@@ -109,19 +109,11 @@ class DetailsMediaMod {
               _ageLimitUS = releas.releaseDates?[0].certification ?? '';
             }
           }
+        } else {
+          throw SocketException('Connect Error');
         }
       } catch (e) {
-        if (e is SocketException) {
-          print(
-              "Socket exception in DeatiledMovie/getDetailesMovie: ${e.toString()}");
-          rethrow;
-        } else if (e is TimeoutException) {
-          print(
-              "Timeout exception in DeatiledMovie/getDetailesMovie: ${e.toString()}");
-        } else {
-          print(
-              "Unhandled exception in DeatiledMovie/getDetailesMovie: ${e.toString()}");
-        }
+        rethrow;
       }
     }
   }
@@ -133,6 +125,7 @@ class DetailsMediaMod {
           'https://api.themoviedb.org/3/tv/$id?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&append_to_response=credits,watch/providers,external_ids');
       try {
         final response = await http.get(url);
+        //обрабатываем резульаты запроса
         if (response.statusCode == 200) {
           final tvShow = TvShowDetailsInfo.fromJson(json.decode(response.body));
           _genres = tvShow.getGenres();
@@ -143,19 +136,11 @@ class DetailsMediaMod {
           _duration = tvShow.getDuration();
           _lastEpisodeDate = tvShow.getLastEpisodeDate();
           _numberOfSeasons = tvShow.numberOfSeasons;
+        } else {
+          throw SocketException('Connect Error');
         }
       } catch (e) {
-        if (e is SocketException) {
-          print(
-              "Socket exception in DeatiledMovie/getDetailesTVShow: ${e.toString()}");
-          rethrow;
-        } else if (e is TimeoutException) {
-          print(
-              "Timeout exception in DeatiledMovie/getDetailesTVShow: ${e.toString()}");
-        } else {
-          print(
-              "Unhandled exception in DeatiledMovie/getDetailesTVShow: ${e.toString()}");
-        }
+        rethrow;
       }
     }
   }
@@ -178,19 +163,11 @@ class DetailsMediaMod {
           } else {
             _imdbVotes = '${movieRatings['imdbVotes']} оценки';
           }
+        } else {
+          throw SocketException('Connect Error');
         }
       } catch (e) {
-        if (e is SocketException) {
-          print("Socket exception in DeatiledMovie/getRating: ${e.toString()}");
-          rethrow;
-        } else if (e is TimeoutException) {
-          //treat TimeoutException
-          print(
-              "Timeout exception in DeatiledMovie/getRating: ${e.toString()}");
-        } else {
-          print(
-              "Unhandled exception in DeatiledMovie/getRating: ${e.toString()}");
-        }
+        rethrow;
       }
     }
   }
@@ -217,6 +194,9 @@ class DetailsMediaMod {
     );
   }
 
+  //метод для запроса трейлера
+  //принимает код страны
+  //типа медиа и  id фильма
   Future<String> trailerCountry(
     String codCounty,
     String mediaType,
@@ -230,6 +210,7 @@ class DetailsMediaMod {
       if (response.statusCode == 200) {
         final movieTrailer =
             json.decode(response.body)['results'] as List<dynamic>;
+        // обрабатываем результаты
         if (movieTrailer.isNotEmpty) {
           for (int i = 0; i < movieTrailer.length; i++) {
             final video = movieTrailer[i];
@@ -238,6 +219,8 @@ class DetailsMediaMod {
             movieTitle = movieTitle.toLowerCase();
             videoName = videoName.toLowerCase();
 
+            //необходимо, что название видео содержало название фильма
+            //и тип был trailer
             if (videoName.contains(movieTitle) && type == 'Trailer') {
               videoKey = video['key'];
               break;
@@ -249,18 +232,8 @@ class DetailsMediaMod {
         return videoKey;
       }
     } catch (e) {
-      if (e is SocketException) {
-        //treat SocketException
-        print("Socket exception: ${e.toString()}");
-        rethrow;
-      } else if (e is TimeoutException) {
-        //treat TimeoutException
-        print("Timeout exception: ${e.toString()}");
-      } else {
-        print("Unhandled exception: ${e.toString()}");
-      }
+      rethrow;
     }
-    return '';
   }
 
   //метод для получения данных о съемочной группе и актерах фильма
@@ -271,19 +244,17 @@ class DetailsMediaMod {
       try {
         final response = await http.get(url);
         if (response.statusCode == 200) {
+          //обрабтывам резульат с помощью соотвествующей модели
           _creditsInfo =
               CreditsInfoRequest.fromJson(json.decode(response.body));
+          //запускаем метод, который создает
+          // карту самых важных работников съемочной группы
           _creditsInfo!.createMapCrewMovie();
+        } else {
+          throw SocketException('Connect false');
         }
       } catch (e) {
-        if (e is SocketException) {
-          print("Socket exception: ${e.toString()}");
-          rethrow;
-        } else if (e is TimeoutException) {
-          print("Timeout exception: ${e.toString()}");
-        } else {
-          print("Unhandled exception: ${e.toString()}");
-        }
+        rethrow;
       }
     }
   }
@@ -299,16 +270,11 @@ class DetailsMediaMod {
           _creditsInfo =
               CreditsInfoRequest.fromJson(json.decode(response.body));
           _creditsInfo!.createMapCrewMovie();
+        } else {
+          throw SocketException('Connect false');
         }
       } catch (e) {
-        if (e is SocketException) {
-          print("Socket exception: ${e.toString()}");
-          rethrow;
-        } else if (e is TimeoutException) {
-          print("Timeout exception: ${e.toString()}");
-        } else {
-          print("Unhandled exception: ${e.toString()}");
-        }
+        rethrow;
       }
     }
   }
@@ -324,23 +290,16 @@ class DetailsMediaMod {
         if (response.statusCode == 200) {
           _watchProviders =
               WatchProvidersRequest.fromJson(json.decode(response.body));
+        } else {
+          throw SocketException('Connect false');
         }
       } catch (e) {
-        if (e is SocketException) {
-          print(
-              "Socket exception in getWatchProviders/details_media_mod: ${e.toString()}");
-          rethrow;
-        } else if (e is TimeoutException) {
-          print(
-              "Timeout exception getWatchProviders/details_media_mod: ${e.toString()}");
-        } else {
-          print(
-              "Unhandled exception getWatchProviders/details_media_mod: ${e.toString()}");
-        }
+        rethrow;
       }
     }
   }
 
+  // метод для форматирования типа медиа в String
   String setStringMediaType(MediaType type) {
     if (type == MediaType.movie) {
       return 'movie';

@@ -1,3 +1,4 @@
+//класс для обработки поиска сериалов
 class SearchTVShowModel {
   SearchTVShowModel({
     required this.page,

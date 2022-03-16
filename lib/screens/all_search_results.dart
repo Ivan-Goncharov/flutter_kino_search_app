@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/media_widgets/movie_item.dart';
+import '../widgets/system_widgets/error_message_widg.dart';
 import '../providers/movie.dart';
 import '../providers/movies.dart';
-import '../widgets/movie_item.dart';
 
 //Экран для отображение всех результатов поиска
 class AllSearchResult extends StatefulWidget {
@@ -49,6 +47,7 @@ class _AllSearchResultState extends State<AllSearchResult> {
       _isLoading = true;
     });
     try {
+      //если фильмы, то вызываем поиск всех фильмов
       if (_isMovie) {
         await _provider.searchAllMovie(_searchText).then((_) => {
               _movies = _provider.itemsMovies,
@@ -56,7 +55,10 @@ class _AllSearchResultState extends State<AllSearchResult> {
                   .sort((a, b) => b.voteCount!.compareTo(a.voteCount as int)),
               if (mounted) {setState(() => _isLoading = false)}
             });
-      } else {
+      }
+
+      //если сериалы, то вызываем метод поиска всех сериалов
+      else {
         await _provider.searchAllTVShow(name: _searchText).then((_) => {
               _movies = _provider.itemsMovies,
               _movies

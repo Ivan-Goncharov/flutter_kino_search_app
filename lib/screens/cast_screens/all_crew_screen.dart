@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/widgets/detailed_widget/single_person_item.dart';
 
-import '../../models/credits_info_request.dart';
+import '../../widgets/detailed_widget/single_person_item.dart';
+import '../../models/request_querry/credits_info_request.dart';
 
 // Экран с самыми важными работниками съемочной группы
 class AllCrewScreen extends StatefulWidget {
@@ -98,7 +98,6 @@ class _AllCrewScreenState extends State<AllCrewScreen> {
   }
 
 // виджет для создания карты одного работника
-
   Center getProgressBar() {
     return Center(
       child: Column(

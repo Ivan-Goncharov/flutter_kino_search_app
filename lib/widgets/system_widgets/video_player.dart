@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/details_media_mod.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-// import '../../providers/movie.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 // Видео плеер, который использует пакет youtube_player_flutter
 class VideoPlayerScreen extends StatefulWidget {

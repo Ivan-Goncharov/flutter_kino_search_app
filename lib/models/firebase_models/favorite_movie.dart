@@ -1,17 +1,16 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../providers/movie.dart';
+import '../../providers/movie.dart';
 
 // класс для получения информации об избранных фильмах
 class FavoriteMovie with ChangeNotifier {
+  //получаем uid пользователя для записи в firebase
   final _userUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
-  // получаем любимые фильмы с firebase
+  // получаем любимые фильмы пользователся с firebase
   Future<List<MediaBasicInfo>?> getAndFetchFavoriteNote() async {
     if (_userUid.isEmpty) {
       return [];
@@ -47,11 +46,11 @@ class FavoriteMovie with ChangeNotifier {
       );
       return loadedMedia;
     } catch (error) {
-      print('ошибка в getand fetch');
       return null;
     }
   }
 
+  //метод для создания типа медиа
   MediaType getEnumType(String type) {
     if (type == 'movie') {
       return MediaType.movie;

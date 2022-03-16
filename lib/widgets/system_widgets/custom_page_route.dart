@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+//класс для кастомной анимации перехода на экран
 class CustomPageRoute extends PageRouteBuilder {
   final Widget child;
 

@@ -2,40 +2,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/my_theme.dart';
-import '/models/favorite_movie.dart';
+import 'models/firebase_models/favorite_movie.dart';
 import '/screens/auth_screen/login_page.dart';
 import '../screens/auth_screen/password_reset.dart';
 import '../screens/overview_movies_screns/genre_of_movies.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'screens/introduction_screens/introdaction_screen.dart';
 import 'screens/cast_screens/all_actor_screen.dart';
 import 'screens/cast_screens/all_crew_screen.dart';
 import './screens/all_search_results.dart';
-import './widgets/custom_page_route.dart';
+import 'widgets/system_widgets/custom_page_route.dart';
 import './screens/bottom_page.dart';
 import 'screens/movie_detailes_info/full_movie_descrip.dart';
-import './widgets/detailed_widget/videoPlayer.dart';
+import 'widgets/system_widgets/video_player.dart';
 import '../providers/movies.dart';
 import 'screens/movie_detailes_info/wath_providers_screen.dart';
 
 void main() async {
+  //инициализируем FireBase
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
-  final pref = await SharedPreferences.getInstance();
-  final showHome = pref.getBool('showHome') ?? false;
-
-  runApp(MyApp(showHome: showHome));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  bool showHome;
-  MyApp({Key? key, required this.showHome}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //подключаем провайдеры
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
@@ -51,6 +46,8 @@ class MyApp extends StatelessWidget {
           themeMode: ThemeMode.system,
           theme: MyTheme.lightTheme,
           darkTheme: MyTheme.darkTheme,
+
+          //StreamBuilder обрабатывает вход в прилодение через FireBase
           home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
@@ -63,14 +60,12 @@ class MyApp extends StatelessWidget {
               } else if (snapshot.hasData) {
                 return const BottomPage();
               } else {
-                if (showHome) {
-                  return const LoginPage();
-                } else {
-                  return const Introduction();
-                }
+                return const LoginPage();
               }
             },
           ),
+
+          //пути навигации, которые используются в приложении
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case FullMovieDesciption.routNamed:
@@ -120,6 +115,7 @@ class MyApp extends StatelessWidget {
     );
   }
 
+  // метод ошибки при подключении к firebase
   Widget errorMessage() {
     return Padding(
       padding: const EdgeInsets.symmetric(

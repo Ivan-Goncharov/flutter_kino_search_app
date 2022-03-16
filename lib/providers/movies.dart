@@ -1,14 +1,11 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_my_kino_app/models/search_tvshow_request.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
+import '../models/request_querry/search_tvshow_request.dart';
 import 'movie.dart';
-import '../models/search_movie_request.dart';
+import '../models/request_querry/search_movie_request.dart';
 
 //класс провайдер для создания списка фильмов в поиске
 class Movies with ChangeNotifier {
@@ -56,7 +53,7 @@ class Movies with ChangeNotifier {
           addMoviesInList(movieSearch);
         }
       } catch (error) {
-        print('Произошла ошибка при поиске фильмов: $error');
+        rethrow;
       }
     } else {
       print(response.statusCode);
@@ -86,13 +83,10 @@ class Movies with ChangeNotifier {
             isNotEmptySearch = false;
           }
         } else {
-          print(response.statusCode);
+          throw SocketException('Connect error');
         }
-      } on SocketException catch (er) {
-        print('Произошла ошибка при поиске фильмов: $er');
-        rethrow;
       } catch (er) {
-        print('Произошла ошибка при поиске фильмов: $er');
+        rethrow;
       }
     }
   }
@@ -134,10 +128,8 @@ class Movies with ChangeNotifier {
           addTvShowInList(tvShowSearch);
         }
       } catch (error) {
-        print('Произошла ошибка movies/searchTvShow: $error');
+        rethrow;
       }
-    } else {
-      print(response.statusCode);
     }
     notifyListeners();
   }
@@ -172,11 +164,12 @@ class Movies with ChangeNotifier {
         }
         notifyListeners();
       } catch (error) {
-        print('Произошла ошибка movies/searchTvShow: $error');
+        rethrow;
       }
     }
   }
 
+// метод для обработки результатов поиска
   void addTvShowInList(SearchTVShowModel search) {
     for (int i = 0; i < search.results.length; i++) {
       final show = search.results[i];

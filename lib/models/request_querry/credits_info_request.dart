@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-//Модель для получения Json результата запроса об актерах и съемочной групее фильма
+//Модель для получения Json результата запроса об актерах и съемочной группе фильма
 class CreditsInfoRequest {
   CreditsInfoRequest({
-    // required this.id,
     required this.cast,
     required this.crew,
   });
 
-  // int id;
+  //список актеров
   List<Cast> cast;
   List<Cast> getCast() {
+    //возвращаем список в сортированном виде по поплярности
     cast.sort(
       (a, b) => b.popularity.compareTo(a.popularity),
     );
@@ -33,7 +33,6 @@ class CreditsInfoRequest {
 
   factory CreditsInfoRequest.fromJson(Map<String, dynamic> json) =>
       CreditsInfoRequest(
-        // id: json["id"],
         cast: List<Cast>.from(json["cast"].map((x) => Cast.fromJson(x))),
         crew: List<Cast>.from(json["crew"].map((x) => Cast.fromJson(x))),
       );

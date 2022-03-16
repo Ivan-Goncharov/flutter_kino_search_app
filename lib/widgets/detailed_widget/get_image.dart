@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//виджет для вывода изображения одного постера фильма
 // ignore: must_be_immutable
 class GetImage extends StatelessWidget {
   final String? imageUrl;
@@ -19,6 +20,7 @@ class GetImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //если постера нет, то выводим системное изображение с названием фильма
     if (imageUrl!.contains('noImageFound')) {
       return Material(
         type: MaterialType.transparency,
@@ -37,6 +39,8 @@ class GetImage extends StatelessWidget {
           ),
         ),
       );
+
+      //если есть, то выводим постер
     } else {
       return ClipRRect(
         borderRadius: BorderRadius.circular(8.0),

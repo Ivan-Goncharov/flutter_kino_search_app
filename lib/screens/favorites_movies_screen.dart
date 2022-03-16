@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/widgets/error_message_widg.dart';
 import 'package:lottie/lottie.dart';
 
-import '../models/favorite_movie.dart';
+import '../widgets/system_widgets/error_message_widg.dart';
+import '../models/firebase_models/favorite_movie.dart';
 import '../providers/movie.dart';
 import '../widgets/detailed_widget/get_image.dart';
 import '../screens/movie_detailes_info/detailed_movie_info.dart';
@@ -20,17 +20,15 @@ class _FavoritesMoviesScreenState extends State<FavoritesMoviesScreen> {
   bool _isLoading = false;
   bool _isError = false;
 
-  //список заполним позже
+  //список любимых фильмов заполним позже
   List<MediaBasicInfo> _listMedia = [];
 
   @override
   void initState() {
     _favoriteMovie = FavoriteMovie();
-    try {
-      getFavorite();
-    } catch (er) {
-      print('init state ошибка');
-    }
+
+    getFavorite();
+
     super.initState();
   }
 
@@ -91,13 +89,10 @@ class _FavoritesMoviesScreenState extends State<FavoritesMoviesScreen> {
                         // если список пустой, то выводим сообщеие об этом
                         _listMedia.isNotEmpty
                             ? createFavoritesList()
-                            : const Text(
+                            : Text(
                                 'У вас нет избранных фильмов',
-                                style: TextStyle(
-                                  color: Colors.white54,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
                               ),
                       ],
                     ),

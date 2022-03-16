@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../screens/cast_screens/all_actor_screen.dart';
-import '../../models/credits_info_request.dart';
+import '../../models/request_querry/credits_info_request.dart';
 import '../../screens/cast_screens/detailed_cast_item.dart';
 
 //виджет для вывода актеров

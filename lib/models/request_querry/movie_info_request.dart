@@ -1,3 +1,4 @@
+//модель для обработки API запроса, который возвращает детальную информацию об одном фильме
 class MovieInfoRequest {
   MovieInfoRequest({
     required this.genres,

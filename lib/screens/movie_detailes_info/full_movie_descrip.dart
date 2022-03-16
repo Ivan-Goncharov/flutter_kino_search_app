@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/details_media_mod.dart';
+import '../../models/media_models/details_media_mod.dart';
 
 //экран для подробного описания фильма и возрастных ограничений
 class FullMovieDesciption extends StatefulWidget {
@@ -95,14 +95,9 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Полное описание',
-                            style: TextStyle(
-                              color: Colors.white60,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          //описание фильма
+                          Text('Полное описание',
+                              style: Theme.of(context).textTheme.displayMedium),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 16.0,
@@ -115,6 +110,8 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                                   height: 1.4),
                             ),
                           ),
+
+                          // возрастные лимиты
                           Row(
                             children: [
                               // возрастной рейтинг RASR, если отсуствует, то пустой текст
@@ -132,13 +129,16 @@ class _FullMovieDesciptionState extends State<FullMovieDesciption> {
                                       ),
                                     )
                                   : const Text(''),
+
                               //возрастной рейтинг US
                               _details.ageLimitUS.isNotEmpty
                                   ? Image(
                                       width: size.width * 0.22,
                                       height: size.height * 0.22,
                                       fit: BoxFit.contain,
-                                      color: Colors.white,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground,
                                       image: AssetImage(
                                         getImageLimitUs(_details.ageLimitUS),
                                       ),

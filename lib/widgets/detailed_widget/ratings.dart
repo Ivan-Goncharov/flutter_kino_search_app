@@ -13,6 +13,7 @@ class Ratings extends StatelessWidget {
         fontSize: 50, color: getColor(rat), fontWeight: FontWeight.bold);
   }
 
+  // цвет текста рейтинга зависит от оценки
   Color getColor(String rat) {
     if (rat.isNotEmpty && !rat.contains('N/A')) {
       final double movieRat = double.parse(rat);
@@ -44,11 +45,10 @@ class Ratings extends StatelessWidget {
             ),
           ),
         ),
+
         //цвет контейнера чуть светлее, чем фон
         Container(
           width: double.infinity,
-          // color: const Color.fromRGBO(20, 20, 20, 1),
-
           decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.circular(8.0)),
@@ -62,6 +62,7 @@ class Ratings extends StatelessWidget {
                   style: ratTextStyle(imdbRat),
                 ),
               ),
+
               // количество оценок
               Padding(
                 padding: const EdgeInsets.only(top: 6.0, bottom: 18.0),

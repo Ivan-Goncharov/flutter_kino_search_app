@@ -1,16 +1,16 @@
-// ignore_for_file: avoid_print
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-import '../../models/details_media_mod.dart';
+import '../../models/media_models/details_media_mod.dart';
 import '../../widgets/detailed_widget/get_image.dart';
 import '../../providers/movie.dart';
-import '../../widgets/detailed_widget/videoPlayer.dart';
-import '../../widgets/error_message_widg.dart';
+import '../../widgets/system_widgets/video_player.dart';
+import '../../widgets/system_widgets/error_message_widg.dart';
 import '../../widgets/detailed_widget/movie_details_column.dart';
 
-//класс с подробным описанием медиа
+//класс с подробным описанием медиа (фильма или сериала)
 class DetailedInfoScreen extends StatefulWidget {
+  //принимает фильм и тэг для анимированного перехода
   final MediaBasicInfo movie;
   final String heroTag;
   const DetailedInfoScreen({
@@ -31,6 +31,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   var _isError = false;
   bool _isClick = false;
 
+  //инициализируем данные о фильме
   @override
   void initState() {
     _movie = widget.movie;
@@ -47,12 +48,18 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
     setState(() {
       _isLoading = true;
     });
+
+    //проверяем, избранные это фильм или нет, для правильного отображения иконки
     _movie!.isfavorte().then((value) {
       _movie!.status = value;
+
+      //если тип медиа Фильм, то инициализируем данные, как у фильма
       if (_movie!.type == MediaType.movie) {
         _inizMovie();
       }
-      if (_movie!.type == MediaType.tvShow) {
+
+      //если тип медиа TV, то инициализируем сериал
+      else {
         _inizTVShow();
       }
     });
@@ -68,22 +75,25 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
       });
 
       if (_details != null) {
+        //сперва получаем детальные данные о фильме, они нужны для остальных запросов
         _details!.getDetailesMovie();
+
+        //делаем все запросы синхронно
         await Future.wait([
           _details!.getRating(),
           _details!.getMovieCredits(),
           _details!.getTrailer(_movie!.type),
           _details!.getWatchProviders(_movie!.type),
         ]).then((_) {
+          //если экран закрыт уже, то метод закрываем
           if (!mounted) return;
+
+          //если нет, то прекращаем загрузку
           setState(() => _isLoading = false);
         });
       }
     } catch (error) {
-      print('ошибка в _inizMovie/detaled movie $error');
-      setState(() {
-        _isError = true;
-      });
+      setState(() => _isError = true);
     }
   }
 
@@ -94,9 +104,12 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
         _isLoading = true;
         _isError = false;
       });
+
       if (_details != null) {
-        _movie!.isfavorte().then((value) => _movie!.status = value);
+        //сперва получаем детальные данные о сериале, они нужны для остальных запросов
         _details!.getDetailesTVShow();
+
+        //делаем все запросы синхронно
         await Future.wait([
           _details!.getRating(),
           _details!.getTVShowCredits(),
@@ -108,14 +121,11 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
         });
       }
     } catch (error) {
-      print('ошибка в _inizMovie/detaled movie $error');
-      if (!mounted) return;
-      setState(() {
-        _isError = true;
-      });
+      setState(() => _isError = true);
     }
   }
 
+  //метод для изменения статуса медиа
   void _likeStatus() {
     _isClick = !_isClick;
     setState(() {
@@ -123,6 +133,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
     });
   }
 
+  //метод для получения изображения для постера
   ImageProvider getImage(String? imageUrl) {
     if (imageUrl!.contains('noImageFound')) {
       return AssetImage(imageUrl);
@@ -137,6 +148,9 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
     final _myWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+
+        //ошибка загрузки
         body: _isError
             ? ErrorMessageWidget(
                 handler: _inizMovie,
@@ -145,7 +159,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
             : Stack(
                 children: [
                   SizedBox(
-                    height: _myHeight * 0.85,
+                    height: _myHeight,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
@@ -168,7 +182,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                         //постер на переднем плане, подключаем анимацию -
                         //для плавного изменеия размеров и положения виджета
                         Positioned(
-                          bottom: 110,
+                          bottom: 180,
                           child: GestureDetector(
                             onDoubleTap: (() {
                               _likeStatus();
@@ -251,11 +265,11 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                     builder: (BuildContext context,
                         ScrollController scrollController) {
                       return Opacity(
-                        opacity: 0.96,
+                        opacity: 0.95,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
-                            color: Theme.of(context).colorScheme.surface,
+                            color: Theme.of(context).colorScheme.background,
                             child: SingleChildScrollView(
                               controller: scrollController,
                               child: Padding(
@@ -271,6 +285,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                                         fontSize: 22,
                                       ),
                                     ),
+
                                     //название фильма на языке оригинала
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -284,6 +299,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                                       ),
                                     ),
                                     _isLoading
+
                                         // пока загружаем, показываем загрузочный спиннер
                                         ? Container(
                                             alignment: Alignment.topCenter,
@@ -294,6 +310,8 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                                                     .colorScheme
                                                     .onInverseSurface),
                                           )
+
+                                        //выводим детальные данные о фильме
                                         : Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 4.0),
@@ -322,7 +340,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   Positioned playVideoButton(BuildContext context) {
     return Positioned(
       right: 55,
-      bottom: 125,
+      bottom: 195,
       child: CircleAvatar(
         radius: 22,
         backgroundColor: const Color.fromARGB(255, 71, 70, 70),

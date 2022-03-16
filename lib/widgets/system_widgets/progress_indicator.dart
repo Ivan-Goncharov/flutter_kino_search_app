@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//индикатор загрузки
 class CustomProgressIndicator extends StatelessWidget {
   const CustomProgressIndicator({Key? key}) : super(key: key);
 

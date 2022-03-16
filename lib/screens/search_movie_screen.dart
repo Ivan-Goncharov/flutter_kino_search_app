@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/movies.dart';
-import '../models/movies_history.dart';
-import '../widgets/error_message_widg.dart';
-import '../widgets/horizont_movie_scroll.dart';
+import '../models/firebase_models/movies_history.dart';
+import '../widgets/system_widgets/error_message_widg.dart';
+import '../widgets/media_widgets/horizont_movie_scroll.dart';
 
 class SearchMovieScreen extends StatefulWidget {
   const SearchMovieScreen({Key? key}) : super(key: key);

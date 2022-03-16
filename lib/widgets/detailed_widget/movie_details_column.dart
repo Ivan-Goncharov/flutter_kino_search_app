@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../models/details_media_mod.dart';
+import '../../models/media_models/details_media_mod.dart';
 import '../../screens/movie_detailes_info/wath_providers_screen.dart';
 import '../../providers/movie.dart';
 import '../../screens/movie_detailes_info/full_movie_descrip.dart';
@@ -24,18 +24,32 @@ class MovieDetailsColumn extends StatelessWidget {
   final double _myHeight;
   final MediaBasicInfo? _media;
 
+  //метод для создания надписи  "год - жанр"
   String getDateAndGenre() {
+    //дата создания фильма или сериала
     String date = _details?.date ?? '';
+
+    //если есть дата последнего сезона у сериала, то выводим и ее
     if (_details!.lastEpisodeDate != '') {
       date += ' - ${_details!.lastEpisodeDate}';
     }
+
+    //переменная для даты и жанра
     String text = '';
+
+    //проверяем, чтобы дата была
     if (date != '') {
-      if (date != '') {
+      //если указаны жанра у фильма, то выводим и дату и жанр
+      if (_details?.genres != null) {
         text = '$date г.  ${_details!.genres}';
-      } else {
+      }
+
+      //если не указаны жанры, то выводим только дату
+      else {
         text = '$date г.';
       }
+
+      //если нет даты, но если жанры, то выводим только жанры
     } else if (_details?.genres != null) {
       text = _details!.genres;
     }
@@ -60,6 +74,7 @@ class MovieDetailsColumn extends StatelessWidget {
                 ),
               )
             : const SizedBox(),
+
         // длительность фильма
         _details!.duration.isEmpty
             ? const SizedBox()
@@ -92,6 +107,7 @@ class MovieDetailsColumn extends StatelessWidget {
                           fontWeight: FontWeight.w400, height: 1.4),
                     ),
                   ),
+
                   //кнопка перехода
                   //на экран с полным описанием фильма
                   TextButton(
@@ -111,11 +127,11 @@ class MovieDetailsColumn extends StatelessWidget {
                   ),
                 ],
               ),
+
+        //рейтинг фильма и количество оценок
         _details!.imdbRat.isEmpty
             ? const SizedBox()
-            :
-            //рейтинг фильма и количество оценок
-            Container(
+            : Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(8.0),
                 child: Ratings(_details!.imdbRat, _details!.imdbVotes),

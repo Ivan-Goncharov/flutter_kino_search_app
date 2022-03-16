@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//класс для хранения двух тем приложения
 class MyTheme {
   static final lightTheme = ThemeData(
     colorScheme: const ColorScheme(

@@ -1,17 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/models/map_of_genres_media.dart';
 
-import '../screens/overview_movies_screns/genre_of_movies.dart';
+import '../../models/media_models/map_of_genres_media.dart';
+import '../../screens/overview_movies_screns/genre_of_movies.dart';
 
 //виджет для вывода скроллинга жанров
 class ListViewOfGenres extends StatelessWidget {
   final bool isMovie;
   ListViewOfGenres({Key? key, required this.isMovie}) : super(key: key);
-
-  //список жанров фильмов: id, name, imageUrl
-  // List<Map<String, dynamic>> genresOfMovie = GenresOfMedia.genresOfMovies;
-  // List<Map<String, dynamic>> genresOfTV = GenresOfMedia.genresOfTvShow;
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +18,15 @@ class ListViewOfGenres extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        //заголовок
         Text(
           isMovie ? 'Фильмы по жанрам' : 'Сериалы по жанрам',
           style: Theme.of(context).textTheme.displayMedium,
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
         ),
+
+        //скроллинг жанров
         Container(
           padding: const EdgeInsets.only(top: 8),
           height: 250,

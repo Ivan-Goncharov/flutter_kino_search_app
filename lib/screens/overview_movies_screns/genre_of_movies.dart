@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../providers/movie.dart';
-import '../../widgets/error_message_widg.dart';
-import '../../models/lists_of_media.dart';
+import '../../widgets/system_widgets/error_message_widg.dart';
+import '../../models/media_models/lists_of_media.dart';
 import '../../widgets/detailed_widget/get_image.dart';
 import '../movie_detailes_info/detailed_movie_info.dart';
 

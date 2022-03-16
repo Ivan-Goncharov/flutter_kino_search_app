@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/screens/favorites_movies_screen.dart';
 
+import '../screens/favorites_movies_screen.dart';
 import './about_it.dart';
 import 'overview_movies_screns/overview_movie_screen.dart';
 import './search_movie_screen.dart';
@@ -71,7 +71,7 @@ class _BottomPageState extends State<BottomPage> {
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.info_outline),
-            label: 'О нас',
+            label: 'О сервисе',
             backgroundColor: colorSc.surfaceVariant,
           ),
         ],
