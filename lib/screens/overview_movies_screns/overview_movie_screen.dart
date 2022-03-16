@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_final_fields
 
-import 'package:flutter_my_kino_app/models/popular_movies.dart';
+import 'package:flutter_my_kino_app/models/lists_of_media.dart';
 import 'package:flutter_my_kino_app/models/popular_tv_shows.dart';
 import 'package:flutter_my_kino_app/providers/movie.dart';
 import 'package:flutter_my_kino_app/screens/overview_movies_screns/tv_shows_overview.dart';
@@ -28,7 +28,7 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
   bool _isError = false;
   bool _isLoading = false;
 
-  PopularMovies _popularMovies = PopularMovies();
+  ListsOfMedia _popularMovies = ListsOfMedia();
   PopularTvShowsModel _popularTvShows = PopularTvShowsModel();
 
   @override
@@ -50,23 +50,11 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
       _isLoading = true;
     });
 
-    await Future.wait([
-      _popularMovies.requestMovies(),
-      _popularTvShows.requestTVShows(),
-    ]).then((value) {
-      if (!value[0] || !value[1]) setState(() => _isError = true);
+    await _popularMovies.requestMediaLists().then((value) {
+      if (!value) setState(() => _isError = true);
       if (!mounted) return;
       setState(() => _isLoading = false);
     });
-  }
-
-  // кастомный стиль для названий страниц
-  TextStyle _textStyle(Color color) {
-    return TextStyle(
-      color: color,
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    );
   }
 
   //счетчик для переключения страниц
@@ -110,7 +98,7 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
                               controller: _controller,
                               children: [
                                 MoviesOverView(popMovies: _popularMovies),
-                                TvShowsOverview(popTvShows: _popularTvShows),
+                                TvShowsOverview(popTvShows: _popularMovies),
                               ],
                             ),
                           ),
@@ -142,17 +130,15 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
       minWidth: size.width * 0.4,
       initialLabelIndex: _count,
       cornerRadius: 8.0,
+      activeFgColor: colors.onTertiary,
       activeBgColor: [
-        colors.surface,
-        colors.surface,
+        colors.tertiary,
       ],
-      borderColor: [colors.surfaceVariant],
+      borderColor: [colors.tertiary],
       borderWidth: 2,
       inactiveBgColor: colors.surfaceVariant,
-      customTextStyles: [
-        _textStyle(colors.onSurfaceVariant),
-        _textStyle(colors.onSurfaceVariant)
-      ],
+      inactiveFgColor: colors.onSurfaceVariant,
+      fontSize: 16,
       totalSwitches: 2,
       labels: const [
         'Фильмы',

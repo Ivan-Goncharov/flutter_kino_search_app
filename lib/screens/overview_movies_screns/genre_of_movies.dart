@@ -3,7 +3,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../providers/movie.dart';
 import '../../widgets/error_message_widg.dart';
-import '../../models/popular_movies.dart';
+import '../../models/lists_of_media.dart';
 import '../../widgets/detailed_widget/get_image.dart';
 import '../movie_detailes_info/detailed_movie_info.dart';
 
@@ -21,13 +21,14 @@ class GenresOfMovies extends StatefulWidget {
 
 class _GenresOfMoviesState extends State<GenresOfMovies> {
   //экземпляр класса для api запросов
-  final PopularMovies _popMovies = PopularMovies();
+  final ListsOfMedia _popMovies = ListsOfMedia();
   //список фильмов заполним позже
   List<MediaBasicInfo> _listMedia = [];
 
   //два флага для загрузки и для ошибки
   bool _isLoading = false;
   bool _isError = false;
+  String _mediaType = '';
 
   //id и name жанра получим чуть позже
   int _genreId = 0;
@@ -40,20 +41,23 @@ class _GenresOfMoviesState extends State<GenresOfMovies> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _genreId = arg['genreId'];
     _genreName = arg['genreName'];
+    _mediaType = arg['mediaType'];
 
     //производим инициализацию списка фильмов
-    _iniz();
+    _inizMovie();
     super.didChangeDependencies();
   }
 
   // метод для инициализации списка фильмов
-  _iniz() async {
+  _inizMovie() async {
     setState(() {
       _isError = false;
       _isLoading = true;
     });
     // вызываем метод для api запроса, ждем результат и обрабатываем его
-    await _popMovies.getListOfGenres(genre: _genreId).then((value) {
+    await _popMovies
+        .getListOfGenres(genre: _genreId, mediaType: _mediaType)
+        .then((value) {
       if (!mounted) return;
       if (value != null) {
         _listMedia = value;
@@ -86,7 +90,7 @@ class _GenresOfMoviesState extends State<GenresOfMovies> {
         ),
         body: _isError
             //выводим ошибку, если произошел сбой в поиске
-            ? ErrorMessageWidget(handler: _iniz, size: size)
+            ? ErrorMessageWidget(handler: _inizMovie, size: size)
             : _isLoading
                 ? getProgressBar(size)
                 : SingleChildScrollView(

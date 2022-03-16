@@ -1,97 +1,29 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/models/map_of_genres_media.dart';
 
 import '../screens/overview_movies_screns/genre_of_movies.dart';
 
 //виджет для вывода скроллинга жанров
 class ListViewOfGenres extends StatelessWidget {
-  ListViewOfGenres({Key? key}) : super(key: key);
+  final bool isMovie;
+  ListViewOfGenres({Key? key, required this.isMovie}) : super(key: key);
 
   //список жанров фильмов: id, name, imageUrl
-  List<Map<String, dynamic>> listOfGenres = [
-    {
-      "id": 28,
-      "name": "Боевик",
-      'imageUrl': 'assets/image/genres/action_movie.jpg',
-    },
-    {
-      "id": 12,
-      "name": "Приключения",
-      'imageUrl': 'assets/image/genres/adventure.jpg'
-    },
-    {
-      "id": 16,
-      "name": "Мультфильм",
-      'imageUrl': 'assets/image/genres/animated.jpg'
-    },
-    {"id": 35, "name": "Комедия", 'imageUrl': 'assets/image/genres/comedy.jpg'},
-    {
-      "id": 80,
-      "name": "Криминал",
-      'imageUrl': 'assets/image/genres/criminal.jpg'
-    },
-    {
-      "id": 99,
-      "name": "Биография",
-      'imageUrl': 'assets/image/genres/documentary.jpg'
-    },
-    {"id": 18, "name": "Драма", 'imageUrl': 'assets/image/genres/drama.jpg'},
-    {
-      "id": 10751,
-      "name": "Семейный",
-      'imageUrl': 'assets/image/genres/family.jpg'
-    },
-    {
-      "id": 14,
-      "name": "Фэнтези",
-      'imageUrl': 'assets/image/genres/fantasy.jpg'
-    },
-    {
-      "id": 36,
-      "name": "История",
-      'imageUrl': 'assets/image/genres/history.jpg'
-    },
-    {"id": 27, "name": "ужасы", 'imageUrl': 'assets/image/genres/horror.jpg'},
-    {
-      "id": 10402,
-      "name": "Музыка",
-      'imageUrl': 'assets/image/genres/music.jpg'
-    },
-    {
-      "id": 9648,
-      "name": "Детектив",
-      'imageUrl': 'assets/image/genres/detectvie.jpg'
-    },
-    {
-      "id": 878,
-      "name": "Фантастика",
-      'imageUrl': 'assets/image/genres/fantastic.jpg'
-    },
-    {
-      "id": 53,
-      "name": "Триллер",
-      'imageUrl': 'assets/image/genres/thriller.jpg'
-    },
-    {
-      "id": 10752,
-      "name": "Военный",
-      'imageUrl': 'assets/image/genres/military.jpg'
-    },
-    {
-      "id": 37,
-      "name": "Вестерн",
-      'imageUrl': 'assets/image/genres/western.jpg'
-    },
-  ];
+  // List<Map<String, dynamic>> genresOfMovie = GenresOfMedia.genresOfMovies;
+  // List<Map<String, dynamic>> genresOfTV = GenresOfMedia.genresOfTvShow;
 
   @override
   Widget build(BuildContext context) {
+    //список жанров фильмов: id, name, imageUrl
+    List<Map<String, dynamic>> genres =
+        isMovie ? GenresOfMedia.genresOfMovies : GenresOfMedia.genresOfTvShow;
     final size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          ' Фильмы по жанрам',
+          isMovie ? 'Фильмы по жанрам' : 'Сериалы по жанрам',
           style: Theme.of(context).textTheme.displayMedium,
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
@@ -105,10 +37,10 @@ class ListViewOfGenres extends StatelessWidget {
             physics: const ClampingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            itemCount: listOfGenres.length,
+            itemCount: genres.length,
             itemBuilder: (context, index) {
               //получаем жанр
-              final genre = listOfGenres[index];
+              final genre = genres[index];
               return Container(
                 padding: const EdgeInsets.only(right: 16.0, left: 3),
                 //обрабатываем нажатие
@@ -121,6 +53,7 @@ class ListViewOfGenres extends StatelessWidget {
                       arguments: {
                         'genreName': genre['name'],
                         'genreId': genre['id'],
+                        'mediaType': isMovie ? 'movie' : 'tv'
                       },
                     );
                   },

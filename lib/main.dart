@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/providers/theme_provider.dart';
+import 'package:flutter_my_kino_app/models/my_theme.dart';
 import '/models/favorite_movie.dart';
 import '/screens/auth_screen/login_page.dart';
 import '../screens/auth_screen/password_reset.dart';

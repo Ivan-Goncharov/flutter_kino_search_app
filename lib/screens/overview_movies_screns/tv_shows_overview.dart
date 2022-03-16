@@ -2,12 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_my_kino_app/models/movies_history.dart';
+import 'package:flutter_my_kino_app/models/lists_of_media.dart';
 import 'package:flutter_my_kino_app/widgets/horizont_movie_scroll.dart';
+import 'package:flutter_my_kino_app/widgets/listview_of_genres.dart';
 import '../../models/popular_tv_shows.dart';
 
 //экран для вывода поплуряных и рейтинговых сериалов
 class TvShowsOverview extends StatelessWidget {
-  final PopularTvShowsModel popTvShows;
+  // final PopularTvShowsModel popTvShows;
+  final ListsOfMedia popTvShows;
   const TvShowsOverview({Key? key, required this.popTvShows}) : super(key: key);
 
   @override
@@ -32,6 +35,11 @@ class TvShowsOverview extends StatelessWidget {
                 historySearch: MovieHistory(''),
                 textController: '',
                 typeScroll: 'PopularTvShows',
+              ),
+
+              ListViewOfGenres(isMovie: false),
+              SizedBox(
+                height: 10,
               ),
 
               //рейтинговые сериалы

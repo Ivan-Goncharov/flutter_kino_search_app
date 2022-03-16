@@ -9,7 +9,7 @@ import '../../widgets/detailed_widget/videoPlayer.dart';
 import '../../widgets/error_message_widg.dart';
 import '../../widgets/detailed_widget/movie_details_column.dart';
 
-//класс с подробным описанием фильма
+//класс с подробным описанием медиа
 class DetailedInfoScreen extends StatefulWidget {
   final MediaBasicInfo movie;
   final String heroTag;

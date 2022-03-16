@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 import '../../models/movies_history.dart';
 import '../../widgets/listview_of_genres.dart';
-import '../../models/popular_movies.dart';
+import '../../models/lists_of_media.dart';
 import '../../widgets/horizont_movie_scroll.dart';
 
 // Обзорный экран популярных фильмов
 class MoviesOverView extends StatelessWidget {
-  final PopularMovies popMovies;
+  final ListsOfMedia popMovies;
   const MoviesOverView({Key? key, required this.popMovies}) : super(key: key);
 
   //получаем экземпляр класса для запросов api по популярным фильмам
@@ -53,7 +53,9 @@ class MoviesOverView extends StatelessWidget {
               ),
 
               //список жанров
-              ListViewOfGenres(),
+              ListViewOfGenres(
+                isMovie: true,
+              ),
               const SizedBox(
                 height: 10,
               ),
