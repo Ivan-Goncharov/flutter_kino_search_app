@@ -47,6 +47,7 @@ class ListsOfMedia {
       return true;
       //если ошибка, то возвращаем false, чтобы обработать запрос
     } catch (e) {
+      print(e);
       return false;
     }
   }

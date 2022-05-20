@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_my_kino_app/widgets/system_widgets/error_message_widg.dart';
 
 import '../../models/media_models/cast.dart';
-import '../../widgets/detailed_widget/get_image.dart';
 import '../../models/request_querry/credits_info_request.dart';
 import '../../providers/movie.dart';
-import '../movie_detailes_info/detailed_movie_info.dart';
+import '../../widgets/detailed_widget/grid_view_depart.dart';
+import '../../widgets/system_widgets/error_message_widg.dart';
 
 //экран с детальным описанием актера
 class DetailedCastInfo extends StatefulWidget {
   //принимаем информацию об актере и herokey для анимации
-  final String heroKey;
+  final Key heroKey;
   final Cast castItem;
   const DetailedCastInfo({
     required this.heroKey,
@@ -25,11 +24,16 @@ class DetailedCastInfo extends StatefulWidget {
 class _DetailedCastInfoState extends State<DetailedCastInfo> {
   //Создаем объект класса с детальным описанием работника
   ItemCastInfo? _castInfo;
+  //переменная для загрузки
   bool _isLoading = false;
+  //отслеживаение ошибки
   bool _isError = false;
+  //список актеров и список работников
   List<MediaBasicInfo> _moviesActor = [];
   List<MediaBasicInfo> _moviesCrew = [];
+  //скролл контроллер
   late DraggableScrollableController _scrContr;
+  //флаг для скрытия кнопки "назад"
   var _hideBackBut = false;
 
   @override
@@ -221,21 +225,18 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
 
                                             //сетка с фильмами, как Актер
                                             _moviesActor.isNotEmpty
-                                                ? createDeportament(
-                                                    context,
-                                                    _moviesActor,
-                                                    'Актер',
-                                                    size,
+                                                ? CastDepartament(
+                                                    depName: 'Актер',
+                                                    list: _moviesActor,
                                                   )
                                                 : const SizedBox(),
 
                                             //сетка с фильмами, как участник съемочной команды
                                             _moviesCrew.isNotEmpty
-                                                ? createDeportament(
-                                                    context,
-                                                    _moviesCrew,
-                                                    'Съемочная группа',
-                                                    size)
+                                                ? CastDepartament(
+                                                    depName: 'Съемочная группа',
+                                                    list: _moviesCrew,
+                                                  )
                                                 : const SizedBox(),
                                           ],
                                         ),
@@ -249,80 +250,6 @@ class _DetailedCastInfoState extends State<DetailedCastInfo> {
                   ],
                 ),
               ),
-      ),
-    );
-  }
-
-  //метод для создания сетки одного подразделения, либо актер, либо чъемочная группа
-  Column createDeportament(BuildContext context, List<MediaBasicInfo> list,
-      String depName, Size size) {
-    return Column(
-      children: [
-        //название депортамента
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.all(8.0),
-          child: Text(depName,
-              textAlign: TextAlign.start,
-              style: Theme.of(context).textTheme.displayMedium),
-        ),
-
-        //создаем сетку с фильмами
-        createGridView(context, list, size),
-      ],
-    );
-  }
-
-// метод для создания сетки с фильмами одного из разделений
-  Widget createGridView(
-      BuildContext ctx, List<MediaBasicInfo> movie, Size size) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      width: double.infinity,
-
-      //сетка с прокруткой внутри
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: 2 / 3,
-          crossAxisCount: 3,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-        ),
-        itemBuilder: (ctx, index) {
-          //тег для анимации перехода
-          final heroTag = 'gridView$index${movie[index].id}';
-          return GestureDetector(
-            //обрабатываем нажатие на постер, открывая детальное описание фильма
-            onTap: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: ((context, animation, secondaryAnimation) {
-                    return DetailedInfoScreen(
-                      movie: movie[index],
-                      heroTag: heroTag,
-                    );
-                  }),
-                  transitionDuration: const Duration(milliseconds: 700),
-                  reverseTransitionDuration: const Duration(milliseconds: 300),
-                ),
-              );
-            },
-
-            //выводим постер одного фильма или серила
-            child: Hero(
-              tag: heroTag,
-              child: GetImage(
-                  imageUrl: movie[index].imageUrl,
-                  title: movie[index].title,
-                  height: size.height * 0.1,
-                  width: size.width * 0.2),
-            ),
-          );
-        },
-        itemCount: movie.length,
       ),
     );
   }

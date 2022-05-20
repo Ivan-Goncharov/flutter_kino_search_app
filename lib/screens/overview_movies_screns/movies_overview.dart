@@ -1,5 +1,3 @@
-// ignore_for_file: avoidwidget.print
-
 import 'package:flutter/material.dart';
 
 import '../../models/firebase_models/movies_history.dart';
@@ -33,7 +31,7 @@ class MoviesOverView extends StatelessWidget {
                 isMovie: true,
                 isSearch: false,
                 historySearch: MovieHistory(''),
-                textController: '',
+                text: '',
                 typeScroll: 'популярные фильмы',
               ),
               const SizedBox(
@@ -48,7 +46,7 @@ class MoviesOverView extends StatelessWidget {
                 isMovie: true,
                 isSearch: false,
                 historySearch: MovieHistory(''),
-                textController: '',
+                text: '',
                 typeScroll: 'лучшие фильмы',
               ),
 
@@ -68,7 +66,7 @@ class MoviesOverView extends StatelessWidget {
                 isMovie: true,
                 isSearch: false,
                 historySearch: MovieHistory(''),
-                textController: '',
+                text: '',
                 typeScroll: 'сейчас смотрят',
               ),
 
@@ -84,7 +82,7 @@ class MoviesOverView extends StatelessWidget {
                 isMovie: true,
                 isSearch: false,
                 historySearch: MovieHistory(''),
-                textController: '',
+                text: '',
                 typeScroll: 'скоро в кино',
               ),
             ],

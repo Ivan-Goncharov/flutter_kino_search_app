@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/detailed_widget/single_person_item.dart';
 import '../../models/request_querry/credits_info_request.dart';
+import '../../widgets/detailed_widget/single_person_item.dart';
 
 // Экран с самыми важными работниками съемочной группы
 class AllCrewScreen extends StatefulWidget {
@@ -36,24 +36,28 @@ class _AllCrewScreenState extends State<AllCrewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Съемочная группа'),
       ),
       body: _isLoading
-          ? getProgressBar()
+          ? Center(
+              child: Column(
+                children: const [
+                  CircularProgressIndicator(),
+                  Text('Загружаем список'),
+                ],
+              ),
+            )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               // сперва проходим по всем ключам карты
               child: ListView.builder(
                 itemBuilder: (context, index) {
                   if (_listCast[index].value.isNotEmpty) {
-                    return createListView(
-                      _listCast[index].value,
-                      _listCast[index].key,
-                      context,
-                      textTheme,
+                    return ItemEmploye(
+                      title: _listCast[index].key,
+                      crewList: _listCast[index].value,
                     );
                   } else {
                     return const SizedBox();
@@ -64,10 +68,20 @@ class _AllCrewScreenState extends State<AllCrewScreen> {
             ),
     );
   }
+}
 
-  // виджет для создания одного скролл списка по должности
-  Widget createListView(List<Cast> crewList, String title, BuildContext context,
-      TextTheme textTheme) {
+// виджет для создания одного скролл списка по должности
+class ItemEmploye extends StatelessWidget {
+  //заголовок должности
+  final String title;
+  //список работников
+  final List<Cast> crewList;
+
+  const ItemEmploye({Key? key, required this.title, required this.crewList})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       width: double.infinity,
@@ -76,7 +90,8 @@ class _AllCrewScreenState extends State<AllCrewScreen> {
         children: [
           // выводим должность
           Text(title,
-              textAlign: TextAlign.start, style: textTheme.displayMedium),
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.displayMedium),
           const SizedBox(height: 15),
           // список людей на должности
           ListView.builder(
@@ -92,18 +107,6 @@ class _AllCrewScreenState extends State<AllCrewScreen> {
             scrollDirection: Axis.vertical,
             physics: const ClampingScrollPhysics(),
           ),
-        ],
-      ),
-    );
-  }
-
-// виджет для создания карты одного работника
-  Center getProgressBar() {
-    return Center(
-      child: Column(
-        children: const [
-          CircularProgressIndicator(),
-          Text('Загружаем список'),
         ],
       ),
     );

@@ -1,12 +1,13 @@
 import 'package:lottie/lottie.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/media_models/lists_of_media.dart';
-import '../../screens/overview_movies_screns/tv_shows_overview.dart';
-import '../../widgets/system_widgets/error_message_widg.dart';
 import '../../screens/overview_movies_screns/movies_overview.dart';
+import '../../screens/overview_movies_screns/tv_shows_overview.dart';
+import '../../models/media_models/lists_of_media.dart';
+import '../../widgets/system_widgets/error_message_widg.dart';
+import '../../widgets/system_widgets/switch_pages.dart';
 
+// экран для вывода обзорной информации по популярным фильмам и сериалам
 class OverviewMovieScreen extends StatefulWidget {
   static const routName = '.movieInfo';
   const OverviewMovieScreen({Key? key}) : super(key: key);
@@ -14,7 +15,6 @@ class OverviewMovieScreen extends StatefulWidget {
   State<OverviewMovieScreen> createState() => _OverviewMovieScreenState();
 }
 
-// экран для вывода обзорной информации по популярным фильмам и сериалам
 class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
   // флаг для переключения между страницами Сериалов/фильмов
   PageController _controller = PageController(
@@ -85,11 +85,28 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //создаем переключатель между страницами
-                    createToogleSwitch(colors, size),
+                    PagesToogleSwitch(
+                        count: _count,
+                        changePageFirst: () {
+                          setState(() {
+                            _controller.animateToPage(0,
+                                duration: const Duration(microseconds: 300),
+                                curve: Curves.easeInBack);
+                            _setCount(true);
+                          });
+                        },
+                        changePageSecond: () {
+                          setState(() {
+                            _controller.animateToPage(1,
+                                duration: const Duration(microseconds: 300),
+                                curve: Curves.easeIn);
+                            _setCount(false);
+                          });
+                        }),
                     _isLoading
                         ?
                         //виджет загрузки
-                        animated(size)
+                        AnimationLoadingWidget()
                         :
                         //все остальное место занимает PageView
                         Expanded(
@@ -110,57 +127,22 @@ class _OverviewMovieScreenState extends State<OverviewMovieScreen> {
       ),
     );
   }
+}
 
-  //анимированный виджет загрузки
-  Widget animated(Size size) {
+//анимированный виджет загрузки
+class AnimationLoadingWidget extends StatelessWidget {
+  const AnimationLoadingWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 150),
       alignment: Alignment.center,
       child: Lottie.asset(
         'assets/animation_lottie/movie_loading.json',
-        height: size.height * 0.4,
-        width: size.width * 0.4,
+        height: MediaQuery.of(context).size.height * 0.4,
+        width: MediaQuery.of(context).size.width * 0.4,
       ),
-    );
-  }
-
-  //toglle switch для переключения страниц
-  ToggleSwitch createToogleSwitch(ColorScheme colors, Size size) {
-    return ToggleSwitch(
-      minWidth: size.width * 0.4,
-      initialLabelIndex: _count,
-      cornerRadius: 8.0,
-      activeFgColor: colors.onTertiary,
-      activeBgColor: [
-        colors.tertiary,
-      ],
-      borderColor: [colors.tertiary],
-      borderWidth: 2,
-      inactiveBgColor: colors.surfaceVariant,
-      inactiveFgColor: colors.onSurfaceVariant,
-      fontSize: 16,
-      totalSwitches: 2,
-      labels: const [
-        'Фильмы',
-        'Сериалы',
-      ],
-      onToggle: (index) {
-        if (index == 0) {
-          setState(() {
-            _controller.animateToPage(0,
-                duration: const Duration(microseconds: 300),
-                curve: Curves.easeInBack);
-            _setCount(true);
-          });
-        } else {
-          setState(() {
-            _controller.animateToPage(1,
-                duration: const Duration(microseconds: 300),
-                curve: Curves.easeIn);
-            _setCount(false);
-          });
-        }
-      },
     );
   }
 }

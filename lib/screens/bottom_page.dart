@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../screens/favorites_movies_screen.dart';
-import './about_it.dart';
 import 'overview_movies_screns/overview_movie_screen.dart';
+import './about_it.dart';
 import './search_movie_screen.dart';
+import '../screens/favorites_movies_screen.dart';
 import '../screens/overview_movies_screns/overview_movie_screen.dart';
 
 /// Экран для BottomNavigation

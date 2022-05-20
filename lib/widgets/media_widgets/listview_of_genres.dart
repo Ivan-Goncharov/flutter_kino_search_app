@@ -14,7 +14,6 @@ class ListViewOfGenres extends StatelessWidget {
     //список жанров фильмов: id, name, imageUrl
     List<Map<String, dynamic>> genres =
         isMovie ? GenresOfMedia.genresOfMovies : GenresOfMedia.genresOfTvShow;
-    final size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -56,7 +55,10 @@ class ListViewOfGenres extends StatelessWidget {
                       },
                     );
                   },
-                  child: getGenreCard(size, genre['imageUrl'], genre['name']),
+                  child: GenreCard(
+                    imageUrl: genre['imageUrl'],
+                    genreName: genre['name'],
+                  ),
                 ),
               );
             },
@@ -65,13 +67,20 @@ class ListViewOfGenres extends StatelessWidget {
       ],
     );
   }
+}
 
 //виджет для вывода одной карточки с жанром
-  Widget getGenreCard(
-    Size size,
-    String imageUrl,
-    String genreName,
-  ) {
+class GenreCard extends StatelessWidget {
+  //изображение
+  final String imageUrl;
+  //название жанра
+  final String genreName;
+  const GenreCard({Key? key, required this.imageUrl, required this.genreName})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -98,6 +107,7 @@ class ListViewOfGenres extends StatelessWidget {
             ),
           ),
         ),
+
         // название жанра
         ConstrainedBox(
           constraints: BoxConstraints(maxWidth: size.width * 0.49),

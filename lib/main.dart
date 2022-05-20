@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_my_kino_app/models/my_theme.dart';
 import 'models/firebase_models/favorite_movie.dart';
 import '/screens/auth_screen/login_page.dart';
@@ -30,6 +31,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     //подключаем провайдеры
     return MultiProvider(
       providers: [
@@ -39,13 +44,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: FavoriteMovie(),
         ),
+        ChangeNotifierProvider.value(
+          value: ChangeThemeProvider(),
+        ),
       ],
       builder: (context, child) {
+        final themeProvider = Provider.of<ChangeThemeProvider>(context);
+
         return MaterialApp(
           title: 'Flutter Demo',
-          themeMode: ThemeMode.system,
-          theme: MyTheme.lightTheme,
-          darkTheme: MyTheme.darkTheme,
+          theme: themeProvider.isDark ? MyTheme.darkTheme : MyTheme.lightTheme,
 
           //StreamBuilder обрабатывает вход в прилодение через FireBase
           home: StreamBuilder<User?>(

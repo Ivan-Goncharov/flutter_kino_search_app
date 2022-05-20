@@ -29,7 +29,7 @@ class SinglePersonItem extends StatelessWidget {
           PageRouteBuilder(
             pageBuilder: ((context, animation, secondaryAnimation) {
               return DetailedCastInfo(
-                heroKey: heroKey,
+                heroKey: UniqueKey(),
                 castItem: castPers,
               );
             }),

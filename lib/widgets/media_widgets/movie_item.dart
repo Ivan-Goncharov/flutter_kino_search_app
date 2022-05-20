@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '/screens/movie_detailes_info/detailed_movie_info.dart';
 import '../detailed_widget/get_image.dart';
 import '../../providers/movie.dart';
-import '/screens/movie_detailes_info/detailed_movie_info.dart';
 
 //виджет для вывода карточки с одним фильмом во всех результатах поиска
 class MovieItem extends StatelessWidget {

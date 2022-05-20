@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "550965878393",
+    "firebase_url": "https://search-movie-app-809ca-default-rtdb.firebaseio.com",
     "project_id": "search-movie-app-809ca",
     "storage_bucket": "search-movie-app-809ca.appspot.com"
   },
@@ -9,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:550965878393:android:3d40fd6ac81d9a2e637ea8",
         "android_client_info": {
-          "package_name": "com.example.flutter_my_kino_app"
+          "package_name": "com.ivan_goncharov_search_movies_app"
         }
       },
       "oauth_client": [

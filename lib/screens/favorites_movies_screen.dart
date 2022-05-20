@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-import '../widgets/system_widgets/error_message_widg.dart';
-import '../models/firebase_models/favorite_movie.dart';
 import '../providers/movie.dart';
-import '../widgets/detailed_widget/get_image.dart';
-import '../screens/movie_detailes_info/detailed_movie_info.dart';
+import '../models/firebase_models/favorite_movie.dart';
+import '../widgets/system_widgets/error_message_widg.dart';
+import '../widgets/media_widgets/favorite_movies.dart';
 
 // Экран для вывода избранных фильмов и сериалов
 class FavoritesMoviesScreen extends StatefulWidget {
@@ -88,7 +87,10 @@ class _FavoritesMoviesScreenState extends State<FavoritesMoviesScreen> {
                         ),
                         // если список пустой, то выводим сообщеие об этом
                         _listMedia.isNotEmpty
-                            ? createFavoritesList()
+                            ? FavoriteMoviesList(
+                                listOfMedia: _listMedia,
+                                changeList: getFavorite,
+                              )
                             : Text(
                                 'У вас нет избранных фильмов',
                                 style:
@@ -97,61 +99,6 @@ class _FavoritesMoviesScreenState extends State<FavoritesMoviesScreen> {
                       ],
                     ),
                   ),
-      ),
-    );
-  }
-
-  Widget createFavoritesList() {
-    return SizedBox(
-      width: double.infinity,
-      //заполняем экран сеткой в 3 элемента
-      child: GridView.builder(
-        shrinkWrap: true,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: 2 / 3,
-          crossAxisCount: 3,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-        ),
-        itemBuilder: (ctx, index) {
-          //тэг hero для анимации
-          final heroTag = 'gridView$index${_listMedia[index].id}';
-          return GestureDetector(
-            onTap: () async {
-              // ожидаем результат следующего экрана,
-              // если в детальном экране медиа изменили статус фильма, то перестраиваем виджет
-              final result = await Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: ((context, animation, secondaryAnimation) {
-                    // вызываем деатльную информацию о фильме
-                    // передаем фильм и тэг hero
-                    return DetailedInfoScreen(
-                      movie: _listMedia[index],
-                      heroTag: heroTag,
-                    );
-                  }),
-                  transitionDuration: const Duration(milliseconds: 700),
-                  reverseTransitionDuration: const Duration(milliseconds: 300),
-                ),
-              );
-              //перестраиваем виджет с новыми данными
-              if (result) {
-                getFavorite();
-              }
-            },
-            // выводим ипостер фильма
-            child: Hero(
-              tag: heroTag,
-              child: GetImage(
-                  imageUrl: _listMedia[index].imageUrl,
-                  title: _listMedia[index].title,
-                  height: 300,
-                  width: 150),
-            ),
-          );
-        },
-        itemCount: _listMedia.length,
       ),
     );
   }

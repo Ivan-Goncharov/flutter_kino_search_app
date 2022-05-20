@@ -7,6 +7,7 @@ import '../models/firebase_models/movies_history.dart';
 import '../widgets/system_widgets/error_message_widg.dart';
 import '../widgets/media_widgets/horizont_movie_scroll.dart';
 
+//экран для поиска фильмов
 class SearchMovieScreen extends StatefulWidget {
   const SearchMovieScreen({Key? key}) : super(key: key);
 
@@ -25,10 +26,19 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   // контроллер для перемещания по ListView и для отслеживания положения
   late ScrollController _scrollController;
 
+  //переменная для отслеживания - нужен ли индикатор загрузки в центре экрана
   var _showCirculCenter = false;
+
+  //переменная для отслеживания - нужен ли индикатор загрузки в текстовом поле
   var _showCirculTexField = false;
+
+  //есть ли ошибка при соединении
   var _isConnectError = false;
+
+  //для загрузочного спиннера
   var _isLoading = true;
+
+  //для хранения введенного текста
   var text = '';
 
   //инициализируем контроллеры с функцией
@@ -50,6 +60,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   // метод вызывается при изменении текста в поле ввода
   _inputTextChange() async {
     final _isEmpty = _movieProvider.itemsMovies.isEmpty;
+
     //производим поиск, если поле ввода не пустое
     // и не совпадает с вводом, которое было до этого
     //это обход, т.к. при  скрытии клавиатуры TextField (при скроллинге)
@@ -62,22 +73,17 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
           _isConnectError = false;
         });
       } else {
-        setState(() {
-          _showCirculTexField = true;
-        });
+        setState(() => _showCirculTexField = true);
       }
       try {
         //вызываем метод поиска фильмов с текстом от пользователя
         await _movieProvider.searchMovie(name: _myTextController.text);
         await _movieProvider.searchTVShow(name: _myTextController.text);
+
         if (_isEmpty) {
-          setState(() {
-            _showCirculCenter = false;
-          });
+          setState(() => _showCirculCenter = false);
         } else {
-          setState(() {
-            _showCirculTexField = false;
-          });
+          setState(() => _showCirculTexField = false);
         }
       } catch (er) {
         // вызываем экран с ошибкой
@@ -86,9 +92,10 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
           _isConnectError = true;
           _showCirculTexField = false;
         });
-        print('возникла ошибка в search_movie/iniz: $er');
       }
-    } // если клаиватура скрыта, то просто выводим предыдущие результаты
+    }
+
+    // если клаиватура скрыта, то просто выводим предыдущие результаты
     else if (_myTextController.text.isNotEmpty) {
       return;
     } else {
@@ -99,7 +106,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
 
   //метод для повторной попытки поиска,
   //если произошла ошибка и пользователь захотел попробовать обновить результаты
-  _errorUpdateScreen() async {
+  Future<void> _errorUpdateScreen() async {
     if (_myTextController.text.isNotEmpty) {
       setState(() {
         _showCirculCenter = true;
@@ -110,16 +117,12 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
         await _movieProvider.searchMovie(name: _myTextController.text);
         await _movieProvider.searchTVShow(name: _myTextController.text).then(
           (_) {
-            setState(() {
-              _showCirculCenter = false;
-            });
+            setState(() => _showCirculCenter = false);
           },
         );
       } catch (er) {
         //вызываем экран с ошибкой
-        setState(() {
-          _isConnectError = true;
-        });
+        setState(() => _isConnectError = true);
       }
     }
   }
@@ -238,15 +241,22 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                           isMovie: false,
                                           isSearch: false,
                                           historySearch: _historySearch,
-                                          textController:
-                                              _myTextController.text,
+                                          text: _myTextController.text,
                                           typeScroll: 'ранее вы искали',
                                         )
                                   :
                                   // если не найдено ни сериалов, ни фильмов, выводим сообщение об ошибке поиска
                                   _movieProvider.itemsMovies.isEmpty &&
                                           _movieProvider.itemsTVshows.isEmpty
-                                      ? createFalseFound()
+                                      ? const Center(
+                                          heightFactor: 8,
+                                          child: Text(
+                                            'Ничего не нашлось',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18),
+                                          ),
+                                        )
                                       : Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -263,7 +273,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                                     isSearch: true,
                                                     historySearch:
                                                         _historySearch,
-                                                    textController:
+                                                    text:
                                                         _myTextController.text,
                                                     typeScroll: 'поиск фильмов',
                                                   ),
@@ -281,7 +291,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
                                                     isSearch: true,
                                                     historySearch:
                                                         _historySearch,
-                                                    textController:
+                                                    text:
                                                         _myTextController.text,
                                                     typeScroll:
                                                         'поиск сериалов',
@@ -295,17 +305,6 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-// создает виджет с ошибкой поиска
-  Center createFalseFound() {
-    return const Center(
-      heightFactor: 8,
-      child: Text(
-        'Ничего не нашлось',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
     );
   }

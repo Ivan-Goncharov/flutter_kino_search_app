@@ -37,7 +37,14 @@ class _AllActorScreenState extends State<AllActorScreen> {
         title: const Text('Актеры'),
       ),
       body: _isLoading
-          ? getProgressBar()
+          ? Center(
+              child: Column(
+                children: const [
+                  CircularProgressIndicator(),
+                  Text('Загружаем список'),
+                ],
+              ),
+            )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               // выводим все карточки актеров
@@ -52,18 +59,6 @@ class _AllActorScreenState extends State<AllActorScreen> {
                 itemCount: _castsList?.length ?? 0,
               ),
             ),
-    );
-  }
-
-// загрузочный спиннер
-  Center getProgressBar() {
-    return Center(
-      child: Column(
-        children: const [
-          CircularProgressIndicator(),
-          Text('Загружаем список'),
-        ],
-      ),
     );
   }
 }

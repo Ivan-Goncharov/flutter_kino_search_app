@@ -1,12 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+import '../../providers/movie.dart';
 import '../../models/media_models/details_media_mod.dart';
 import '../../widgets/detailed_widget/get_image.dart';
-import '../../providers/movie.dart';
-import '../../widgets/system_widgets/video_player.dart';
 import '../../widgets/system_widgets/error_message_widg.dart';
 import '../../widgets/detailed_widget/movie_details_column.dart';
+import '../../widgets/detailed_widget/play_video_button.dart';
 
 //класс с подробным описанием медиа (фильма или сериала)
 class DetailedInfoScreen extends StatefulWidget {
@@ -25,8 +25,11 @@ class DetailedInfoScreen extends StatefulWidget {
 }
 
 class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
+  //флаг для отслеживания загрузки данных
   var _isLoading = false;
+  //базовые данные о фильме
   MediaBasicInfo? _movie;
+  //детальные данные о фильме
   DetailsMediaMod? _details;
   var _isError = false;
   bool _isClick = false;
@@ -35,6 +38,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   @override
   void initState() {
     _movie = widget.movie;
+    //получение детальных данных о фильме
     _details = DetailsMediaMod(
       _movie?.id ?? 0,
       _movie?.date ?? '',
@@ -45,9 +49,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   //получаем размеры экрана и задаем начальные размеры для постера фильма
   @override
   void didChangeDependencies() {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     //проверяем, избранные это фильм или нет, для правильного отображения иконки
     _movie!.isfavorte().then((value) {
@@ -70,9 +72,7 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
   // метод для инициализации подробных данных о фильме
   _inizMovie() async {
     try {
-      setState(() {
-        _isError = false;
-      });
+      setState(() => _isError = false);
 
       if (_details != null) {
         //сперва получаем детальные данные о фильме, они нужны для остальных запросов
@@ -252,7 +252,8 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                         // кнопка для воспроизведения видео трейлера
                         _isLoading
                             ? const SizedBox()
-                            : playVideoButton(context),
+                            : PlayVideoButton(
+                                keyVideo: _details?.keyVideo ?? '')
                       ],
                     ),
                   ),
@@ -332,48 +333,6 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
                   ),
                 ],
               ),
-      ),
-    );
-  }
-
-// Кнопка для воспроизведения видео трейлера
-  Positioned playVideoButton(BuildContext context) {
-    return Positioned(
-      right: 55,
-      bottom: 195,
-      child: CircleAvatar(
-        radius: 22,
-        backgroundColor: const Color.fromARGB(255, 71, 70, 70),
-        child: IconButton(
-          icon: const Icon(
-            Icons.play_arrow_rounded,
-            color: Colors.white,
-            size: 25,
-          ),
-          onPressed: () {
-            _details!.keyVideo.isNotEmpty
-                ? Navigator.pushNamed(
-                    context,
-                    VideoPlayerScreen.routNamed,
-                    arguments: _details?.keyVideo ?? '',
-                  )
-                : showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const AlertDialog(
-                        title: Text(
-                          'Ошибка',
-                          textAlign: TextAlign.center,
-                        ),
-                        content: Text(
-                          'Приносим наши извинения, видео не нашлось',
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    },
-                  );
-          },
-        ),
       ),
     );
   }

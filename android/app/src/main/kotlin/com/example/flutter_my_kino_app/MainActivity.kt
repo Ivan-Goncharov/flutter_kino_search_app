@@ -1,4 +1,4 @@
-package com.example.flutter_my_kino_app
+package com.ivan_goncharov_search_movies_app
 
 import io.flutter.embedding.android.FlutterActivity
 

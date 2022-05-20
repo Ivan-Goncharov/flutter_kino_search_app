@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../screens/cast_screens/all_actor_screen.dart';
 import '../../models/request_querry/credits_info_request.dart';
-import '../../screens/cast_screens/detailed_cast_item.dart';
+import '../../widgets/detailed_widget/item_actor_info.dart';
 
 //виджет для вывода актеров
 class ActorCast extends StatelessWidget {
@@ -20,8 +21,6 @@ class ActorCast extends StatelessWidget {
     // проверяем длину списка актеров
     final actors = creditsInfo?.getCast();
     final lenghtActorsList = actors?.length ?? 0;
-    final size = MediaQuery.of(context).size;
-    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Padding(
@@ -79,113 +78,12 @@ class ActorCast extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             physics: const ClampingScrollPhysics(),
             itemBuilder: (context, index) {
-              final actor = actors![index];
-
-              return actorInfo(
-                  context: context,
-                  actor: actor,
-                  heroKey: 'actorHero$index',
-                  size: size,
-                  colorScheme: colorScheme);
+              return ItemActorInfo(actor: actors![index]);
             },
             itemCount: lenghtActorsList > 10 ? 10 : lenghtActorsList,
           ),
         ),
       ],
     );
-  }
-
-  // Шаблон для вывода одного актера
-  Container actorInfo({
-    required BuildContext context,
-    required Cast actor,
-    required String heroKey,
-    required Size size,
-    required ColorScheme colorScheme,
-  }) {
-    return Container(
-      child: GestureDetector(
-        onTap: () {
-          // при нажатии на карту с актером -
-          //открывается детальное описание
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: ((context, animation, secondaryAnimation) {
-                return DetailedCastInfo(
-                  heroKey: heroKey,
-                  castItem: actor,
-                );
-              }),
-              transitionDuration: const Duration(milliseconds: 700),
-            ),
-          );
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            //постер с закругленными краями
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Hero(
-                tag: heroKey,
-                child: Image(
-                  image: actor.getImage(),
-                  height: size.height * 0.15,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            // имя и фамилия актера
-            Text(
-              actor.name,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.fade,
-              softWrap: true,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(
-              height: size.height * 0.005,
-            ),
-            // если есть, то имя персонажа
-            Text(
-              '${getActorChapter(actor)}',
-              softWrap: true,
-              maxLines: 2,
-              overflow: TextOverflow.fade,
-              style: TextStyle(
-                  color: colorScheme.onInverseSurface,
-                  fontWeight: FontWeight.w400),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-      padding: const EdgeInsets.only(right: 10),
-      width: size.width * 0.33,
-    );
-  }
-
-  // возвращаем имя персонажа,
-  // для сериалов и для фильмов различная запись ролей,
-  // поэтому проверяем как записано и возвращаем имя героя, исходя из записи
-  String? getActorChapter(Cast actor) {
-    if (actor.roles != null) {
-      if (actor.roles?[0].character != null) {
-        return actor.roles![0].character;
-      } else {
-        return '';
-      }
-    } else if (actor.character != null) {
-      return actor.character;
-    } else {
-      return '';
-    }
   }
 }

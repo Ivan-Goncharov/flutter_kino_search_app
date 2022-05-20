@@ -13,7 +13,7 @@ class HorrizontalMovieScroll extends StatelessWidget {
   final bool isMovie;
   final MovieHistory historySearch;
   final bool isSearch;
-  final String textController;
+  final String text;
   final String typeScroll;
 
   const HorrizontalMovieScroll({
@@ -24,7 +24,7 @@ class HorrizontalMovieScroll extends StatelessWidget {
     required this.isMovie,
     required this.isSearch,
     required this.historySearch,
-    required this.textController,
+    required this.text,
     required this.typeScroll,
   }) : super(key: key);
 
@@ -55,7 +55,7 @@ class HorrizontalMovieScroll extends StatelessWidget {
               //если конец списка в поиске, то выводим кнопку,
               //которая предлагает перейти на экран со всеми результатами
               if (index == list.length - 1 && list.length > 11 && isSearch) {
-                return getEndButton(size, isMovie, context);
+                return EndListButton(isMovie: isMovie, text: text);
               }
               // один элемент скроллинга - это постер фильма
               //с возмоностью перехода на экран с детальной ин-фой
@@ -71,23 +71,36 @@ class HorrizontalMovieScroll extends StatelessWidget {
       ],
     );
   }
+}
 
-  //кнопка перехода на экран со всеми результатми
-  Widget getEndButton(Size size, bool isMovie, BuildContext context) {
+//кнопка перехода на экран со всеми результатми
+class EndListButton extends StatelessWidget {
+  //флаг - что мы ищем
+  //true - фильмы
+  //false - сериалы
+  final bool isMovie;
+
+  //заголовок, который мы ищем
+  final String text;
+  const EndListButton({Key? key, required this.isMovie, required this.text})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(8),
       ),
-      height: size.height * 0.15,
-      width: size.width * 0.35,
+      height: MediaQuery.of(context).size.height * 0.15,
+      width: MediaQuery.of(context).size.width * 0.35,
       child: TextButton(
         onPressed: () {
           Navigator.pushNamed(
             context,
             AllSearchResult.routNamed,
             arguments: {
-              'searchText': textController,
+              'searchText': text,
               'isMovie': isMovie,
             },
           );

@@ -84,7 +84,7 @@ class ItemCastInfo {
     //дата смерти
     if (castDeathDate != null) {
       dateTimeDeath = DateFormat('yyyy-MM-dd').parse(castDeathDate);
-      _deathday = dateFormat.format(dateTimeDeath);
+      _deathday = ' - ' + dateFormat.format(dateTimeDeath);
     }
 
     _age = yearsBetween(dateTimeBirth, dateTimeDeath);

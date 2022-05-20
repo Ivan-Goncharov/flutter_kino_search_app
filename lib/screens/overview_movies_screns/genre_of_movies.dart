@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_my_kino_app/widgets/media_widgets/genre_grid_view.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../models/media_models/lists_of_media.dart';
 import '../../providers/movie.dart';
 import '../../widgets/system_widgets/error_message_widg.dart';
-import '../../models/media_models/lists_of_media.dart';
-import '../../widgets/detailed_widget/get_image.dart';
-import '../movie_detailes_info/detailed_movie_info.dart';
 
 //экран для вывода фильмов соотвествующего жанра
 class GenresOfMovies extends StatefulWidget {
@@ -92,17 +91,33 @@ class _GenresOfMoviesState extends State<GenresOfMovies> {
             //выводим ошибку, если произошел сбой в поиске
             ? ErrorMessageWidget(handler: _inizMovie, size: size)
             : _isLoading
-                ? getProgressBar(size)
+
+                //при загрузке выводим загрузочный спиннер
+                ? Container(
+                    alignment: Alignment.center,
+                    child: Lottie.asset(
+                      'assets/animation_lottie/movie_loading.json',
+                      height: size.height * 0.4,
+                      width: size.width * 0.4,
+                    ),
+                  )
+
+                //прокручивающийся  список фильмао
                 : SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // если список пустой, то выводим сообщеие об этом
-                          //если нет, то выводим GridView  с фильмами
+                          //проверяем наличие фильмов в списке
                           _listMedia.isNotEmpty
-                              ? createGridView()
+
+                              //если есть, то выводим GridView  с фильмами
+                              ? ItemGenreGridView(
+                                  listOfMedia: _listMedia,
+                                )
+
+                              // если список пустой, то выводим сообщение об этом
                               : const Text(
                                   'Поиск не удался',
                                   style: TextStyle(
@@ -115,70 +130,6 @@ class _GenresOfMoviesState extends State<GenresOfMovies> {
                       ),
                     ),
                   ),
-      ),
-    );
-  }
-
-// метод, который возвращаем GridView c фильмами конкретного жанра
-  Widget createGridView() {
-    return SizedBox(
-      width: double.infinity,
-      //заполняем экран сеткой в 3 элемента
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: 2 / 3,
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-        ),
-        itemBuilder: (ctx, index) {
-          //тэг hero для анимации
-          final heroTag = 'genreGridView$index${_listMedia[index].id}';
-          return GestureDetector(
-            onTap: () {
-              //обрабатываем нажатие на постер
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: ((context, animation, secondaryAnimation) {
-                    // вызываем деатльную информацию о фильме
-                    // передаем фильм и тэг hero
-                    return DetailedInfoScreen(
-                      movie: _listMedia[index],
-                      heroTag: heroTag,
-                    );
-                  }),
-                  transitionDuration: const Duration(milliseconds: 700),
-                  reverseTransitionDuration: const Duration(milliseconds: 300),
-                ),
-              );
-            },
-            // выводим постер фильма через анимацию
-            child: Hero(
-              tag: heroTag,
-              child: GetImage(
-                  imageUrl: _listMedia[index].imageUrl,
-                  title: _listMedia[index].title,
-                  height: 300,
-                  width: 150),
-            ),
-          );
-        },
-        itemCount: _listMedia.length,
-      ),
-    );
-  }
-
-//загрузочный спиннер
-  Container getProgressBar(Size size) {
-    return Container(
-      alignment: Alignment.center,
-      child: Lottie.asset(
-        'assets/animation_lottie/movie_loading.json',
-        height: size.height * 0.4,
-        width: size.width * 0.4,
       ),
     );
   }
