@@ -18,13 +18,9 @@ class LoginTitle extends StatelessWidget {
             height: size.height * 0.2,
             width: size.width * 0.4,
             margin: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Color(0xFFFFD8E4),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Image(
-              image: const AssetImage(
-                'assets/image/logo/logo_transp.png',
+            child: const Image(
+              image: AssetImage(
+                'assets/image/logo/kino_app_logo.png',
               ),
               fit: BoxFit.contain,
             ),

@@ -1,4 +1,4 @@
-package com.ivan_goncharov_search_movies_app
+package com.ivangonch.movie_search_app
 
 import io.flutter.embedding.android.FlutterActivity
 

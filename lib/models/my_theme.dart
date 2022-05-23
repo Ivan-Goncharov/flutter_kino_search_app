@@ -105,7 +105,7 @@ class MyTheme {
   static final darkTheme = ThemeData(
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
-      primary: Color(0xFFFFB4A0),
+      primary: Color.fromRGBO(255, 180, 160, 1),
       onPrimary: Color(0xFF640E00),
       primaryContainer: Color(0xFF862108),
       onPrimaryContainer: Color(0xFFFFDAD0),

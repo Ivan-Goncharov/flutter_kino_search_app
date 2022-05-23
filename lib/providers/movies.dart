@@ -55,9 +55,7 @@ class Movies with ChangeNotifier {
       } catch (error) {
         rethrow;
       }
-    } else {
-      print(response.statusCode);
-    }
+    } else {}
     notifyListeners();
   }
 
@@ -73,7 +71,6 @@ class Movies with ChangeNotifier {
           Uri.parse(
               'https://api.themoviedb.org/3/search/movie?api_key=2115a4e4d0db6b9e7298306e0f3a6817&language=ru&query=${Uri.encodeFull(name)}&page=$page&include_adult=false'),
         );
-        // print(response);
         if (response.statusCode == 200) {
           //получаем результаты поиска и проходимся по списку, создавая фильмы
           final movieSearch = SearchMovie.fromJson(json.decode(response.body));
@@ -83,7 +80,7 @@ class Movies with ChangeNotifier {
             isNotEmptySearch = false;
           }
         } else {
-          throw SocketException('Connect error');
+          throw const SocketException('Connect error');
         }
       } catch (er) {
         rethrow;
@@ -159,8 +156,6 @@ class Movies with ChangeNotifier {
           else {
             isNotEmptySearch = false;
           }
-        } else {
-          print(response.statusCode);
         }
         notifyListeners();
       } catch (error) {

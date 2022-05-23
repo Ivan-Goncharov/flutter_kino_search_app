@@ -2,22 +2,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_my_kino_app/models/my_theme.dart';
-import 'models/firebase_models/favorite_movie.dart';
-import '/screens/auth_screen/login_page.dart';
-import '../screens/auth_screen/password_reset.dart';
-import '../screens/overview_movies_screns/genre_of_movies.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/cast_screens/all_actor_screen.dart';
-import 'screens/cast_screens/all_crew_screen.dart';
-import './screens/all_search_results.dart';
-import 'widgets/system_widgets/custom_page_route.dart';
-import './screens/bottom_page.dart';
-import 'screens/movie_detailes_info/full_movie_descrip.dart';
-import 'widgets/system_widgets/video_player.dart';
+import '../models/my_theme.dart';
+import '../models/firebase_models/favorite_movie.dart';
 import '../providers/movies.dart';
-import 'screens/movie_detailes_info/wath_providers_screen.dart';
+import '../screens/auth_screen/login_page.dart';
+import '../screens/auth_screen/password_reset.dart';
+import '../screens/overview_movies_screns/genre_of_movies.dart';
+import '../screens/movie_detailes_info/wath_providers_screen.dart';
+import '../screens/cast_screens/all_actor_screen.dart';
+import '../screens/cast_screens/all_crew_screen.dart';
+import '../screens/all_search_results.dart';
+import '../screens/bottom_page.dart';
+import '../screens/movie_detailes_info/full_movie_descrip.dart';
+import '../widgets/system_widgets/video_player.dart';
+import '../widgets/system_widgets/custom_page_route.dart';
 
 void main() async {
   //инициализируем FireBase
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               } else if (snapshot.hasError) {
-                return errorMessage();
+                return const ErrorMessage();
               } else if (snapshot.hasData) {
                 return const BottomPage();
               } else {
@@ -122,9 +122,14 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
 
-  // метод ошибки при подключении к firebase
-  Widget errorMessage() {
+//ошибка при доступе к firebase
+class ErrorMessage extends StatelessWidget {
+  const ErrorMessage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 20,

@@ -1,4 +1,4 @@
-// ignore_for_file: use_rethrow_when_possible, avoid_print
+// ignore_for_file: use_rethrow_when_possible,
 
 import 'dart:convert';
 
@@ -71,10 +71,8 @@ class MediaBasicInfo with ChangeNotifier {
           }
         },
       );
-      print(ret);
       return ret;
     } catch (e) {
-      print(e);
       return ret;
     }
   }
@@ -102,7 +100,6 @@ class MediaBasicInfo with ChangeNotifier {
       );
       notifyListeners();
     } catch (error) {
-      print(error);
       throw error;
     }
   }
@@ -153,7 +150,6 @@ class MediaBasicInfo with ChangeNotifier {
           keyMedia = key.toString();
         }
       });
-      print(keyMedia);
       return keyMedia;
     } catch (error) {
       throw error;

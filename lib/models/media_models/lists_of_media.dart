@@ -47,7 +47,6 @@ class ListsOfMedia {
       return true;
       //если ошибка, то возвращаем false, чтобы обработать запрос
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -143,8 +142,6 @@ class ListsOfMedia {
                     !country.contains('CH') &&
                     !country.contains('TH') &&
                     voteCount > 1000) {
-                  print(tvShow['name']);
-                  print(list.length);
                   list.add(createSingleMedia(tvShow, false));
                 }
               }

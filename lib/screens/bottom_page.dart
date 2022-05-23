@@ -23,12 +23,6 @@ class _BottomPageState extends State<BottomPage> {
     const AboutIt(),
   ];
 
-  @override
-  void initState() {
-    print('зашли в _bottomPage');
-    super.initState();
-  }
-
   //переменная для сохранения индекса выбранной страницы
   var _selectedPage = 0;
 
