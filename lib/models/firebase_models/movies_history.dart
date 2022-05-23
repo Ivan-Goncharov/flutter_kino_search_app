@@ -52,7 +52,7 @@ class MovieHistory {
 
       _historySearch.add(media);
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -76,7 +76,7 @@ class MovieHistory {
       http.delete(getUrl);
       _historySearch.removeAt(0);
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -91,7 +91,7 @@ class MovieHistory {
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       return extractedData.keys.first;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 

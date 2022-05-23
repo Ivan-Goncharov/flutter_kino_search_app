@@ -116,6 +116,7 @@ class MyApp extends StatelessWidget {
                   child: const GenresOfMovies(),
                   settings: settings,
                 );
+              default:
             }
           },
         );
