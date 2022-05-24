@@ -76,10 +76,10 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
 
       if (_details != null) {
         //сперва получаем детальные данные о фильме, они нужны для остальных запросов
-        _details!.getDetailesMovie();
+        await _details!.getDetailesMovie();
 
         //делаем все запросы синхронно
-        await Future.wait([
+        Future.wait([
           _details!.getRating(),
           _details!.getMovieCredits(),
           _details!.getTrailer(_movie!.type),
@@ -107,10 +107,10 @@ class _DetailedInfoScreenState extends State<DetailedInfoScreen> {
 
       if (_details != null) {
         //сперва получаем детальные данные о сериале, они нужны для остальных запросов
-        _details!.getDetailesTVShow();
+        await _details!.getDetailesTVShow();
 
         //делаем все запросы синхронно
-        await Future.wait([
+        Future.wait([
           _details!.getRating(),
           _details!.getTVShowCredits(),
           _details!.getTrailer(_movie!.type),

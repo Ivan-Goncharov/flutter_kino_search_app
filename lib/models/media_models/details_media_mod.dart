@@ -110,7 +110,7 @@ class DetailsMediaMod {
             }
           }
         } else {
-          throw SocketException('Connect Error');
+          throw const SocketException('Connect Error');
         }
       } catch (e) {
         rethrow;
@@ -137,7 +137,7 @@ class DetailsMediaMod {
           _lastEpisodeDate = tvShow.getLastEpisodeDate();
           _numberOfSeasons = tvShow.numberOfSeasons;
         } else {
-          throw SocketException('Connect Error');
+          throw const SocketException('Connect Error');
         }
       } catch (e) {
         rethrow;
@@ -164,7 +164,7 @@ class DetailsMediaMod {
             _imdbVotes = '${movieRatings['imdbVotes']} оценки';
           }
         } else {
-          throw SocketException('Connect Error');
+          throw const SocketException('Connect Error');
         }
       } catch (e) {
         rethrow;
@@ -251,7 +251,7 @@ class DetailsMediaMod {
           // карту самых важных работников съемочной группы
           _creditsInfo!.createMapCrewMovie();
         } else {
-          throw SocketException('Connect false');
+          throw const SocketException('Connect false');
         }
       } catch (e) {
         rethrow;

@@ -77,6 +77,10 @@ class ListSupplier extends StatelessWidget {
               // переходим по тапу на изображение на ссылку с провайдером
               child: GestureDetector(
                 onTap: () {
+                  print(
+                    _getMediaLink('${listOfSupplier[index].providerName}',
+                        '$movieTitle', '$originalTitle'),
+                  );
                   _launchURLBrowser(
                     _getMediaLink('${listOfSupplier[index].providerName}',
                         '$movieTitle', '$originalTitle'),
@@ -118,7 +122,7 @@ class ListSupplier extends StatelessWidget {
 
     switch (providerName) {
       case 'Ivi':
-        return 'https://www.ivi.ru/search/?ivi_search=${Uri.encodeFull(mediaOrigName)}';
+        return 'https://www.ivi.tv';
 
       case 'Kinopoisk':
         return 'https://www.kinopoisk.ru/index.php?kp_query=${Uri.encodeFull(mediaRusName)}';

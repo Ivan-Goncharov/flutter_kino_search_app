@@ -32,23 +32,24 @@ class TvShowDetailsInfo {
   WatchProviders? watchProviders;
   ExternalIds? externalIds;
 
-  factory TvShowDetailsInfo.fromJson(Map<String, dynamic> json) =>
-      TvShowDetailsInfo(
-        episodeRunTime: List<int>.from(json["episode_run_time"].map((x) => x)),
-        firstAirDate: json["first_air_date"],
-        genres: List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
-        lastAirDate: json["last_air_date"],
-        name: json["name"],
-        nextEpisodeToAir: json["next_episode_to_air"],
-        numberOfEpisodes: json["number_of_episodes"],
-        numberOfSeasons: json["number_of_seasons"],
-        originalName: json["original_name"],
-        overview: json["overview"],
-        posterPath: json["poster_path"],
-        voteCount: json["vote_count"],
-        watchProviders: WatchProviders.fromJson(json["watch/providers"]),
-        externalIds: ExternalIds.fromJson(json["external_ids"]),
-      );
+  factory TvShowDetailsInfo.fromJson(Map<String, dynamic> json) {
+    return TvShowDetailsInfo(
+      episodeRunTime: List<int>.from(json["episode_run_time"].map((x) => x)),
+      firstAirDate: json["first_air_date"],
+      genres: List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
+      lastAirDate: json["last_air_date"],
+      name: json["name"],
+      nextEpisodeToAir: json["next_episode_to_air"],
+      numberOfEpisodes: json["number_of_episodes"],
+      numberOfSeasons: json["number_of_seasons"],
+      originalName: json["original_name"],
+      overview: json["overview"],
+      posterPath: json["poster_path"],
+      voteCount: json["vote_count"],
+      watchProviders: WatchProviders.fromJson(json["watch/providers"]),
+      externalIds: ExternalIds.fromJson(json["external_ids"]),
+    );
+  }
 
   String getGenres() {
     String genre = '';
@@ -134,7 +135,7 @@ class Results {
   Results({
     required this.ru,
   });
-  At ru;
+  At? ru;
 
   factory Results.fromJson(Map<String, dynamic> json) => Results(
         ru: At.fromJson(json["RU"]),
@@ -171,8 +172,10 @@ class At {
 
   factory At.fromJson(Map<String, dynamic> json) => At(
         link: json["link"],
-        flatrate: List<Flatrate>.from(
-            json["flatrate"].map((x) => Flatrate.fromJson(x))),
+        flatrate: json["flatrate"] == null
+            ? null
+            : List<Flatrate>.from(
+                json["flatrate"].map((x) => Flatrate.fromJson(x))),
         buy: json["buy"] == null
             ? null
             : List<Flatrate>.from(json["buy"].map((x) => Flatrate.fromJson(x))),

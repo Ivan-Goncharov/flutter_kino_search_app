@@ -76,7 +76,7 @@ class _WatchProvidersScreenState extends State<WatchProvidersScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           //заголовок
-                          WatchNowTitle(),
+                          const WatchNowTitle(),
                           // если нет информации по подпискам, то не выводим
                           watchProv?.flatrate == null
                               ? const SizedBox()
