@@ -2,6 +2,8 @@
 
 Данное приложение позволяет любителям кинематографа  искать любимые фильмы и сериалы. Просматривать актуальную информацию по фильмам и сериалам. А также смотреть, в каком сервисе выгоднее всего смотреть фильм на данный момент.
 
+__Google Play Store:__ [Поиск фильмов](https://play.google.com/store/apps/details?id=com.ivangonch.movie_search_app)
+
 <img src="assets/readme_asstes/images/1.png" alt="drawing" width="200"/> <img src="assets/readme_asstes/images/2.png" alt="drawing" width="200"/> <img src="assets/readme_asstes/images/3.png" alt="drawing" width="200"/> 
 
 <img src="assets/readme_asstes/images/4.png" alt="drawing" width="200"/>  <img src="assets/readme_asstes/images/5.png" alt="drawing" width="200"/> 
